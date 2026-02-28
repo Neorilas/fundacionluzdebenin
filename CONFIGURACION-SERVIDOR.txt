@@ -1,0 +1,59 @@
+FUNDACIÓN LUZ DE BENÍN — Configuración del servidor Hetzner
+=============================================================
+
+DATOS DEL SERVIDOR
+------------------
+IP:      91.107.235.70
+Usuario: root
+Web:     https://nuevo.fundacionluzdebenin.org
+
+
+PASO 1 — Abrir la consola
+--------------------------
+1. Ve a https://console.hetzner.com
+2. Entra en tu servidor → botón "Console" (arriba a la derecha)
+3. Inicia sesión: usuario "root" + contraseña del email de Hetzner
+
+
+PASO 2 — Comando de instalación completa
+-----------------------------------------
+Copia la línea de abajo y pégala en la consola (clic derecho → Pegar).
+Tarda unos 3-5 minutos. No cierres la ventana mientras trabaja.
+
+apt-get update -qq && apt-get install -y -qq git curl && curl -fsSL https://get.docker.com | sh && git clone https://github.com/Neorilas/fundacionluzdebenin.git /root/fundacion && cd /root/fundacion && cp .env.production .env && sed -i "s/cambia-esto-por-un-secreto-largo-y-aleatorio/$(openssl rand -hex 32)/" .env && ufw allow 80/tcp && ufw allow 443/tcp && ufw allow OpenSSH && ufw --force enable && docker compose build --parallel && docker compose up -d && echo "DEPLOY COMPLETADO"
+
+Al terminar debe aparecer: DEPLOY COMPLETADO
+
+
+PASO 3 — Verificar que funciona
+---------------------------------
+Abre en el navegador:
+  Web:   https://nuevo.fundacionluzdebenin.org
+  Admin: https://nuevo.fundacionluzdebenin.org/admin/
+  API:   https://nuevo.fundacionluzdebenin.org/api/health
+
+Credenciales del panel admin:
+  Email:      admin@fundacionluzdebenin.org
+  Contraseña: admin123   <-- CAMBIALA EN EL PANEL DESPUÉS
+
+
+PASO 4 — Si algo falla
+------------------------
+Ver logs en tiempo real (pégalo en la consola del servidor):
+  docker compose logs -f
+
+Ver estado de los servicios:
+  docker compose ps
+
+
+CUANDO QUIERAS PASAR AL DOMINIO DEFINITIVO
+-------------------------------------------
+1. Cambia en Hostalia el registro A de fundacionluzdebenin.org → 91.107.235.70
+2. En la consola del servidor ejecuta:
+   bash /root/fundacion/scripts/switch-domain.sh fundacionluzdebenin.org
+
+
+PARA FUTURAS ACTUALIZACIONES
+------------------------------
+Cuando se hagan cambios en el código, ejecutar en la consola del servidor:
+  cd /root/fundacion && git pull && bash scripts/update.sh
