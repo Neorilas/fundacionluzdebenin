@@ -113,14 +113,48 @@ CUANDO QUIERAS PASAR AL DOMINIO DEFINITIVO
 
 
 ═══════════════════════════════════════════════════════════
-SI ALGO FALLA
+SI LA WEB NO CARGA (diagnostico)
+═══════════════════════════════════════════════════════════
+
+Ejecuta estos comandos desde SSH, en orden:
+
+1. Ver estado de los contenedores (deben aparecer todos como "Up"):
+   cd /root/fundacion && docker compose ps
+
+2. Comprobar que el backend responde internamente:
+   curl http://localhost:3001/api/health
+
+3. Comprobar que el frontend responde internamente:
+   curl http://localhost:3000
+
+4. Ver si Caddy obtuvo el certificado SSL (busca errores o "certificate obtained"):
+   docker compose logs caddy --tail=40
+
+5. Si el backend dice que no hay admin, ejecuta el seed:
+   docker compose exec backend node -e "
+     const bcrypt = require('bcryptjs');
+     const { PrismaClient } = require('@prisma/client');
+     const p = new PrismaClient();
+     bcrypt.hash('admin123', 10).then(h =>
+       p.adminUser.upsert({
+         where: { email: 'admin@fundacionluzdebenin.org' },
+         update: {},
+         create: { email: 'admin@fundacionluzdebenin.org', passwordHash: h, name: 'Administrador' }
+       })
+     ).then(() => { console.log('Admin creado'); p.\$disconnect(); });
+   "
+
+6. Si Caddy falla por DNS (el dominio aun no apunta al servidor),
+   espera 10-15 minutos y luego reinicia Caddy:
+   docker compose restart caddy
+
+
+═══════════════════════════════════════════════════════════
+SI ALGO FALLA (logs generales)
 ═══════════════════════════════════════════════════════════
 
 Ver logs en tiempo real (desde SSH):
-  docker compose -f /root/fundacion/docker-compose.yml logs -f
-
-Ver estado de los servicios:
-  docker compose -f /root/fundacion/docker-compose.yml ps
+  cd /root/fundacion && docker compose logs -f
 
 Ver historial de deploys automaticos:
   https://github.com/Neorilas/fundacionluzdebenin/actions
