@@ -30,7 +30,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
     <>
       <Hero lang={l} />
       <MissionStrip lang={l} title={missionTitle} text={missionText} />
-      <StatsCounter lang={l} stats={sec?.stats} />
+      <StatsCounter lang={l} />
       <FeaturedProjects lang={l} projects={proj} />
       <LatestBlog lang={l} posts={blog} />
       <DonationCTA lang={l} />
