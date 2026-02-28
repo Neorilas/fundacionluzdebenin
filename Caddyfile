@@ -1,9 +1,14 @@
-# Sustituye el dominio por el tuyo si cambias de proveedor.
-# Caddy obtiene y renueva el certificado SSL automáticamente.
+# ─────────────────────────────────────────────────────────────────────────────
+# Caddyfile — Proxy inverso + SSL automático (Let's Encrypt)
+#
+# El dominio se lee de $DOMAIN en .env  →  no toques este archivo para cambiar
+# de subdominio a dominio definitivo. Solo cambia DOMAIN en .env y ejecuta:
+#   bash scripts/switch-domain.sh
+# ─────────────────────────────────────────────────────────────────────────────
 
 {$DOMAIN} {
 
-    # API pública, panel admin e imágenes → backend
+    # API REST, panel admin e imágenes → backend
     handle /api/* {
         reverse_proxy backend:3001
     }
@@ -14,12 +19,18 @@
         reverse_proxy backend:3001
     }
 
-    # Todo lo demás → frontend estático (Nginx)
+    # Web pública → frontend estático (Nginx)
     handle {
         reverse_proxy frontend:80
     }
 
-    # Logs
+    # Cabeceras de seguridad básicas
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options SAMEORIGIN
+        Referrer-Policy strict-origin-when-cross-origin
+    }
+
     log {
         output file /data/logs/access.log {
             roll_size 10MB
@@ -28,7 +39,7 @@
     }
 }
 
-# Redirige www → sin www
+# www → sin www (actúa solo cuando DOMAIN es el dominio raíz)
 www.{$DOMAIN} {
     redir https://{$DOMAIN}{uri} permanent
 }
