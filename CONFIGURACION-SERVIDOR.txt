@@ -8,6 +8,18 @@ Usuario: root
 Web:     https://nuevo.fundacionluzdebenin.org
 
 
+IMPORTANTE — Cómo pegar comandos en la consola Hetzner
+-------------------------------------------------------
+En la consola web de Hetzner NO funciona Ctrl+V.
+Para pegar texto usa el BOTÓN DEL PORTAPAPELES que aparece
+en la barra superior de la consola (icono de clipboard / portapapeles).
+Así evitas tener que escribir caracteres especiales como @.
+
+
+═══════════════════════════════════════════════════════════
+INSTALACIÓN INICIAL (se hace UNA SOLA VEZ)
+═══════════════════════════════════════════════════════════
+
 PASO 1 — Abrir la consola
 --------------------------
 1. Ve a https://console.hetzner.com
@@ -15,18 +27,54 @@ PASO 1 — Abrir la consola
 3. Inicia sesión: usuario "root" + contraseña del email de Hetzner
 
 
-PASO 2 — Comando de instalación completa
------------------------------------------
-Copia la línea de abajo y pégala en la consola (clic derecho → Pegar).
-Tarda unos 3-5 minutos. No cierres la ventana mientras trabaja.
+PASO 2 — Preparar el servidor y generar clave SSH
+--------------------------------------------------
+Pega este comando en la consola (con el botón de portapapeles):
 
-apt-get update -qq && apt-get install -y -qq git curl && curl -fsSL https://get.docker.com | sh && git clone https://github.com/Neorilas/fundacionluzdebenin.git /root/fundacion && cd /root/fundacion && cp .env.production .env && sed -i "s/cambia-esto-por-un-secreto-largo-y-aleatorio/$(openssl rand -hex 32)/" .env && ufw allow 80/tcp && ufw allow 443/tcp && ufw allow OpenSSH && ufw --force enable && docker compose build --parallel && docker compose up -d && echo "DEPLOY COMPLETADO"
+apt-get update -qq && apt-get install -y -qq git curl && curl -fsSL https://get.docker.com | sh && ufw allow 80/tcp && ufw allow 443/tcp && ufw allow OpenSSH && ufw --force enable && mkdir -p ~/.ssh && chmod 700 ~/.ssh && ssh-keygen -t ed25519 -C "github-actions-deploy" -f ~/.ssh/github_actions -N "" && cat ~/.ssh/github_actions.pub >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && echo "" && echo "==== COPIA ESTA CLAVE PRIVADA PARA GITHUB ====" && cat ~/.ssh/github_actions && echo "==== FIN DE LA CLAVE PRIVADA ===="
 
-Al terminar debe aparecer: DEPLOY COMPLETADO
+Al terminar verás una clave privada que empieza por:
+  -----BEGIN OPENSSH PRIVATE KEY-----
+Cópiala COMPLETA (incluyendo esas líneas de inicio y fin).
+La necesitarás en el PASO 4.
 
 
-PASO 3 — Verificar que funciona
----------------------------------
+PASO 3 — Clonar el proyecto e instalar
+---------------------------------------
+Primero necesitas crear un token de acceso en GitHub:
+  1. Ve a: https://github.com/settings/tokens/new
+  2. Marca el permiso "repo" (acceso a repositorios privados)
+  3. Genera el token y cópialo (empieza por ghp_)
+
+Luego pega este comando, SUSTITUYENDO "TU_TOKEN_AQUI" por tu token:
+
+TOKEN=TU_TOKEN_AQUI && git clone "https://Neorilas:${TOKEN}@github.com/Neorilas/fundacionluzdebenin.git" /root/fundacion && cd /root/fundacion && cp .env.production .env && sed -i "s/cambia-esto-por-un-secreto-largo-y-aleatorio/$(openssl rand -hex 32)/" .env && docker compose build --parallel && docker compose up -d && echo "INSTALACION COMPLETADA"
+
+(No necesitas escribir @ — lo hace el comando automáticamente)
+Al terminar debe aparecer: INSTALACION COMPLETADA
+
+
+PASO 4 — Activar despliegue automático (GitHub Actions)
+--------------------------------------------------------
+Con esto, cada vez que hagas git push el servidor se actualiza solo.
+
+  a) Ve a tu repositorio en GitHub:
+     https://github.com/Neorilas/fundacionluzdebenin/settings/secrets/actions
+
+  b) Crea un nuevo secreto:
+     Nombre:  SSH_PRIVATE_KEY
+     Valor:   (pega aquí la clave privada del PASO 2, completa)
+
+  c) Haz clic en "Add secret"
+
+¡Listo! A partir de ahora cada git push a la rama main despliega automáticamente.
+También puedes lanzarlo manualmente desde:
+  GitHub → pestaña "Actions" → "Deploy to Hetzner" → "Run workflow"
+
+
+═══════════════════════════════════════════════════════════
+VERIFICAR QUE FUNCIONA
+═══════════════════════════════════════════════════════════
 Abre en el navegador:
   Web:   https://nuevo.fundacionluzdebenin.org
   Admin: https://nuevo.fundacionluzdebenin.org/admin/
@@ -34,26 +82,38 @@ Abre en el navegador:
 
 Credenciales del panel admin:
   Email:      admin@fundacionluzdebenin.org
-  Contraseña: admin123   <-- CAMBIALA EN EL PANEL DESPUÉS
+  Contrasena: admin123   <-- CAMBIALA EN EL PANEL DESPUES
 
 
-PASO 4 — Si algo falla
-------------------------
+═══════════════════════════════════════════════════════════
+PARA FUTURAS ACTUALIZACIONES
+═══════════════════════════════════════════════════════════
+Con GitHub Actions configurado, basta con:
+
+  git add .
+  git commit -m "descripcion del cambio"
+  git push
+
+El servidor se actualiza automáticamente en 1-2 minutos.
+Puedes ver el progreso en: https://github.com/Neorilas/fundacionluzdebenin/actions
+
+
+═══════════════════════════════════════════════════════════
+CUANDO QUIERAS PASAR AL DOMINIO DEFINITIVO
+═══════════════════════════════════════════════════════════
+1. Cambia en Hostalia el registro A de fundacionluzdebenin.org → 91.107.235.70
+2. En la consola del servidor ejecuta:
+   bash /root/fundacion/scripts/switch-domain.sh fundacionluzdebenin.org
+
+
+═══════════════════════════════════════════════════════════
+SI ALGO FALLA
+═══════════════════════════════════════════════════════════
 Ver logs en tiempo real (pégalo en la consola del servidor):
   docker compose logs -f
 
 Ver estado de los servicios:
   docker compose ps
 
-
-CUANDO QUIERAS PASAR AL DOMINIO DEFINITIVO
--------------------------------------------
-1. Cambia en Hostalia el registro A de fundacionluzdebenin.org → 91.107.235.70
-2. En la consola del servidor ejecuta:
-   bash /root/fundacion/scripts/switch-domain.sh fundacionluzdebenin.org
-
-
-PARA FUTURAS ACTUALIZACIONES
-------------------------------
-Cuando se hagan cambios en el código, ejecutar en la consola del servidor:
-  cd /root/fundacion && git pull && bash scripts/update.sh
+Ver historial de despliegues automáticos:
+  https://github.com/Neorilas/fundacionluzdebenin/actions

@@ -1,0 +1,29 @@
+name: Deploy to Hetzner
+
+# Se ejecuta automáticamente en cada push a main
+# También se puede lanzar manualmente desde GitHub → Actions → "Run workflow"
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy via SSH
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 91.107.235.70
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            set -e
+            echo "🔄 Desplegando Fundación Luz de Benín..."
+            cd /root/fundacion
+            git pull --ff-only
+            bash scripts/update.sh
+            echo "✅ Despliegue completado"
