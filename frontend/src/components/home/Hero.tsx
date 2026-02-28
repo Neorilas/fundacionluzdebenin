@@ -18,8 +18,21 @@ const quotes = {
 };
 
 const taglines = {
-  es: 'Una fundación movida por el Amor en Benín, África Occidental.',
-  fr: 'Une fondation animée par l\'Amour au Bénin, Afrique de l\'Ouest.',
+  es: 'Llevamos esperanza a los más vulnerables de Benín, África Occidental.',
+  fr: "Nous apportons l'espoir aux plus vulnérables du Bénin, Afrique de l'Ouest.",
+};
+
+const heroStats = {
+  es: [
+    { value: '4', label: 'orfanatos' },
+    { value: '2.500', label: 'gallinas' },
+    { value: '+300k', label: 'huevos/año' },
+  ],
+  fr: [
+    { value: '4', label: 'orphelinats' },
+    { value: '2 500', label: 'poules' },
+    { value: '+300k', label: 'œufs/an' },
+  ],
 };
 
 export default function Hero({ lang }: Props) {
@@ -27,7 +40,7 @@ export default function Hero({ lang }: Props) {
 
   return (
     <section className="relative bg-primary-900 text-white overflow-hidden">
-      {/* Subtle background pattern */}
+      {/* Background pattern */}
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white rounded-full -translate-y-1/3 translate-x-1/3" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent rounded-full translate-y-1/2 -translate-x-1/2" />
@@ -35,8 +48,8 @@ export default function Hero({ lang }: Props) {
 
       <div className="relative max-w-4xl mx-auto px-6 py-20 sm:py-28 text-center">
 
-        {/* Bible quote — eje central */}
-        <div className="mb-12">
+        {/* Bible quote */}
+        <div className="mb-10">
           <span className="block text-primary-light text-7xl font-serif leading-none opacity-30 mb-4">&ldquo;</span>
           <blockquote className="text-2xl sm:text-3xl lg:text-4xl font-light italic leading-relaxed text-white mb-6">
             {text}
@@ -47,30 +60,40 @@ export default function Hero({ lang }: Props) {
         </div>
 
         {/* Divider */}
-        <div className="flex items-center justify-center gap-4 mb-10">
+        <div className="flex items-center justify-center gap-4 mb-8">
           <div className="h-px w-16 bg-primary-700" />
           <span className="text-primary-400 text-xl">✦</span>
           <div className="h-px w-16 bg-primary-700" />
         </div>
 
         {/* Tagline */}
-        <p className="text-primary-200 text-lg sm:text-xl mb-10 max-w-xl mx-auto leading-relaxed">
+        <p className="text-primary-200 text-lg sm:text-xl mb-8 max-w-xl mx-auto leading-relaxed">
           {taglines[lang]}
         </p>
+
+        {/* Quick stats strip */}
+        <div className="flex justify-center gap-8 sm:gap-12 mb-10">
+          {heroStats[lang].map(({ value, label }) => (
+            <div key={label} className="text-center">
+              <div className="text-2xl font-extrabold text-white">{value}</div>
+              <div className="text-xs text-primary-300 uppercase tracking-wide mt-0.5">{label}</div>
+            </div>
+          ))}
+        </div>
 
         {/* CTAs */}
         <div className="flex flex-wrap justify-center gap-4">
           <Link
             href={`/${lang}/proyectos/`}
-            className="inline-flex items-center gap-2 bg-white text-primary-900 hover:bg-primary-50 font-semibold px-7 py-3 rounded-full transition-colors"
+            className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-7 py-3 rounded-full transition-colors"
           >
-            {lang === 'es' ? 'Conoce nuestros proyectos' : 'Découvrez nos projets'} →
+            {lang === 'es' ? 'Ver proyectos' : 'Voir les projets'}
           </Link>
           <Link
             href={`/${lang}/colabora/`}
-            className="inline-flex items-center gap-2 bg-accent hover:bg-accent-700 text-white font-semibold px-7 py-3 rounded-full transition-colors"
+            className="inline-flex items-center gap-2 bg-accent hover:bg-accent-700 text-white font-bold px-8 py-3.5 rounded-full transition-colors shadow-lg shadow-accent/30 text-lg"
           >
-            {t(lang, 'common.donate')} 💚
+            {t(lang, 'common.donate')} ❤️
           </Link>
         </div>
       </div>

@@ -7,16 +7,16 @@ interface Props {
 
 const stats = {
   es: [
-    { icon: '🏠', value: '2', label: 'orfanatos atendidos' },
+    { icon: '🏠', value: '4', label: 'orfanatos atendidos en Benín' },
     { icon: '👦', value: 'Decenas', label: 'de niños con mejor calidad de vida' },
-    { icon: '🥚', value: '+200.000', label: 'huevos producidos al año' },
-    { icon: '📈', value: '↑', label: 'Riqueza local en crecimiento' },
+    { icon: '🐔', value: '2.500', label: 'gallinas en nuestra granja' },
+    { icon: '🥚', value: '+300.000', label: 'huevos producidos al año' },
   ],
   fr: [
-    { icon: '🏠', value: '2', label: 'orphelinats accompagnés' },
-    { icon: '👦', value: 'Des dizaines', label: 'd\'enfants avec une meilleure qualité de vie' },
-    { icon: '🥚', value: '+200 000', label: 'œufs produits par an' },
-    { icon: '📈', value: '↑', label: 'Richesse locale en croissance' },
+    { icon: '🏠', value: '4', label: 'orphelinats accompagnés au Bénin' },
+    { icon: '👦', value: 'Des dizaines', label: "d'enfants avec une meilleure qualité de vie" },
+    { icon: '🐔', value: '2 500', label: 'poules dans notre ferme avicole' },
+    { icon: '🥚', value: '+300 000', label: 'œufs produits par an' },
   ],
 };
 
@@ -31,7 +31,7 @@ export default function StatsCounter({ lang }: Props) {
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {items.map(({ icon, value, label }) => (
-            <div key={label} className="text-center p-6 rounded-2xl bg-white border border-primary-100 shadow-sm">
+            <div key={label} className="text-center p-6 rounded-2xl bg-white border border-primary-100 shadow-sm hover:shadow-md transition-shadow">
               <div className="text-4xl mb-3">{icon}</div>
               <div className="text-3xl sm:text-4xl font-extrabold text-primary-800 mb-2 leading-tight">
                 {value}
