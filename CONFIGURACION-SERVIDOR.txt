@@ -41,6 +41,18 @@ Tarda unos 5-10 minutos. Al terminar debe aparecer: DEPLOY COMPLETADO
 
 
 ═══════════════════════════════════════════════════════════
+SI EL DEPLOY FALLO A MITAD (por un error de codigo)
+═══════════════════════════════════════════════════════════
+
+Si el paso 2 se corto por un error pero Docker y el repo ya estan
+instalados, NO repitas todo el script. Solo pega esto:
+
+cd /root/fundacion && git pull && docker compose build --parallel && docker compose up -d && echo "COMPLETADO"
+
+Tarda unos 5 minutos. Al terminar debe aparecer: COMPLETADO
+
+
+═══════════════════════════════════════════════════════════
 PASO 3 — Configurar el deploy automatico (GitHub Actions)
 ═══════════════════════════════════════════════════════════
 
