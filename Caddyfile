@@ -12,7 +12,7 @@
     handle /api/* {
         reverse_proxy backend:3001
     }
-    handle /admin/* {
+    handle /admin* {
         reverse_proxy backend:3001
     }
     handle /uploads/* {

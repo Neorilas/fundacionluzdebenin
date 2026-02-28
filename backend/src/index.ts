@@ -41,7 +41,7 @@ app.use('/uploads', express.static(uploadDir));
 // Serve admin panel (React SPA built in admin/dist)
 const adminDistPath = path.join(__dirname, '../admin/dist');
 app.use('/admin', express.static(adminDistPath));
-app.get('/admin/*', (_req, res) => {
+app.get(['/admin', '/admin/', '/admin/*'], (_req, res) => {
   res.sendFile(path.join(adminDistPath, 'index.html'));
 });
 
