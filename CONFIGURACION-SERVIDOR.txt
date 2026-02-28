@@ -118,19 +118,22 @@ SI LA WEB NO CARGA (diagnostico)
 
 Ejecuta estos comandos desde SSH, en orden:
 
-1. Ver estado de los contenedores (deben aparecer todos como "Up"):
+1. Ver por que falla el backend (pega esto y comparte el resultado):
+   cd /root/fundacion && docker compose logs backend --tail=50
+
+2. Ver por que falla Caddy:
+   cd /root/fundacion && docker compose logs caddy --tail=30
+
+3. Ver estado de los contenedores (deben aparecer todos como "Up"):
    cd /root/fundacion && docker compose ps
 
-2. Comprobar que el backend responde internamente:
+4. Comprobar que el backend responde internamente:
    curl http://localhost:3001/api/health
 
-3. Comprobar que el frontend responde internamente:
-   curl http://localhost:3000
-
-4. Ver si Caddy obtuvo el certificado SSL (busca errores o "certificate obtained"):
+5. Ver si Caddy obtuvo el certificado SSL (busca errores o "certificate obtained"):
    docker compose logs caddy --tail=40
 
-5. Si el backend dice que no hay admin, ejecuta el seed:
+6. Si el backend dice que no hay admin, ejecuta el seed:
    docker compose exec backend node -e "
      const bcrypt = require('bcryptjs');
      const { PrismaClient } = require('@prisma/client');
@@ -144,9 +147,8 @@ Ejecuta estos comandos desde SSH, en orden:
      ).then(() => { console.log('Admin creado'); p.\$disconnect(); });
    "
 
-6. Si Caddy falla por DNS (el dominio aun no apunta al servidor),
-   espera 10-15 minutos y luego reinicia Caddy:
-   docker compose restart caddy
+6. Si Caddy falla, aplica el fix y reinicialo (sin reconstruir todo):
+   cd /root/fundacion && git pull && docker compose up -d --no-deps caddy && docker compose logs caddy --tail=20
 
 
 ═══════════════════════════════════════════════════════════
