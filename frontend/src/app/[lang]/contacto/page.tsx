@@ -1,4 +1,4 @@
-import { Lang } from '@/lib/types';
+import { Lang, Settings } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import ContactForm from '@/components/ui/ContactForm';
@@ -8,7 +8,7 @@ export const revalidate = 60;
 export default async function ContactoPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   const l = lang as Lang;
-  const settings = await api.getSettings().catch(() => ({}));
+  const settings = await api.getSettings().catch(() => ({} as Settings));
 
   return (
     <div>

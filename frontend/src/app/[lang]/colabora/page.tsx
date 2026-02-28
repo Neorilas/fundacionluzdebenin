@@ -1,4 +1,4 @@
-import { Lang } from '@/lib/types';
+import { Lang, Settings } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -11,7 +11,7 @@ export default async function ColaboraPage({ params }: { params: Promise<{ lang:
 
   const [sec, settings] = await Promise.all([
     api.getPageSections('colabora').catch(() => ({})),
-    api.getSettings().catch(() => ({})),
+    api.getSettings().catch(() => ({} as Settings)),
   ]);
 
   const get = (section: string, key: string) => {
