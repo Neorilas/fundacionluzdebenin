@@ -12,6 +12,8 @@ RUN npm run build
 # ─── Stage 2: Build backend (TypeScript) ─────────────────────────────────────
 FROM node:20-alpine AS backend-builder
 
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
@@ -26,6 +28,8 @@ RUN npm run build
 
 # ─── Stage 3: Production image ───────────────────────────────────────────────
 FROM node:20-alpine
+
+RUN apk add --no-cache openssl
 
 WORKDIR /app
 
