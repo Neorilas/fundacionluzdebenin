@@ -24,7 +24,7 @@ services:
       timeout: 5s
       retries: 3
 
-  # ── Frontend Web (Next.js static → Nginx) ─────────────────────────────────
+  # ── Frontend Web (Next.js standalone) ────────────────────────────────────
   frontend:
     build:
       context: ./frontend
@@ -33,10 +33,9 @@ services:
         NEXT_PUBLIC_API_URL: https://${DOMAIN}
     restart: unless-stopped
     expose:
-      - "80"
+      - "3000"
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
 
   # ── Caddy: proxy inverso + SSL automático ─────────────────────────────────
   caddy:

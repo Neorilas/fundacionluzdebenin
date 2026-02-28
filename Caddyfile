@@ -19,9 +19,9 @@
         reverse_proxy backend:3001
     }
 
-    # Web pública → frontend estático (Nginx)
+    # Web pública → frontend Next.js standalone
     handle {
-        reverse_proxy frontend:80
+        reverse_proxy frontend:3000
     }
 
     # Cabeceras de seguridad básicas
