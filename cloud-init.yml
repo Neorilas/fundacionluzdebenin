@@ -1,0 +1,63 @@
+#cloud-config
+# ─────────────────────────────────────────────────────────────────────────────
+# Pega este archivo en el campo "User data" al crear/reconstruir el servidor
+# en console.hetzner.com → Server → Actions → Rebuild
+#
+# Antes de pegarlo, sustituye:
+#   TU_CLAVE_SSH_PUBLICA  → contenido de hetzner_key.pub (generado en PASO 1)
+#   TU_TOKEN_GITHUB       → tu token de GitHub (empieza por ghp_)
+# ─────────────────────────────────────────────────────────────────────────────
+
+packages:
+  - git
+  - curl
+  - ufw
+
+# Tu clave SSH personal → te permitirá conectarte con ssh root@91.107.235.70
+ssh_authorized_keys:
+  - TU_CLAVE_SSH_PUBLICA
+
+write_files:
+  - path: /root/setup.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      set -e
+      exec >> /root/setup.log 2>&1
+
+      echo "▶ Instalando Docker..."
+      curl -fsSL https://get.docker.com | sh
+
+      echo "▶ Configurando firewall..."
+      ufw allow OpenSSH
+      ufw allow 80/tcp
+      ufw allow 443/tcp
+      ufw --force enable
+
+      echo "▶ Generando clave SSH para GitHub Actions..."
+      mkdir -p /root/.ssh
+      chmod 700 /root/.ssh
+      ssh-keygen -t ed25519 -C "github-actions-deploy" -f /root/.ssh/ga_key -N ""
+      cat /root/.ssh/ga_key.pub >> /root/.ssh/authorized_keys
+      chmod 600 /root/.ssh/authorized_keys
+
+      echo "▶ Clonando repositorio..."
+      git clone "https://Neorilas:TU_TOKEN_GITHUB@github.com/Neorilas/fundacionluzdebenin.git" /root/fundacion
+
+      echo "▶ Configurando entorno..."
+      cd /root/fundacion
+      cp .env.production .env
+      JWT=$(openssl rand -hex 32)
+      sed -i "s/cambia-esto-por-un-secreto-largo-y-aleatorio/$JWT/" .env
+
+      echo "▶ Construyendo y levantando servicios Docker..."
+      docker compose build --parallel
+      docker compose up -d
+
+      echo ""
+      echo "✅ INSTALACION COMPLETADA"
+      echo "Clave privada para GitHub Actions guardada en: /root/CLAVE_GITHUB_ACTIONS.txt"
+      cp /root/.ssh/ga_key /root/CLAVE_GITHUB_ACTIONS.txt
+
+runcmd:
+  - bash /root/setup.sh

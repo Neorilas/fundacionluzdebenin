@@ -8,68 +8,104 @@ Usuario: root
 Web:     https://nuevo.fundacionluzdebenin.org
 
 
-IMPORTANTE — Cómo pegar comandos en la consola Hetzner
+═══════════════════════════════════════════════════════════
+INSTALACIÓN AUTOMÁTICA (sin tocar la consola del servidor)
+═══════════════════════════════════════════════════════════
+
+PASO 1 — Generar tu clave SSH en Windows
+-----------------------------------------
+Abre PowerShell (o CMD) en tu PC y ejecuta:
+
+  ssh-keygen -t ed25519 -f "%USERPROFILE%\.ssh\hetzner_key" -N ""
+
+Luego ejecuta esto para ver la clave pública (la necesitas en el PASO 3):
+
+  type "%USERPROFILE%\.ssh\hetzner_key.pub"
+
+Copia toda esa línea (empieza por "ssh-ed25519 AAAA...")
+
+
+PASO 2 — Crear un token de acceso en GitHub
+--------------------------------------------
+1. Ve a: https://github.com/settings/tokens/new
+2. Dale un nombre (ej: "hetzner-deploy")
+3. Marca el permiso: repo (acceso completo a repositorios privados)
+4. Haz clic en "Generate token"
+5. Copia el token (empieza por ghp_ — solo se muestra una vez)
+
+
+PASO 3 — Preparar el archivo cloud-init.yml
+--------------------------------------------
+Abre el archivo "cloud-init.yml" que está en la raíz del proyecto.
+Sustituye las dos líneas de placeholders:
+
+  TU_CLAVE_SSH_PUBLICA  →  la línea del PASO 1 (ssh-ed25519 AAAA...)
+  TU_TOKEN_GITHUB       →  el token del PASO 2 (ghp_xxx...)
+
+Ejemplo de cómo debe quedar la línea de la clave:
+  - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBxxx... hetzner_key
+
+Guarda el archivo.
+
+
+PASO 4 — Reconstruir el servidor con cloud-init
+------------------------------------------------
+IMPORTANTE: Esto borra lo que haya en el servidor ahora (que no tiene nada útil).
+
+1. Ve a: https://console.hetzner.com
+2. Entra en tu servidor
+3. Haz clic en "Actions" (arriba a la derecha) → "Rebuild"
+4. Elige la imagen: Ubuntu 24.04
+5. Despliega "Advanced options" → busca el campo "User data"
+6. Pega TODO el contenido del archivo cloud-init.yml (con tus datos ya rellenos)
+7. Confirma el rebuild
+
+El servidor tardará unos 5-10 minutos en instalarse solo.
+Verás la IP igual: 91.107.235.70
+
+
+PASO 5 — Conectarte al servidor desde tu PC
+--------------------------------------------
+Abre PowerShell y ejecuta:
+
+  ssh -i "%USERPROFILE%\.ssh\hetzner_key" root@91.107.235.70
+
+Si te pregunta "Are you sure you want to continue connecting?" → escribe: yes
+
+Para ver el progreso de la instalación (si aún está trabajando):
+  tail -f /root/setup.log
+
+Cuando veas "INSTALACION COMPLETADA" todo está listo.
+
+
+PASO 6 — Configurar GitHub Actions (deploy automático)
 -------------------------------------------------------
-En la consola web de Hetzner NO funciona Ctrl+V.
-Para pegar texto usa el BOTÓN DEL PORTAPAPELES que aparece
-en la barra superior de la consola (icono de clipboard / portapapeles).
-Así evitas tener que escribir caracteres especiales como @.
+Ahora que estás dentro del servidor vía SSH, ejecuta:
+
+  cat /root/CLAVE_GITHUB_ACTIONS.txt
+
+Copia TODO lo que aparezca (desde -----BEGIN hasta -----END...).
+
+Luego ve a GitHub y añade esa clave como secreto:
+  https://github.com/Neorilas/fundacionluzdebenin/settings/secrets/actions
+  → "New repository secret"
+  Nombre:  SSH_PRIVATE_KEY
+  Valor:   (pega la clave copiada)
+
+¡LISTO! A partir de ahora cada git push despliega automáticamente en 1-2 minutos.
 
 
 ═══════════════════════════════════════════════════════════
-INSTALACIÓN INICIAL (se hace UNA SOLA VEZ)
+PARA FUTURAS ACTUALIZACIONES
 ═══════════════════════════════════════════════════════════
+Con GitHub Actions configurado, solo necesitas:
 
-PASO 1 — Abrir la consola
---------------------------
-1. Ve a https://console.hetzner.com
-2. Entra en tu servidor → botón "Console" (arriba a la derecha)
-3. Inicia sesión: usuario "root" + contraseña del email de Hetzner
+  git add .
+  git commit -m "descripcion del cambio"
+  git push
 
-
-PASO 2 — Preparar el servidor y generar clave SSH
---------------------------------------------------
-Pega este comando en la consola (con el botón de portapapeles):
-
-apt-get update -qq && apt-get install -y -qq git curl && curl -fsSL https://get.docker.com | sh && ufw allow 80/tcp && ufw allow 443/tcp && ufw allow OpenSSH && ufw --force enable && mkdir -p ~/.ssh && chmod 700 ~/.ssh && ssh-keygen -t ed25519 -C "github-actions-deploy" -f ~/.ssh/github_actions -N "" && cat ~/.ssh/github_actions.pub >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && echo "" && echo "==== COPIA ESTA CLAVE PRIVADA PARA GITHUB ====" && cat ~/.ssh/github_actions && echo "==== FIN DE LA CLAVE PRIVADA ===="
-
-Al terminar verás una clave privada que empieza por:
-  -----BEGIN OPENSSH PRIVATE KEY-----
-Cópiala COMPLETA (incluyendo esas líneas de inicio y fin).
-La necesitarás en el PASO 4.
-
-
-PASO 3 — Clonar el proyecto e instalar
----------------------------------------
-Primero necesitas crear un token de acceso en GitHub:
-  1. Ve a: https://github.com/settings/tokens/new
-  2. Marca el permiso "repo" (acceso a repositorios privados)
-  3. Genera el token y cópialo (empieza por ghp_)
-
-Luego pega este comando, SUSTITUYENDO "TU_TOKEN_AQUI" por tu token:
-
-TOKEN=TU_TOKEN_AQUI && git clone "https://Neorilas:${TOKEN}@github.com/Neorilas/fundacionluzdebenin.git" /root/fundacion && cd /root/fundacion && cp .env.production .env && sed -i "s/cambia-esto-por-un-secreto-largo-y-aleatorio/$(openssl rand -hex 32)/" .env && docker compose build --parallel && docker compose up -d && echo "INSTALACION COMPLETADA"
-
-(No necesitas escribir @ — lo hace el comando automáticamente)
-Al terminar debe aparecer: INSTALACION COMPLETADA
-
-
-PASO 4 — Activar despliegue automático (GitHub Actions)
---------------------------------------------------------
-Con esto, cada vez que hagas git push el servidor se actualiza solo.
-
-  a) Ve a tu repositorio en GitHub:
-     https://github.com/Neorilas/fundacionluzdebenin/settings/secrets/actions
-
-  b) Crea un nuevo secreto:
-     Nombre:  SSH_PRIVATE_KEY
-     Valor:   (pega aquí la clave privada del PASO 2, completa)
-
-  c) Haz clic en "Add secret"
-
-¡Listo! A partir de ahora cada git push a la rama main despliega automáticamente.
-También puedes lanzarlo manualmente desde:
-  GitHub → pestaña "Actions" → "Deploy to Hetzner" → "Run workflow"
+El servidor se actualiza solo. Progreso en:
+  https://github.com/Neorilas/fundacionluzdebenin/actions
 
 
 ═══════════════════════════════════════════════════════════
@@ -86,34 +122,21 @@ Credenciales del panel admin:
 
 
 ═══════════════════════════════════════════════════════════
-PARA FUTURAS ACTUALIZACIONES
-═══════════════════════════════════════════════════════════
-Con GitHub Actions configurado, basta con:
-
-  git add .
-  git commit -m "descripcion del cambio"
-  git push
-
-El servidor se actualiza automáticamente en 1-2 minutos.
-Puedes ver el progreso en: https://github.com/Neorilas/fundacionluzdebenin/actions
-
-
-═══════════════════════════════════════════════════════════
 CUANDO QUIERAS PASAR AL DOMINIO DEFINITIVO
 ═══════════════════════════════════════════════════════════
 1. Cambia en Hostalia el registro A de fundacionluzdebenin.org → 91.107.235.70
-2. En la consola del servidor ejecuta:
+2. Desde tu PC (SSH) o desde GitHub Actions manual, ejecuta:
    bash /root/fundacion/scripts/switch-domain.sh fundacionluzdebenin.org
 
 
 ═══════════════════════════════════════════════════════════
 SI ALGO FALLA
 ═══════════════════════════════════════════════════════════
-Ver logs en tiempo real (pégalo en la consola del servidor):
-  docker compose logs -f
+Ver log de instalación:
+  cat /root/setup.log
 
-Ver estado de los servicios:
-  docker compose ps
+Ver logs de Docker en tiempo real:
+  docker compose -f /root/fundacion/docker-compose.yml logs -f
 
-Ver historial de despliegues automáticos:
+Ver historial de despliegues automaticos:
   https://github.com/Neorilas/fundacionluzdebenin/actions
