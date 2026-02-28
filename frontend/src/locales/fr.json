@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "whatWeDo": "Ce Que Nous Faisons",
+    "projects": "Projets",
+    "whoWeAre": "Qui Sommes-Nous",
+    "collaborate": "Collaborer",
+    "blog": "Blog",
+    "contact": "Contact"
+  },
+  "hero": {
+    "scrollDown": "Voir plus"
+  },
+  "home": {
+    "mission": "Notre Mission",
+    "stats": "Notre Impact",
+    "featuredProjects": "Projets en Vedette",
+    "seeAllProjects": "Voir tous les projets",
+    "latestBlog": "Dernières Nouvelles",
+    "seeAllPosts": "Voir tous les articles",
+    "donationCTA": {
+      "title": "Votre aide peut changer une vie",
+      "subtitle": "Soutenez nos projets avec un don et ensemble nous apporterons plus de lumière au Bénin.",
+      "button": "Faire un don"
+    }
+  },
+  "projects": {
+    "title": "Nos Projets",
+    "subtitle": "Chaque projet transforme des communautés au Bénin",
+    "filter": {
+      "all": "Tous",
+      "active": "En cours",
+      "completed": "Terminés",
+      "planned": "Planifiés"
+    },
+    "status": {
+      "active": "En cours",
+      "completed": "Terminé",
+      "planned": "Planifié"
+    },
+    "readMore": "Voir le projet",
+    "backToProjects": "← Retour aux projets"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Actualités de la Fondation",
+    "readMore": "Lire la suite",
+    "backToBlog": "← Retour au blog",
+    "publishedOn": "Publié le"
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Vous avez une question ? Écrivez-nous",
+    "form": {
+      "name": "Nom",
+      "email": "Email",
+      "subject": "Sujet",
+      "message": "Message",
+      "send": "Envoyer le message",
+      "sending": "Envoi en cours...",
+      "success": "Message envoyé ! Nous vous répondrons bientôt.",
+      "error": "Erreur lors de l'envoi. Veuillez réessayer."
+    },
+    "info": {
+      "email": "Adresse email",
+      "phone": "Téléphone",
+      "address": "Adresse"
+    }
+  },
+  "collaborate": {
+    "title": "Collaborez avec Nous",
+    "subtitle": "Votre aide, sous toute forme, change des vies au Bénin",
+    "bankTransfer": "Virement Bancaire",
+    "holder": "Titulaire",
+    "iban": "IBAN",
+    "bic": "BIC/SWIFT",
+    "impactTitle": "Que puis-je obtenir avec mon don ?",
+    "otherWays": "Autres façons d'aider",
+    "volunteer": {
+      "title": "Bénévolat",
+      "desc": "Rejoignez nos expéditions de coopération au Bénin ou collaborez depuis l'Espagne en communication, design et collecte de fonds."
+    },
+    "companies": {
+      "title": "Entreprises",
+      "desc": "Établissez un partenariat d'entreprise avec la fondation et améliorez votre RSE tout en changeant des vies réelles."
+    },
+    "spread": {
+      "title": "Diffusez",
+      "desc": "Partagez notre mission sur les réseaux sociaux, entre amis et en famille. La visibilité est fondamentale."
+    }
+  },
+  "whoWeAre": {
+    "title": "Qui Sommes-Nous",
+    "legal": "Informations Légales",
+    "nif": "NIF",
+    "registration": "Registre",
+    "values": "Nos Valeurs",
+    "team": "Notre Équipe"
+  },
+  "whatWeDo": {
+    "title": "Ce Que Nous Faisons",
+    "methodology": "Notre Méthodologie",
+    "impact": "Impact cumulé"
+  },
+  "footer": {
+    "tagline": "Nous apportons la lumière aux communautés les plus vulnérables du Bénin.",
+    "rights": "Tous droits réservés.",
+    "legal": "Mentions légales",
+    "privacy": "Confidentialité",
+    "cookies": "Cookies"
+  },
+  "common": {
+    "learnMore": "En savoir plus",
+    "donate": "Faire un don",
+    "loading": "Chargement...",
+    "error": "Erreur lors du chargement du contenu"
+  }
+}

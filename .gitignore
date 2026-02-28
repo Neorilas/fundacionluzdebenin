@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+backend/admin/node_modules/
+
+# Build outputs
+dist/
+.next/
+out/
+backend/admin/dist/
+
+# Database
+*.db
+*.db-journal
+backend/prisma/migrations/
+
+# Uploads (imágenes subidas por el admin)
+backend/uploads/
+uploads/
+
+# Environment files (contienen secretos)
+.env
+.env.local
+.env.production.local
+.env.development.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+
+# Claude
+.claude/

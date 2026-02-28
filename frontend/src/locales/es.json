@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "whatWeDo": "Qué Hacemos",
+    "projects": "Proyectos",
+    "whoWeAre": "Quiénes Somos",
+    "collaborate": "Colabora",
+    "blog": "Blog",
+    "contact": "Contacto"
+  },
+  "hero": {
+    "scrollDown": "Ver más"
+  },
+  "home": {
+    "mission": "Nuestra Misión",
+    "stats": "Nuestro Impacto",
+    "featuredProjects": "Proyectos Destacados",
+    "seeAllProjects": "Ver todos los proyectos",
+    "latestBlog": "Últimas Noticias",
+    "seeAllPosts": "Ver todos los artículos",
+    "donationCTA": {
+      "title": "Tu ayuda puede cambiar una vida",
+      "subtitle": "Apoya nuestros proyectos con una donación y juntos llevaremos más luz a Benín.",
+      "button": "Donar ahora"
+    }
+  },
+  "projects": {
+    "title": "Nuestros Proyectos",
+    "subtitle": "Cada proyecto transforma comunidades en Benín",
+    "filter": {
+      "all": "Todos",
+      "active": "En curso",
+      "completed": "Completados",
+      "planned": "Planificados"
+    },
+    "status": {
+      "active": "En curso",
+      "completed": "Completado",
+      "planned": "Planificado"
+    },
+    "readMore": "Ver proyecto",
+    "backToProjects": "← Volver a proyectos"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Noticias y actualidad de la Fundación",
+    "readMore": "Leer más",
+    "backToBlog": "← Volver al blog",
+    "publishedOn": "Publicado el"
+  },
+  "contact": {
+    "title": "Contacto",
+    "subtitle": "¿Tienes alguna pregunta? Escríbenos",
+    "form": {
+      "name": "Nombre",
+      "email": "Email",
+      "subject": "Asunto",
+      "message": "Mensaje",
+      "send": "Enviar mensaje",
+      "sending": "Enviando...",
+      "success": "¡Mensaje enviado! Te responderemos pronto.",
+      "error": "Error al enviar. Por favor, inténtalo de nuevo."
+    },
+    "info": {
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "address": "Dirección"
+    }
+  },
+  "collaborate": {
+    "title": "Colabora con Nosotros",
+    "subtitle": "Tu ayuda, en cualquier forma, cambia vidas en Benín",
+    "bankTransfer": "Transferencia Bancaria",
+    "holder": "Titular",
+    "iban": "IBAN",
+    "bic": "BIC/SWIFT",
+    "impactTitle": "¿Qué puedo conseguir con mi donación?",
+    "otherWays": "Otras formas de ayudar",
+    "volunteer": {
+      "title": "Voluntariado",
+      "desc": "Únete a nuestras expediciones de cooperación en Benín o colabora desde España en labores de comunicación, diseño y captación."
+    },
+    "companies": {
+      "title": "Empresas",
+      "desc": "Establece una alianza corporativa con la fundación y mejora tu RSC mientras cambias vidas reales."
+    },
+    "spread": {
+      "title": "Difunde",
+      "desc": "Comparte nuestra misión en redes sociales, entre amigos y familia. La visibilidad es fundamental."
+    }
+  },
+  "whoWeAre": {
+    "title": "Quiénes Somos",
+    "legal": "Información Legal",
+    "nif": "NIF",
+    "registration": "Registro",
+    "values": "Nuestros Valores",
+    "team": "Nuestro Equipo"
+  },
+  "whatWeDo": {
+    "title": "Qué Hacemos",
+    "methodology": "Nuestra Metodología",
+    "impact": "Impacto acumulado"
+  },
+  "footer": {
+    "tagline": "Llevamos luz a las comunidades más vulnerables de Benín.",
+    "rights": "Todos los derechos reservados.",
+    "legal": "Aviso legal",
+    "privacy": "Privacidad",
+    "cookies": "Cookies"
+  },
+  "common": {
+    "learnMore": "Saber más",
+    "donate": "Donar",
+    "loading": "Cargando...",
+    "error": "Error al cargar el contenido"
+  }
+}

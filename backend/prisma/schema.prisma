@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  titleEs     String
+  titleFr     String
+  descEs      String
+  descFr      String
+  status      String   @default("active") // active | completed | planned
+  featured    Boolean  @default(false)
+  images      String   @default("[]") // JSON array of image URLs
+  stats       String   @default("{}") // JSON object with stats
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  titleEs     String
+  titleFr     String
+  excerptEs   String
+  excerptFr   String
+  contentEs   String
+  contentFr   String
+  coverImage  String    @default("")
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model PageSection {
+  id       String @id @default(cuid())
+  page     String
+  section  String
+  key      String
+  valueEs  String @default("")
+  valueFr  String @default("")
+
+  @@unique([page, section, key])
+}
+
+model ContactMessage {
+  id        String    @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  read      Boolean   @default(false)
+  repliedAt DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String @default("")
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+}

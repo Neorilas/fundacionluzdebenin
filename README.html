@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fundación Luz de Benín — Guía del proyecto</title>
+  <link rel="icon" type="image/jpeg" href="logo.jpg" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f4;
+      color: #1c1917;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #064e3b, #065f46);
+      color: white;
+      padding: 48px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header .logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    header .logo-wrap img {
+      width: 140px;
+      height: 140px;
+      object-fit: contain;
+      mix-blend-mode: screen;
+      filter: brightness(1.1) contrast(1.05);
+      border-radius: 50%;
+      background: transparent;
+    }
+
+    header h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+    header p { font-size: 1.1rem; opacity: 0.85; }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 640px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.5rem; }
+    }
+
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      border: 1px solid #e7e5e4;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+
+    .card-accent {
+      border-left: 4px solid #065f46;
+    }
+
+    .card-orange {
+      border-left: 4px solid #ea580c;
+    }
+
+    .card h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Section headings */
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #065f46;
+      margin: 40px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #d1fae5;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* URL badges */
+    .url-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: 'Courier New', monospace;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .url-badge:hover { background: #d1fae5; }
+    .url-badge.orange {
+      background: #fff7ed;
+      color: #c2410c;
+      border-color: #fed7aa;
+    }
+    .url-badge.orange:hover { background: #ffedd5; }
+
+    /* Credential box */
+    .cred-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 12px 0;
+    }
+
+    .cred-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #dcfce7;
+      font-size: 0.9rem;
+    }
+    .cred-row:last-child { border-bottom: none; }
+    .cred-label { color: #166534; font-weight: 500; }
+    .cred-value {
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      background: white;
+      padding: 3px 10px;
+      border-radius: 6px;
+      border: 1px solid #bbf7d0;
+      color: #065f46;
+    }
+
+    /* Code blocks */
+    pre {
+      background: #1c1917;
+      color: #d6d3d1;
+      border-radius: 10px;
+      padding: 18px 20px;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      margin: 12px 0;
+    }
+
+    pre .comment { color: #78716c; }
+    pre .cmd { color: #4ade80; }
+    pre .url { color: #60a5fa; }
+    pre .path { color: #fbbf24; }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin: 12px 0;
+    }
+
+    th {
+      background: #f5f5f4;
+      color: #57534e;
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f5f5f4;
+      vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafaf9; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-orange { background: #ffedd5; color: #9a3412; }
+    .badge-blue { background: #dbeafe; color: #1e40af; }
+
+    /* Steps */
+    .steps { list-style: none; padding: 0; }
+    .steps li {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      background: #065f46;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .steps li p { margin: 0; font-size: 0.95rem; }
+    .steps li strong { display: block; margin-bottom: 2px; }
+
+    /* Alert boxes */
+    .alert {
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      margin: 12px 0;
+      display: flex;
+      gap: 10px;
+    }
+    .alert-warning {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+    }
+    .alert-info {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+    }
+
+    /* Admin sections table */
+    .admin-table td:first-child { font-weight: 600; color: #065f46; width: 160px; }
+
+    /* Structure tree */
+    .tree {
+      background: #1c1917;
+      color: #d6d3d1;
+      border-radius: 10px;
+      padding: 18px 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      line-height: 1.9;
+    }
+    .tree .dir { color: #fbbf24; }
+    .tree .file { color: #94a3b8; }
+    .tree .comment { color: #4b5563; }
+
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: #78716c;
+      font-size: 0.85rem;
+      border-top: 1px solid #e7e5e4;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <img src="logo.jpg" alt="Logo Fundación Luz de Benín" />
+  </div>
+  <h1>Fundación Luz de Benín</h1>
+  <p>Guía completa del proyecto web — Panel de administración y despliegue</p>
+</header>
+
+<div class="container">
+
+  <!-- URLs -->
+  <h2 class="section-title">🖥️ URLs en local (desarrollo)</h2>
+  <div class="card" style="margin-bottom:20px;">
+    <div style="display:flex; flex-wrap:wrap; gap:12px;">
+      <a href="http://localhost:3000/es/" target="_blank" class="url-badge">🌐 http://localhost:3000/es/ — Web (Español)</a>
+      <a href="http://localhost:3000/fr/" target="_blank" class="url-badge">🌐 http://localhost:3000/fr/ — Web (Français)</a>
+      <a href="http://localhost:5173/admin/" target="_blank" class="url-badge orange">🔐 http://localhost:5173/admin/ — Panel Admin</a>
+      <a href="http://localhost:3001/api/health" target="_blank" class="url-badge">⚙️ http://localhost:3001/api/health — API</a>
+    </div>
+  </div>
+
+  <!-- Arrancar servidores -->
+  <h2 class="section-title">🚀 Cómo arrancar los servidores</h2>
+  <div class="grid-2">
+    <div class="card card-accent">
+      <h2>1️⃣ Backend (API)</h2>
+      <pre><span class="comment"># Terminal 1</span>
+<span class="cmd">cd</span> <span class="path">fundacion/backend</span>
+<span class="cmd">npm run dev</span></pre>
+      <p style="font-size:0.85rem; color:#57534e;">Levanta la API REST en el puerto <strong>3001</strong>. Necesario para que todo funcione.</p>
+    </div>
+    <div class="card card-orange">
+      <h2>2️⃣ Panel Admin</h2>
+      <pre><span class="comment"># Terminal 2</span>
+<span class="cmd">cd</span> <span class="path">fundacion/backend/admin</span>
+<span class="cmd">npm run dev</span></pre>
+      <p style="font-size:0.85rem; color:#57534e;">Levanta el panel de administración en el puerto <strong>5173</strong>.</p>
+    </div>
+    <div class="card card-accent">
+      <h2>3️⃣ Frontend (Web)</h2>
+      <pre><span class="comment"># Terminal 3</span>
+<span class="cmd">cd</span> <span class="path">fundacion/frontend</span>
+<span class="cmd">npm run dev</span></pre>
+      <p style="font-size:0.85rem; color:#57534e;">Levanta la web pública en el puerto <strong>3000</strong>.</p>
+    </div>
+    <div class="card" style="background:#f0fdf4; border-color:#bbf7d0;">
+      <h2>⚡ Orden de arranque</h2>
+      <ol class="steps">
+        <li><div class="step-num">1</div><p><strong>Backend primero</strong> — El admin y el frontend dependen de él.</p></li>
+        <li><div class="step-num">2</div><p><strong>Admin y/o Frontend</strong> — Pueden arrancar en cualquier orden.</p></li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Acceso admin -->
+  <h2 class="section-title">🔐 Acceso al Panel de Administración</h2>
+  <div class="grid-2">
+    <div class="card card-accent">
+      <h2>📋 Credenciales de acceso</h2>
+      <div class="cred-box">
+        <div class="cred-row">
+          <span class="cred-label">URL</span>
+          <span class="cred-value">localhost:5173/admin/</span>
+        </div>
+        <div class="cred-row">
+          <span class="cred-label">Email</span>
+          <span class="cred-value">admin@fundacionluzdebenin.org</span>
+        </div>
+        <div class="cred-row">
+          <span class="cred-label">Contraseña</span>
+          <span class="cred-value">admin123</span>
+        </div>
+      </div>
+      <div class="alert alert-warning">
+        ⚠️ Cambia la contraseña antes de publicar en producción. Hazlo en <strong>Configuración → Cambiar contraseña</strong>.
+      </div>
+    </div>
+    <div class="card">
+      <h2>🗂️ Secciones del panel</h2>
+      <table class="admin-table">
+        <tr><td>Dashboard</td><td>Resumen: proyectos, posts y mensajes sin leer</td></tr>
+        <tr><td>Proyectos</td><td>Crear, editar y borrar proyectos (ES + FR)</td></tr>
+        <tr><td>Blog</td><td>Artículos en Markdown, publicar o borrador (ES + FR)</td></tr>
+        <tr><td>Páginas</td><td>Editar textos del Hero, Misión, etc. por página</td></tr>
+        <tr><td>Mensajes</td><td>Inbox del formulario de contacto</td></tr>
+        <tr><td>Donaciones</td><td>Cambiar IBAN, titular y BIC</td></tr>
+        <tr><td>Configuración</td><td>Email, teléfono, redes sociales, nombre del sitio</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Flujo de uso -->
+  <h2 class="section-title">✏️ Cómo editar contenido</h2>
+  <div class="card">
+    <ol class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <p><strong>Abre el panel admin</strong> en <code>http://localhost:5173/admin/</code> e inicia sesión.</p>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <p><strong>Navega a la sección</strong> que quieres editar usando el menú lateral.</p>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <p><strong>Edita el contenido.</strong> Los campos con pestaña <span class="badge badge-blue">ES</span> <span class="badge badge-green">FR</span> permiten introducir texto en ambos idiomas.</p>
+      </li>
+      <li>
+        <div class="step-num">4</div>
+        <p><strong>Guarda los cambios</strong> con el botón correspondiente.</p>
+      </li>
+      <li>
+        <div class="step-num">5</div>
+        <p><strong>Verifica en la web</strong> recargando <code>http://localhost:3000/es/</code> — los cambios aparecen al instante.</p>
+      </li>
+    </ol>
+  </div>
+
+  <!-- API pública -->
+  <h2 class="section-title">🔗 Rutas de la API</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h2>🌍 Rutas públicas</h2>
+      <table>
+        <thead><tr><th>Método</th><th>Ruta</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/projects</code></td></tr>
+          <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/projects/:slug</code></td></tr>
+          <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/blog</code></td></tr>
+          <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/blog/:slug</code></td></tr>
+          <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/pages/:page</code></td></tr>
+          <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/settings</code></td></tr>
+          <tr><td><span class="badge badge-orange">POST</span></td><td><code>/api/contact</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h2>🔐 Rutas admin (requieren JWT)</h2>
+      <table>
+        <thead><tr><th>Método</th><th>Ruta</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-orange">POST</span></td><td><code>/api/admin/auth/login</code></td></tr>
+          <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/admin/projects</code></td></tr>
+          <tr><td><span class="badge badge-orange">POST</span></td><td><code>/api/admin/projects</code></td></tr>
+          <tr><td><span class="badge badge-blue">PUT</span></td><td><code>/api/admin/projects/:id</code></td></tr>
+          <tr><td><span class="badge badge-green">GET</span></td><td><code>/api/admin/blog</code></td></tr>
+          <tr><td><span class="badge badge-orange">POST</span></td><td><code>/api/admin/upload</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Estructura de archivos -->
+  <h2 class="section-title">📁 Estructura del proyecto</h2>
+  <div class="card">
+    <div class="tree">
+<span class="dir">fundacion/</span>
+├── <span class="dir">backend/</span>           <span class="comment">← API Express + Prisma (puerto 3001)</span>
+│   ├── <span class="dir">prisma/</span>
+│   │   ├── <span class="file">schema.prisma</span>    <span class="comment">← Modelos de BD</span>
+│   │   └── <span class="file">seed.ts</span>          <span class="comment">← Datos iniciales</span>
+│   ├── <span class="dir">src/</span>
+│   │   ├── <span class="file">index.ts</span>         <span class="comment">← Servidor principal</span>
+│   │   ├── <span class="dir">routes/public/</span>   <span class="comment">← API pública</span>
+│   │   ├── <span class="dir">routes/admin/</span>    <span class="comment">← API admin (JWT)</span>
+│   │   └── <span class="dir">middleware/</span>      <span class="comment">← Auth, errores</span>
+│   ├── <span class="dir">uploads/</span>           <span class="comment">← Imágenes subidas</span>
+│   ├── <span class="file">.env</span>               <span class="comment">← DATABASE_URL, JWT_SECRET, PORT</span>
+│   └── <span class="dir">admin/</span>             <span class="comment">← Panel admin React+Vite (puerto 5173)</span>
+│       └── <span class="dir">src/pages/</span>
+│           ├── <span class="file">Login.tsx</span>
+│           ├── <span class="file">Dashboard.tsx</span>
+│           ├── <span class="dir">Projects/</span>    <span class="comment">← List.tsx + Form.tsx</span>
+│           ├── <span class="dir">Blog/</span>        <span class="comment">← List.tsx + Form.tsx</span>
+│           ├── <span class="dir">Pages/</span>       <span class="comment">← Editor.tsx</span>
+│           ├── <span class="dir">Contacts/</span>    <span class="comment">← Inbox.tsx</span>
+│           └── <span class="dir">Settings/</span>    <span class="comment">← General.tsx</span>
+│
+└── <span class="dir">frontend/</span>          <span class="comment">← Next.js 14 (puerto 3000)</span>
+    ├── <span class="file">next.config.mjs</span>    <span class="comment">← output: 'export' para cPanel</span>
+    ├── <span class="file">.env.local</span>        <span class="comment">← NEXT_PUBLIC_API_URL</span>
+    └── <span class="dir">src/app/[lang]/</span>
+        ├── <span class="file">page.tsx</span>         <span class="comment">← Inicio</span>
+        ├── <span class="dir">proyectos/</span>       <span class="comment">← Listado + detalle</span>
+        ├── <span class="dir">blog/</span>            <span class="comment">← Listado + artículo</span>
+        ├── <span class="dir">que-hacemos/</span>
+        ├── <span class="dir">quienes-somos/</span>
+        ├── <span class="dir">colabora/</span>
+        └── <span class="dir">contacto/</span>
+    </div>
+  </div>
+
+  <!-- Despliegue -->
+  <h2 class="section-title">☁️ Despliegue en producción — Hetzner VPS</h2>
+
+  <div class="card" style="margin-bottom:20px; background:#f0fdf4; border-color:#bbf7d0;">
+    <h2>🏗️ Arquitectura en el servidor</h2>
+    <div class="tree" style="margin-top:12px;">
+<span style="color:#60a5fa;">Hetzner CAX11</span>  <span class="comment">← ~4€/mes · ARM · 4GB RAM</span>
+│
+├── <span style="color:#fbbf24;">Caddy</span>  :80 / :443   <span class="comment">← SSL automático (Let's Encrypt)</span>
+│    ├── /api/*      → backend:3001
+│    ├── /admin/*    → backend:3001
+│    ├── /uploads/*  → backend:3001
+│    └── /*          → frontend:80
+│
+├── <span style="color:#4ade80;">backend</span>  :3001       <span class="comment">← Express + Prisma + SQLite</span>
+│    └── /data/prod.db   <span class="comment">← Volumen persistente</span>
+│
+└── <span style="color:#a78bfa;">frontend</span>  :80        <span class="comment">← Nginx + Next.js static export</span>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:20px;">
+    <div class="card card-accent">
+      <h2>1️⃣ Preparar el servidor (una sola vez)</h2>
+      <pre><span class="comment"># Desde tu PC — instala Docker y configura el servidor</span>
+<span class="cmd">ssh</span> root@IP_DEL_SERVIDOR <span class="url">'bash -s'</span> \
+  &lt; scripts/setup-server.sh</pre>
+      <p style="font-size:0.85rem; color:#57534e; margin-top:8px;">Instala Docker, Git, configura el firewall y crea el usuario <code>deploy</code>.</p>
+    </div>
+    <div class="card card-orange">
+      <h2>2️⃣ Subir el código</h2>
+      <pre><span class="comment"># Sube el proyecto a GitHub primero, luego:</span>
+<span class="cmd">ssh</span> deploy@IP_DEL_SERVIDOR
+<span class="cmd">git clone</span> <span class="url">https://github.com/TU/fundacion.git</span>
+<span class="cmd">cd</span> <span class="path">fundacion</span></pre>
+    </div>
+  </div>
+
+  <div class="card card-accent" style="margin-bottom:20px;">
+    <h2>3️⃣ Desplegar (un solo comando)</h2>
+    <pre><span class="cmd">bash</span> scripts/deploy.sh</pre>
+    <p style="font-size:0.85rem; color:#57534e; margin-top:8px;">
+      El script crea el <code>.env</code>, genera el JWT_SECRET automáticamente, construye las imágenes Docker y levanta todo.
+      Pide el dominio si no está configurado.
+    </p>
+  </div>
+
+  <div class="card" style="margin-bottom:20px;">
+    <h2>⚙️ Variables de entorno necesarias (.env)</h2>
+    <div class="cred-box">
+      <div class="cred-row"><span class="cred-label">DOMAIN</span><span class="cred-value">fundacionluzdebenin.org</span></div>
+      <div class="cred-row"><span class="cred-label">JWT_SECRET</span><span class="cred-value">← generado automáticamente</span></div>
+    </div>
+    <p style="font-size:0.85rem; color:#57534e; margin-top:8px;">Solo dos variables. El resto lo gestiona Docker Compose internamente.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h2>🔄 Actualizar la web</h2>
+      <pre><span class="comment"># En el servidor, tras hacer git push:</span>
+<span class="cmd">bash</span> scripts/update.sh</pre>
+      <p style="font-size:0.85rem; color:#57534e; margin-top:8px;">Reconstruye solo lo que ha cambiado. Caddy sigue activo durante la actualización (cero downtime).</p>
+    </div>
+    <div class="card">
+      <h2>📋 Comandos útiles</h2>
+      <pre><span class="comment"># Ver logs en tiempo real</span>
+<span class="cmd">docker compose logs -f</span>
+
+<span class="comment"># Ver estado de los servicios</span>
+<span class="cmd">docker compose ps</span>
+
+<span class="comment"># Explorar la base de datos</span>
+<span class="cmd">docker compose exec backend</span> \
+  npx prisma studio
+
+<span class="comment"># Backup de la BD</span>
+<span class="cmd">docker compose cp</span> \
+  backend:/data/prod.db ./backup.db</pre>
+    </div>
+  </div>
+
+  <div class="alert alert-info" style="margin-top:20px;">
+    ℹ️ <strong>SSL automático:</strong> Caddy obtiene y renueva el certificado de Let's Encrypt sin configuración adicional. Solo necesitas que el dominio apunte a la IP del servidor antes del primer arranque.
+  </div>
+
+  <!-- Base de datos -->
+  <h2 class="section-title">🗄️ Base de datos</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>Tabla</th><th>Contenido</th></tr></thead>
+      <tbody>
+        <tr><td><code>Project</code></td><td>Proyectos con título ES/FR, descripción, estado, imágenes, estadísticas</td></tr>
+        <tr><td><code>BlogPost</code></td><td>Artículos con contenido Markdown ES/FR, imagen de portada, estado publicado</td></tr>
+        <tr><td><code>PageSection</code></td><td>Textos editables por página y sección (Hero, Misión, etc.)</td></tr>
+        <tr><td><code>ContactMessage</code></td><td>Mensajes del formulario de contacto</td></tr>
+        <tr><td><code>Setting</code></td><td>Configuración del sitio: IBAN, email, redes, teléfono…</td></tr>
+        <tr><td><code>AdminUser</code></td><td>Usuarios del panel de administración</td></tr>
+      </tbody>
+    </table>
+    <div class="alert alert-info" style="margin-top:12px;">
+      ℹ️ Para explorar la BD visualmente ejecuta: <code>cd backend &amp;&amp; npx prisma studio</code> → abre en <strong>http://localhost:5555</strong>
+    </div>
+  </div>
+
+  <!-- Paleta de colores -->
+  <h2 class="section-title">🎨 Paleta de colores</h2>
+  <div class="card">
+    <div style="display:flex; flex-wrap:wrap; gap:12px;">
+      <div style="text-align:center;">
+        <div style="width:80px;height:80px;background:#065F46;border-radius:12px;margin-bottom:6px;"></div>
+        <code style="font-size:0.75rem;">#065F46</code><br>
+        <span style="font-size:0.75rem;color:#78716c;">primary</span>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:80px;height:80px;background:#D1FAE5;border-radius:12px;margin-bottom:6px;border:1px solid #a7f3d0;"></div>
+        <code style="font-size:0.75rem;">#D1FAE5</code><br>
+        <span style="font-size:0.75rem;color:#78716c;">primary-light</span>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:80px;height:80px;background:#EA580C;border-radius:12px;margin-bottom:6px;"></div>
+        <code style="font-size:0.75rem;">#EA580C</code><br>
+        <span style="font-size:0.75rem;color:#78716c;">accent</span>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:80px;height:80px;background:#FEF3C7;border-radius:12px;margin-bottom:6px;border:1px solid #fde68a;"></div>
+        <code style="font-size:0.75rem;">#FEF3C7</code><br>
+        <span style="font-size:0.75rem;color:#78716c;">accent-light</span>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:80px;height:80px;background:#FAFAFA;border-radius:12px;margin-bottom:6px;border:1px solid #e7e5e4;"></div>
+        <code style="font-size:0.75rem;">#FAFAFA</code><br>
+        <span style="font-size:0.75rem;color:#78716c;">bg</span>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:80px;height:80px;background:#1C1917;border-radius:12px;margin-bottom:6px;"></div>
+        <code style="font-size:0.75rem;">#1C1917</code><br>
+        <span style="font-size:0.75rem;color:#78716c;">text</span>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:80px;height:80px;background:#78716C;border-radius:12px;margin-bottom:6px;"></div>
+        <code style="font-size:0.75rem;">#78716C</code><br>
+        <span style="font-size:0.75rem;color:#78716c;">muted</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>🌟 Fundación Luz de Benín &mdash; Proyecto web v1.0.0</p>
+  <p style="margin-top:6px;">Frontend: Next.js 14 &nbsp;·&nbsp; Backend: Express + Prisma + SQLite &nbsp;·&nbsp; Admin: React + Vite</p>
+</footer>
+
+</body>
+</html>

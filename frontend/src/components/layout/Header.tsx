@@ -1,0 +1,115 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import { Lang } from '@/lib/types';
+import { t } from '@/lib/i18n';
+import LangSwitcher from './LangSwitcher';
+
+interface Props {
+  lang: Lang;
+}
+
+export default function Header({ lang }: Props) {
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  const links = [
+    { href: `/${lang}/`, label: t(lang, 'nav.home') },
+    { href: `/${lang}/que-hacemos/`, label: t(lang, 'nav.whatWeDo') },
+    { href: `/${lang}/proyectos/`, label: t(lang, 'nav.projects') },
+    { href: `/${lang}/quienes-somos/`, label: t(lang, 'nav.whoWeAre') },
+    { href: `/${lang}/blog/`, label: t(lang, 'nav.blog') },
+    { href: `/${lang}/contacto/`, label: t(lang, 'nav.contact') },
+  ];
+
+  const isActive = (href: string) => pathname === href || pathname === href.slice(0, -1);
+
+  return (
+    <header className="sticky top-0 z-50 bg-primary-800 text-white shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link href={`/${lang}/`} className="flex items-center gap-2 font-bold text-lg">
+            <Image
+              src="/logo.jpg"
+              alt="Fundación Luz de Benín"
+              width={36}
+              height={36}
+              className="rounded-full object-cover mix-blend-screen"
+            />
+            <span className="hidden sm:inline">Fundación Luz de Benín</span>
+            <span className="sm:hidden">FLdB</span>
+          </Link>
+
+          {/* Desktop nav */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {links.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  isActive(href)
+                    ? 'bg-primary-700 text-white'
+                    : 'text-primary-100 hover:bg-primary-700 hover:text-white'
+                }`}
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <LangSwitcher lang={lang} />
+            <Link
+              href={`/${lang}/colabora/`}
+              className="hidden sm:inline-flex bg-accent hover:bg-accent-700 text-white px-4 py-1.5 rounded-full text-sm font-semibold transition-colors"
+            >
+              {t(lang, 'common.donate')}
+            </Link>
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setOpen(!open)}
+              className="lg:hidden p-2 rounded-md text-primary-100 hover:bg-primary-700"
+              aria-label="Menu"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {open
+                  ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                }
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile menu */}
+        {open && (
+          <div className="lg:hidden py-3 border-t border-primary-700">
+            {links.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setOpen(false)}
+                className={`block px-3 py-2 rounded-md text-sm font-medium ${
+                  isActive(href) ? 'bg-primary-700 text-white' : 'text-primary-100 hover:bg-primary-700'
+                }`}
+              >
+                {label}
+              </Link>
+            ))}
+            <Link
+              href={`/${lang}/colabora/`}
+              onClick={() => setOpen(false)}
+              className="block mt-2 bg-accent text-white px-3 py-2 rounded-md text-sm font-semibold text-center"
+            >
+              {t(lang, 'common.donate')}
+            </Link>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+}
