@@ -17,6 +17,7 @@ RUN apk add --no-cache openssl
 WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
+COPY tsconfig.seed.json ./
 COPY prisma ./prisma/
 
 RUN npm ci --silent
