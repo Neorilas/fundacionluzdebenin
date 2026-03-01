@@ -24,6 +24,7 @@ RUN npx prisma generate
 
 COPY src ./src/
 RUN npm run build
+RUN npx tsc -p tsconfig.seed.json
 
 
 # ─── Stage 3: Production image ───────────────────────────────────────────────
@@ -59,4 +60,4 @@ ENV UPLOAD_DIR=/app/uploads
 EXPOSE 3001
 
 # On start: apply DB schema (idempotent) then run the server
-CMD ["sh", "-c", "npx prisma db push --schema=./prisma/schema.prisma && node dist/index.js"]
+CMD ["sh", "-c", "npx prisma db push --schema=./prisma/schema.prisma && node dist/prisma/seed.js && node dist/index.js"]

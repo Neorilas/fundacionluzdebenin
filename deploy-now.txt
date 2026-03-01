@@ -1,0 +1,10 @@
+El GitHub Action se encarga de todo automáticamente en cada push a master.
+No hace falta ningún comando manual.
+
+Al arrancar el contenedor, el backend ejecuta en orden:
+  1. prisma db push            → aplica el schema
+  2. node dist/prisma/seed.js  → inserta/actualiza secciones (upsert, idempotente)
+  3. node dist/index.js        → arranca el servidor
+
+─── Solo si necesitas forzar un redespliegue manual ────────────────────────
+ssh root@91.107.235.70 "cd /root/fundacion && bash scripts/update.sh"
