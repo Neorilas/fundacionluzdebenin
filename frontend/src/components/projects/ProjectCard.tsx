@@ -13,10 +13,6 @@ export default function ProjectCard({ project, lang }: Props) {
   const desc = lang === 'es' ? project.descEs : project.descFr;
   const statusLabel = t(lang, `projects.status.${project.status}`);
 
-  const goal = project.stats?.goal ? Number(project.stats.goal) : null;
-  const raised = project.stats?.raised ? Number(project.stats.raised) : null;
-  const pct = goal && raised ? Math.min(100, Math.round((raised / goal) * 100)) : null;
-
   return (
     <article className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden group flex flex-col">
       {/* Image */}
@@ -44,33 +40,6 @@ export default function ProjectCard({ project, lang }: Props) {
         </div>
         <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">{title}</h3>
         <p className="text-sm text-muted line-clamp-3 mb-4 flex-1">{desc}</p>
-
-        {/* Progress bar */}
-        {pct !== null && raised !== null && goal !== null && (
-          <div className="mb-4">
-            <div className="flex justify-between text-xs font-medium mb-1.5">
-              <span className="text-primary-800">
-                {raised.toLocaleString(lang === 'es' ? 'es-ES' : 'fr-FR')}€{' '}
-                <span className="text-muted font-normal">
-                  {lang === 'es' ? 'recaudados' : 'collectés'}
-                </span>
-              </span>
-              <span className="text-accent font-bold">{pct}%</span>
-            </div>
-            <div className="w-full bg-gray-100 rounded-full h-2.5">
-              <div
-                className="bg-accent h-2.5 rounded-full transition-all"
-                style={{ width: `${pct}%` }}
-              />
-            </div>
-            <p className="text-xs text-muted mt-1.5">
-              {lang === 'es' ? 'Objetivo:' : 'Objectif :'}{' '}
-              <span className="font-semibold text-gray-700">
-                {goal.toLocaleString(lang === 'es' ? 'es-ES' : 'fr-FR')}€
-              </span>
-            </p>
-          </div>
-        )}
 
         <Link
           href={`/${lang}/proyectos/${project.slug}/`}
