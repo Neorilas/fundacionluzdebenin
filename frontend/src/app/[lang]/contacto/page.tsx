@@ -1,9 +1,34 @@
+import type { Metadata } from 'next';
 import { Lang, Settings } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import ContactForm from '@/components/ui/ContactForm';
 
 export const revalidate = 60;
+
+const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params;
+  const isFr = lang === 'fr';
+  const title = isFr ? 'Contact' : 'Contacto';
+  const description = isFr
+    ? "Contactez la Fondation Lumière du Bénin. Répondez à vos questions sur nos projets, le bénévolat ou les dons. Nous vous répondrons rapidement."
+    : 'Contacta con la Fundación Luz de Benín. Resuelve tus dudas sobre proyectos, voluntariado o donaciones. Te responderemos lo antes posible.';
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `${SITE_URL}/${lang}/contacto/`,
+      languages: {
+        'es': `${SITE_URL}/es/contacto/`,
+        'fr': `${SITE_URL}/fr/contacto/`,
+        'x-default': `${SITE_URL}/es/contacto/`,
+      },
+    },
+    openGraph: { title, description, url: `${SITE_URL}/${lang}/contacto/` },
+  };
+}
 
 export default async function ContactoPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;

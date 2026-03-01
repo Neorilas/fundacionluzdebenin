@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
@@ -6,6 +7,42 @@ import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 
 export const revalidate = 60;
+
+const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string; slug: string }> }): Promise<Metadata> {
+  const { lang, slug } = await params;
+  const isFr = lang === 'fr';
+  try {
+    const post = await api.getBlogPost(slug);
+    const title = isFr ? post.titleFr : post.titleEs;
+    const description = isFr ? post.excerptFr : post.excerptEs;
+    return {
+      title,
+      description,
+      alternates: {
+        canonical: `${SITE_URL}/${lang}/blog/${slug}/`,
+        languages: {
+          'es': `${SITE_URL}/es/blog/${slug}/`,
+          'fr': `${SITE_URL}/fr/blog/${slug}/`,
+          'x-default': `${SITE_URL}/es/blog/${slug}/`,
+        },
+      },
+      openGraph: {
+        title,
+        description,
+        url: `${SITE_URL}/${lang}/blog/${slug}/`,
+        type: 'article',
+        ...(post.publishedAt && { publishedTime: new Date(post.publishedAt).toISOString() }),
+        ...(post.coverImage && {
+          images: [{ url: post.coverImage.startsWith('http') ? post.coverImage : `${SITE_URL}${post.coverImage}`, alt: title }],
+        }),
+      },
+    };
+  } catch {
+    return { title: isFr ? 'Article' : 'Artículo' };
+  }
+}
 
 export async function generateStaticParams() {
   try {

@@ -1,9 +1,34 @@
+import type { Metadata } from 'next';
 import { Lang } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import SectionTitle from '@/components/ui/SectionTitle';
 
 export const revalidate = 60;
+
+const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params;
+  const isFr = lang === 'fr';
+  const title = isFr ? 'Qui Sommes-Nous' : 'Quiénes Somos';
+  const description = isFr
+    ? "Fondée en 2012 par des coopérants espagnols, la Fondation Lumière du Bénin œuvre pour le développement durable des communautés rurales du Bénin depuis plus de 12 ans."
+    : 'Fundada en 2012 por cooperantes españoles, la Fundación Luz de Benín lleva más de 12 años trabajando por el desarrollo sostenible de las comunidades rurales de Benín.';
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `${SITE_URL}/${lang}/quienes-somos/`,
+      languages: {
+        'es': `${SITE_URL}/es/quienes-somos/`,
+        'fr': `${SITE_URL}/fr/quienes-somos/`,
+        'x-default': `${SITE_URL}/es/quienes-somos/`,
+      },
+    },
+    openGraph: { title, description, url: `${SITE_URL}/${lang}/quienes-somos/` },
+  };
+}
 
 export default async function QuienesSomosPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;

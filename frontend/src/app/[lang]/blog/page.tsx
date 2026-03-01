@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { Lang } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
@@ -5,6 +6,30 @@ import BlogCard from '@/components/blog/BlogCard';
 import SectionTitle from '@/components/ui/SectionTitle';
 
 export const revalidate = 60;
+
+const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params;
+  const isFr = lang === 'fr';
+  const title = isFr ? 'Actualité' : 'Blog y Noticias';
+  const description = isFr
+    ? "Suivez l'actualité de la Fondation Lumière du Bénin : nouvelles des projets, témoignages du terrain et rapports d'activité."
+    : 'Sigue la actualidad de la Fundación Luz de Benín: novedades de proyectos, testimonios del terreno e informes de actividad.';
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `${SITE_URL}/${lang}/blog/`,
+      languages: {
+        'es': `${SITE_URL}/es/blog/`,
+        'fr': `${SITE_URL}/fr/blog/`,
+        'x-default': `${SITE_URL}/es/blog/`,
+      },
+    },
+    openGraph: { title, description, url: `${SITE_URL}/${lang}/blog/` },
+  };
+}
 
 export default async function BlogPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;

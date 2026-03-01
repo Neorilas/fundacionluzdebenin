@@ -1,9 +1,34 @@
+import type { Metadata } from 'next';
 import { Lang } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import SectionTitle from '@/components/ui/SectionTitle';
 
 export const revalidate = 60;
+
+const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params;
+  const isFr = lang === 'fr';
+  const title = isFr ? 'Ce Que Nous Faisons' : 'Qué Hacemos';
+  const description = isFr
+    ? "Découvrez nos trois axes d'action au Bénin : soutien aux orphelinats, accompagnement des mères célibataires et développement d'une économie durable grâce à notre ferme avicole."
+    : 'Conoce nuestras tres áreas de trabajo en Benín: apoyo a orfanatos, acompañamiento a madres solteras y desarrollo de una economía sostenible con nuestra granja avícola.';
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `${SITE_URL}/${lang}/que-hacemos/`,
+      languages: {
+        'es': `${SITE_URL}/es/que-hacemos/`,
+        'fr': `${SITE_URL}/fr/que-hacemos/`,
+        'x-default': `${SITE_URL}/es/que-hacemos/`,
+      },
+    },
+    openGraph: { title, description, url: `${SITE_URL}/${lang}/que-hacemos/` },
+  };
+}
 
 export default async function QueHacemosPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;

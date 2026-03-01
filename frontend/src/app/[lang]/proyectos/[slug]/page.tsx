@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Lang } from '@/lib/types';
@@ -6,6 +7,41 @@ import { t } from '@/lib/i18n';
 import Badge from '@/components/ui/Badge';
 
 export const revalidate = 60;
+
+const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string; slug: string }> }): Promise<Metadata> {
+  const { lang, slug } = await params;
+  const isFr = lang === 'fr';
+  try {
+    const project = await api.getProject(slug);
+    const title = isFr ? project.titleFr : project.titleEs;
+    const description = isFr ? project.descFr : project.descEs;
+    const image = project.images?.[0];
+    return {
+      title,
+      description,
+      alternates: {
+        canonical: `${SITE_URL}/${lang}/proyectos/${slug}/`,
+        languages: {
+          'es': `${SITE_URL}/es/proyectos/${slug}/`,
+          'fr': `${SITE_URL}/fr/proyectos/${slug}/`,
+          'x-default': `${SITE_URL}/es/proyectos/${slug}/`,
+        },
+      },
+      openGraph: {
+        title,
+        description,
+        url: `${SITE_URL}/${lang}/proyectos/${slug}/`,
+        ...(image && {
+          images: [{ url: image.startsWith('http') ? image : `${SITE_URL}${image}`, alt: title }],
+        }),
+      },
+    };
+  } catch {
+    return { title: isFr ? 'Projet' : 'Proyecto' };
+  }
+}
 
 export async function generateStaticParams() {
   try {

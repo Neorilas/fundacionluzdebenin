@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { Lang, Settings, StripeProduct } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
@@ -6,6 +7,30 @@ import TaxDeduction from '@/components/colabora/TaxDeduction';
 import DonationWidget from '@/components/colabora/DonationWidget';
 
 export const revalidate = 60;
+
+const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params;
+  const isFr = lang === 'fr';
+  const title = isFr ? 'Faire un Don' : 'Colabora y Dona';
+  const description = isFr
+    ? "Faites un don à la Fondation Lumière du Bénin. Déductible fiscalement à 80 %. Chaque euro compte pour les orphelinats, les mères célibataires et les projets de développement au Bénin."
+    : 'Dona a la Fundación Luz de Benín. Deducible al 80% en el IRPF. Cada euro cuenta para los orfanatos, madres solteras y proyectos de desarrollo en Benín.';
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `${SITE_URL}/${lang}/colabora/`,
+      languages: {
+        'es': `${SITE_URL}/es/colabora/`,
+        'fr': `${SITE_URL}/fr/colabora/`,
+        'x-default': `${SITE_URL}/es/colabora/`,
+      },
+    },
+    openGraph: { title, description, url: `${SITE_URL}/${lang}/colabora/` },
+  };
+}
 
 export default async function ColaboraPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;

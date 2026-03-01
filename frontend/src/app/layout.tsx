@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Fundación Luz de Benín',
-  description: 'ONG española de cooperación al desarrollo en Benín, África Occidental.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org'),
   icons: {
     icon: '/logo.jpg',
     apple: '/logo.jpg',
