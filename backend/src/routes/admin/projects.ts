@@ -32,7 +32,7 @@ router.post('/', async (req, res, next) => {
         featured: featured || false,
         images: JSON.stringify(images || []),
         stats: JSON.stringify(stats || {}),
-        order: order || 0,
+        order: order !== undefined ? parseInt(order, 10) : 0,
       },
     });
     res.status(201).json(parseProject(project));
@@ -55,7 +55,7 @@ router.put('/:id', async (req, res, next) => {
         ...(featured !== undefined && { featured }),
         ...(images !== undefined && { images: JSON.stringify(images) }),
         ...(stats !== undefined && { stats: JSON.stringify(stats) }),
-        ...(order !== undefined && { order }),
+        ...(order !== undefined && { order: parseInt(order, 10) }),
       },
     });
     res.json(parseProject(project));

@@ -11,19 +11,39 @@ const links = [
   { to: '/admin/settings', label: 'Configuración', icon: '⚙️' },
 ];
 
-export default function Sidebar() {
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function Sidebar({ isOpen, onClose }: Props) {
   return (
-    <aside className="w-64 bg-primary-800 text-white flex flex-col">
-      <div className="p-5 border-b border-primary-700">
-        <h1 className="text-lg font-bold">Fundación Luz de Benín</h1>
-        <p className="text-primary-light text-xs mt-1">Panel de administración</p>
+    <aside className={`
+      fixed inset-y-0 left-0 z-50 w-64 bg-primary-800 text-white flex flex-col
+      transition-transform duration-200
+      ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+      lg:relative lg:inset-auto lg:translate-x-0 lg:z-auto lg:flex-shrink-0
+    `}>
+      <div className="p-5 border-b border-primary-700 flex items-center justify-between">
+        <div>
+          <h1 className="text-lg font-bold leading-tight">Fundación Luz de Benín</h1>
+          <p className="text-primary-light text-xs mt-1">Panel de administración</p>
+        </div>
+        <button
+          onClick={onClose}
+          className="lg:hidden text-primary-200 hover:text-white p-1 ml-2 flex-shrink-0"
+          aria-label="Cerrar menú"
+        >
+          ✕
+        </button>
       </div>
-      <nav className="flex-1 py-4">
+      <nav className="flex-1 py-4 overflow-y-auto">
         {links.map(({ to, label, icon, end }) => (
           <NavLink
             key={to}
             to={to}
             end={end}
+            onClick={onClose}
             className={({ isActive }) =>
               `flex items-center gap-3 px-5 py-3 text-sm transition-colors ${
                 isActive
