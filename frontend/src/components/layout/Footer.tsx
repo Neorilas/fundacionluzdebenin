@@ -66,11 +66,11 @@ export default function Footer({ lang }: Props) {
             <ul className="space-y-2 text-sm">
               {[
                 {
-                  href: `/${lang}/apadrina-gallina/`,
+                  href: `/${lang}/campanas/apadrina-gallina/`,
                   label: lang === 'es' ? '🐔 Apadrina una gallina — 5€/mes' : '🐔 Parraine une poule — 5€/mois',
                 },
                 {
-                  href: `/${lang}/apadrina-oveja/`,
+                  href: `/${lang}/campanas/apadrina-oveja/`,
                   label: lang === 'es' ? '🐑 Apadrina una oveja — 10€/mes' : '🐑 Parraine une brebis — 10€/mois',
                 },
               ].map(({ href, label }) => (
