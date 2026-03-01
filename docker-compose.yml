@@ -13,6 +13,9 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       CORS_ORIGIN: https://${DOMAIN}
       UPLOAD_DIR: /app/uploads
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      FRONTEND_URL: https://${DOMAIN}
     volumes:
       - sqlite_data:/data          # Base de datos SQLite persistente
       - uploads_data:/app/uploads  # Imágenes subidas persistentes

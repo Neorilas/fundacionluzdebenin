@@ -74,3 +74,41 @@ model AdminUser {
   name         String
   createdAt    DateTime @default(now())
 }
+
+model StripeProduct {
+  id              String     @id @default(cuid())
+  stripeProductId String?
+  stripePriceId   String?    @unique
+  nameEs          String
+  nameFr          String
+  descEs          String     @default("")
+  descFr          String     @default("")
+  amount          Int                          // céntimos (1000 = 10€)
+  interval        String     @default("month") // "month" | "year"
+  currency        String     @default("eur")
+  active          Boolean    @default(true)
+  order           Int        @default(0)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  donations       Donation[]
+}
+
+model Donation {
+  id                    String         @id @default(cuid())
+  stripeSessionId       String?        @unique
+  stripePaymentIntentId String?        @unique
+  stripeSubscriptionId  String?        @unique
+  stripeCustomerId      String?
+  type                  String                  // "one_time" | "subscription"
+  status                String         @default("pending") // pending|completed|failed|canceled
+  amount                Int                     // céntimos
+  currency              String         @default("eur")
+  donorName             String?
+  donorEmail            String?
+  donorDni              String?                 // para certificado fiscal anual
+  stripeProductId       String?
+  stripeProduct         StripeProduct? @relation(fields: [stripeProductId], references: [id])
+  paidAt                DateTime?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+}

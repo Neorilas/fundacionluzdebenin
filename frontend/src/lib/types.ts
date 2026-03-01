@@ -49,3 +49,24 @@ export interface Settings {
 }
 
 export type Lang = 'es' | 'fr';
+
+export interface StripeProduct {
+  id: string;
+  nameEs: string;
+  nameFr: string;
+  descEs: string;
+  descFr: string;
+  amount: number;
+  interval: string;
+  order: number;
+}
+
+export interface CheckoutPayload {
+  type: 'one_time' | 'subscription';
+  amount?: number;
+  stripeProductId?: string;
+  donorName?: string;
+  donorEmail?: string;
+  donorDni?: string;
+  lang: Lang;
+}

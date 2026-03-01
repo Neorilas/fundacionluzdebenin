@@ -1,8 +1,9 @@
-import { Lang, Settings } from '@/lib/types';
+import { Lang, Settings, StripeProduct } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import SectionTitle from '@/components/ui/SectionTitle';
 import TaxDeduction from '@/components/colabora/TaxDeduction';
+import DonationWidget from '@/components/colabora/DonationWidget';
 
 export const revalidate = 60;
 
@@ -10,9 +11,10 @@ export default async function ColaboraPage({ params }: { params: Promise<{ lang:
   const { lang } = await params;
   const l = lang as Lang;
 
-  const [sec, settings] = await Promise.all([
+  const [sec, settings, stripeProducts] = await Promise.all([
     api.getPageSections('colabora').catch(() => ({})),
     api.getSettings().catch(() => ({} as Settings)),
+    api.getStripeProducts().catch(() => [] as StripeProduct[]),
   ]);
 
   const get = (section: string, key: string) => {
@@ -21,7 +23,6 @@ export default async function ColaboraPage({ params }: { params: Promise<{ lang:
   };
 
   const impacts = ['10eur', '30eur', '100eur', '500eur'];
-  const impactIcons = ['📚', '🏫', '🖊️', '💧'];
 
   const otherWays = [
     { key: 'volunteer', icon: '🙋' },
@@ -37,6 +38,9 @@ export default async function ColaboraPage({ params }: { params: Promise<{ lang:
           <p className="text-xl text-primary-100">{get('hero', 'subtitle') || t(l, 'collaborate.subtitle')}</p>
         </div>
       </section>
+
+      {/* Donation widget — shown first */}
+      <DonationWidget lang={l} stripeProducts={stripeProducts} />
 
       {/* Bank transfer */}
       <section className="py-16 bg-white">
@@ -66,12 +70,11 @@ export default async function ColaboraPage({ params }: { params: Promise<{ lang:
         <div className="max-w-4xl mx-auto px-4">
           <SectionTitle title={t(l, 'collaborate.impactTitle')} />
           <div className="grid sm:grid-cols-2 gap-4">
-            {impacts.map((key, i) => {
+            {impacts.map((key) => {
               const text = get('impact', key);
               if (!text) return null;
               return (
-                <div key={key} className="flex items-start gap-4 bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-                  <span className="text-3xl">{impactIcons[i]}</span>
+                <div key={key} className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
                   <p className="text-gray-700 text-sm leading-relaxed">{text}</p>
                 </div>
               );
