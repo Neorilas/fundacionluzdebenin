@@ -114,5 +114,18 @@
     "donate": "Donar",
     "loading": "Cargando...",
     "error": "Error al cargar el contenido"
+  },
+  "donation": {
+    "title": "Haz una donación",
+    "subtitle": "Elige cómo quieres colaborar",
+    "tabOneTime": "Una sola vez",
+    "tabMonthly": "Mensual",
+    "recommended": "Recomendado",
+    "successTitle": "¡Gracias por tu donación!",
+    "successText": "Tu donación contribuirá directamente a nuestros proyectos en Benín.",
+    "successCertificate": "Si facilitaste tu DNI/NIF, generaremos tu certificado fiscal anual.",
+    "cancelTitle": "Donación no procesada",
+    "cancelText": "No se ha realizado ningún cargo. Puedes intentarlo cuando quieras.",
+    "backToCollaborate": "Volver a colabora"
   }
 }

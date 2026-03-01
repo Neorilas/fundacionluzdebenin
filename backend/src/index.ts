@@ -11,6 +11,8 @@ import blogPublic from './routes/public/blog';
 import pagesPublic from './routes/public/pages';
 import settingsPublic from './routes/public/settings';
 import contactPublic from './routes/public/contact';
+import stripeWebhook from './routes/public/stripeWebhook';
+import stripePublic from './routes/public/stripe';
 
 // Admin routes
 import authAdmin from './routes/admin/auth';
@@ -20,11 +22,16 @@ import pagesAdmin from './routes/admin/pages';
 import contactsAdmin from './routes/admin/contacts';
 import settingsAdmin from './routes/admin/settings';
 import uploadAdmin from './routes/admin/upload';
+import stripeAdmin from './routes/admin/stripe';
 
 import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// IMPORTANT: Stripe webhook must be mounted BEFORE express.json()
+// because it needs the raw body for signature verification
+app.use('/api/stripe/webhook', stripeWebhook);
 
 // Middleware
 app.use(cors({
@@ -51,6 +58,7 @@ app.use('/api/blog', blogPublic);
 app.use('/api/pages', pagesPublic);
 app.use('/api/settings', settingsPublic);
 app.use('/api/contact', contactPublic);
+app.use('/api/stripe', stripePublic);
 
 // Admin API routes
 app.use('/api/admin/auth', authAdmin);
@@ -60,6 +68,7 @@ app.use('/api/admin/pages', pagesAdmin);
 app.use('/api/admin/contacts', contactsAdmin);
 app.use('/api/admin/settings', settingsAdmin);
 app.use('/api/admin/upload', uploadAdmin);
+app.use('/api/admin/stripe', stripeAdmin);
 
 // Health check
 app.get('/api/health', (_req, res) => {

@@ -6,10 +6,11 @@ interface Stats {
   projects: number;
   posts: number;
   unreadMessages: number;
+  completedDonations: number;
 }
 
 export default function Dashboard() {
-  const [stats, setStats] = useState<Stats>({ projects: 0, posts: 0, unreadMessages: 0 });
+  const [stats, setStats] = useState<Stats>({ projects: 0, posts: 0, unreadMessages: 0, completedDonations: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -17,11 +18,13 @@ export default function Dashboard() {
       api.get('/admin/projects'),
       api.get('/admin/blog'),
       api.get('/admin/contacts'),
-    ]).then(([projects, blog, contacts]) => {
+      api.get('/admin/stripe/donations?status=completed&page=1').catch(() => ({ data: { total: 0 } })),
+    ]).then(([projects, blog, contacts, donations]) => {
       setStats({
         projects: projects.data.length,
         posts: blog.data.length,
         unreadMessages: contacts.data.filter((c: { read: boolean }) => !c.read).length,
+        completedDonations: donations.data.total ?? 0,
       });
     }).finally(() => setLoading(false));
   }, []);
@@ -30,6 +33,7 @@ export default function Dashboard() {
     { label: 'Proyectos', value: stats.projects, icon: '🏗️', to: '/admin/projects', color: 'bg-emerald-50 border-emerald-200' },
     { label: 'Posts del Blog', value: stats.posts, icon: '✍️', to: '/admin/blog', color: 'bg-blue-50 border-blue-200' },
     { label: 'Mensajes sin leer', value: stats.unreadMessages, icon: '📬', to: '/admin/contacts', color: stats.unreadMessages > 0 ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200' },
+    { label: 'Donaciones completadas', value: stats.completedDonations, icon: '💚', to: '/admin/donations', color: 'bg-green-50 border-green-200' },
   ];
 
   const quickActions = [
@@ -49,7 +53,7 @@ export default function Dashboard() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {cards.map((card) => (
               <Link
                 key={card.label}

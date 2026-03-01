@@ -66,6 +66,7 @@ import BlogForm from './pages/Blog/Form';
 import PagesEditor from './pages/Pages/Editor';
 import ContactsInbox from './pages/Contacts/Inbox';
 import DonationsSettings from './pages/Donations/Settings';
+import ProductForm from './pages/Donations/ProductForm';
 import GeneralSettings from './pages/Settings/General';
 
 function AdminLayout({ children }: { children: ReactNode }) {
@@ -100,6 +101,8 @@ export default function App() {
                   <Route path="pages" element={<PagesEditor />} />
                   <Route path="contacts" element={<ContactsInbox />} />
                   <Route path="donations" element={<DonationsSettings />} />
+                  <Route path="donations/products/new" element={<ProductForm />} />
+                  <Route path="donations/products/:id" element={<ProductForm />} />
                   <Route path="settings" element={<GeneralSettings />} />
                   <Route path="*" element={<Navigate to="/admin/" replace />} />
                 </Routes>

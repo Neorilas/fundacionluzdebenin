@@ -114,5 +114,18 @@
     "donate": "Faire un don",
     "loading": "Chargement...",
     "error": "Erreur lors du chargement du contenu"
+  },
+  "donation": {
+    "title": "Faire un don",
+    "subtitle": "Choisissez comment collaborer",
+    "tabOneTime": "Une seule fois",
+    "tabMonthly": "Mensuel",
+    "recommended": "Recommandé",
+    "successTitle": "Merci pour votre don !",
+    "successText": "Votre don contribuera directement à nos projets au Bénin.",
+    "successCertificate": "Si vous avez fourni votre NIE/NIF, nous générerons votre certificat fiscal annuel.",
+    "cancelTitle": "Don non traité",
+    "cancelText": "Aucun montant n'a été débité. Vous pouvez réessayer quand vous le souhaitez.",
+    "backToCollaborate": "Retour à collaborer"
   }
 }
