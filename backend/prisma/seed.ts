@@ -200,9 +200,11 @@ async function main() {
   ];
 
   for (const project of projects) {
+    // Don't overwrite images on update — users upload images via admin
+    const { images: _images, ...projectUpdate } = project;
     await prisma.project.upsert({
       where: { slug: project.slug },
-      update: project,
+      update: projectUpdate,
       create: project,
     });
   }
@@ -281,9 +283,11 @@ Il y a trois ans, nous avons lancé notre programme de santé materno-infantile 
   ];
 
   for (const post of posts) {
+    // Don't overwrite images on update — users upload images via admin
+    const { images: _images, ...postUpdate } = post;
     await prisma.blogPost.upsert({
       where: { slug: post.slug },
-      update: post,
+      update: postUpdate,
       create: post,
     });
   }
