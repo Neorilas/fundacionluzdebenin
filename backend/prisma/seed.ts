@@ -283,11 +283,9 @@ Il y a trois ans, nous avons lancé notre programme de santé materno-infantile 
   ];
 
   for (const post of posts) {
-    // Don't overwrite images on update — users upload images via admin
-    const { images: _images, ...postUpdate } = post;
     await prisma.blogPost.upsert({
       where: { slug: post.slug },
-      update: postUpdate,
+      update: post,
       create: post,
     });
   }
