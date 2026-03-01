@@ -7,6 +7,7 @@ import StatsCounter from '@/components/home/StatsCounter';
 import FeaturedProjects from '@/components/home/FeaturedProjects';
 import LatestBlog from '@/components/home/LatestBlog';
 import DonationCTA from '@/components/home/DonationCTA';
+import CampaignsStrip from '@/components/home/CampaignsStrip';
 
 export const revalidate = 60;
 
@@ -93,6 +94,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       <Hero lang={l} sec={sec} />
       <MissionStrip lang={l} sec={sec} />
       <StatsCounter lang={l} sec={sec} />
+      <CampaignsStrip lang={l} />
       <FeaturedProjects lang={l} projects={proj} />
       <LatestBlog lang={l} posts={blog} />
       <DonationCTA lang={l} sec={sec} />

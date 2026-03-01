@@ -13,7 +13,7 @@ export default function Footer({ lang }: Props) {
   return (
     <footer className="bg-primary-900 text-primary-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 font-bold text-white text-lg mb-3">
@@ -50,6 +50,29 @@ export default function Footer({ lang }: Props) {
                 { href: `/${lang}/colabora/`, label: t(lang, 'nav.collaborate') },
                 { href: `/${lang}/blog/`, label: t(lang, 'nav.blog') },
                 { href: `/${lang}/contacto/`, label: t(lang, 'nav.contact') },
+              ].map(({ href, label }) => (
+                <li key={href}>
+                  <Link href={href} className="text-primary-300 hover:text-white transition-colors">{label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Campañas */}
+          <div>
+            <h3 className="font-semibold text-white mb-3">
+              {lang === 'es' ? 'Apadrina' : 'Parraine'}
+            </h3>
+            <ul className="space-y-2 text-sm">
+              {[
+                {
+                  href: `/${lang}/apadrina-gallina/`,
+                  label: lang === 'es' ? '🐔 Apadrina una gallina — 5€/mes' : '🐔 Parraine une poule — 5€/mois',
+                },
+                {
+                  href: `/${lang}/apadrina-oveja/`,
+                  label: lang === 'es' ? '🐑 Apadrina una oveja — 10€/mes' : '🐑 Parraine une brebis — 10€/mois',
+                },
               ].map(({ href, label }) => (
                 <li key={href}>
                   <Link href={href} className="text-primary-300 hover:text-white transition-colors">{label}</Link>
