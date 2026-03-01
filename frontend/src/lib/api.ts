@@ -1,6 +1,11 @@
 import { Project, BlogPost, PageSections, Settings, StripeProduct, CheckoutPayload, Campaign } from './types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+// API_INTERNAL_URL (non-NEXT_PUBLIC) is read at runtime on the server side,
+// allowing ISR/SSR to call the backend directly via Docker network when
+// the public domain DNS hasn't been updated yet.
+const API_URL = process.env.API_INTERNAL_URL
+  || process.env.NEXT_PUBLIC_API_URL
+  || 'http://localhost:3001';
 
 async function fetchAPI<T>(path: string): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {

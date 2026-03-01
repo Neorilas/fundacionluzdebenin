@@ -35,6 +35,10 @@ services:
       args:
         NEXT_PUBLIC_API_URL: https://${DOMAIN}
     restart: unless-stopped
+    environment:
+      # Runtime env var (not baked at build time) so ISR/SSR server-side fetches
+      # bypass the public domain DNS and call the backend directly.
+      API_INTERNAL_URL: http://backend:3001
     expose:
       - "3000"
     depends_on:
