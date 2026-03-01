@@ -23,17 +23,14 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
   const proj = projects.status === 'fulfilled' ? projects.value : [];
   const blog = posts.status === 'fulfilled' ? posts.value : [];
 
-  const missionTitle = sec?.mission?.title ? (l === 'es' ? sec.mission.title.es : sec.mission.title.fr) : '';
-  const missionText  = sec?.mission?.text  ? (l === 'es' ? sec.mission.text.es  : sec.mission.text.fr)  : '';
-
   return (
     <>
-      <Hero lang={l} />
-      <MissionStrip lang={l} title={missionTitle} text={missionText} />
-      <StatsCounter lang={l} />
+      <Hero lang={l} sec={sec} />
+      <MissionStrip lang={l} sec={sec} />
+      <StatsCounter lang={l} sec={sec} />
       <FeaturedProjects lang={l} projects={proj} />
       <LatestBlog lang={l} posts={blog} />
-      <DonationCTA lang={l} />
+      <DonationCTA lang={l} sec={sec} />
     </>
   );
 }

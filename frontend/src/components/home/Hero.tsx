@@ -5,6 +5,7 @@ import { t } from '@/lib/i18n';
 
 interface Props {
   lang: Lang;
+  sec?: any;
 }
 
 const quotes = {
@@ -36,8 +37,24 @@ const heroStats = {
   ],
 };
 
-export default function Hero({ lang }: Props) {
-  const { text, reference } = quotes[lang];
+export default function Hero({ lang, sec }: Props) {
+  const text = sec?.hero?.quote?.[lang] || quotes[lang].text;
+  const reference = sec?.hero?.quoteRef?.[lang] || quotes[lang].reference;
+  const tagline = sec?.hero?.tagline?.[lang] || taglines[lang];
+  const quickStats = [
+    {
+      value: sec?.hero?.stat1Value?.[lang] || heroStats[lang][0].value,
+      label: sec?.hero?.stat1Label?.[lang] || heroStats[lang][0].label,
+    },
+    {
+      value: sec?.hero?.stat2Value?.[lang] || heroStats[lang][1].value,
+      label: sec?.hero?.stat2Label?.[lang] || heroStats[lang][1].label,
+    },
+    {
+      value: sec?.hero?.stat3Value?.[lang] || heroStats[lang][2].value,
+      label: sec?.hero?.stat3Label?.[lang] || heroStats[lang][2].label,
+    },
+  ];
 
   return (
     <section className="relative bg-primary-900 text-white overflow-hidden">
@@ -83,12 +100,12 @@ export default function Hero({ lang }: Props) {
 
         {/* Tagline */}
         <p className="text-primary-200 text-lg sm:text-xl mb-8 max-w-xl mx-auto leading-relaxed">
-          {taglines[lang]}
+          {tagline}
         </p>
 
         {/* Quick stats strip */}
         <div className="flex justify-center gap-8 sm:gap-12 mb-10">
-          {heroStats[lang].map(({ value, label }) => (
+          {quickStats.map(({ value, label }) => (
             <div key={label} className="text-center">
               <div className="text-2xl font-extrabold text-white">{value}</div>
               <div className="text-xs text-primary-300 uppercase tracking-wide mt-0.5">{label}</div>

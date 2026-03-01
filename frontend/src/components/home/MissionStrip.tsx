@@ -3,8 +3,7 @@ import { Lang } from '@/lib/types';
 
 interface Props {
   lang: Lang;
-  title: string;
-  text: string;
+  sec?: any;
 }
 
 const pillars = {
@@ -50,8 +49,30 @@ const pillars = {
   ],
 };
 
-export default function MissionStrip({ lang, title, text }: Props) {
-  const items = pillars[lang];
+export default function MissionStrip({ lang, sec }: Props) {
+  const title = sec?.mission?.title?.[lang] || '';
+  const text = sec?.mission?.text?.[lang] || '';
+  const href = `/${lang}/proyectos/`;
+  const items = [
+    {
+      icon: sec?.pillar1?.icon?.[lang] || pillars[lang][0].icon,
+      title: sec?.pillar1?.title?.[lang] || pillars[lang][0].title,
+      desc: sec?.pillar1?.desc?.[lang] || pillars[lang][0].desc,
+      href,
+    },
+    {
+      icon: sec?.pillar2?.icon?.[lang] || pillars[lang][1].icon,
+      title: sec?.pillar2?.title?.[lang] || pillars[lang][1].title,
+      desc: sec?.pillar2?.desc?.[lang] || pillars[lang][1].desc,
+      href,
+    },
+    {
+      icon: sec?.pillar3?.icon?.[lang] || pillars[lang][2].icon,
+      title: sec?.pillar3?.title?.[lang] || pillars[lang][2].title,
+      desc: sec?.pillar3?.desc?.[lang] || pillars[lang][2].desc,
+      href,
+    },
+  ];
 
   return (
     <section className="py-16 bg-white">

@@ -3,6 +3,7 @@ import { t } from '@/lib/i18n';
 
 interface Props {
   lang: Lang;
+  sec?: any;
 }
 
 const stats = {
@@ -20,8 +21,29 @@ const stats = {
   ],
 };
 
-export default function StatsCounter({ lang }: Props) {
-  const items = stats[lang];
+export default function StatsCounter({ lang, sec }: Props) {
+  const items = [
+    {
+      icon: sec?.stat1?.icon?.[lang] || stats[lang][0].icon,
+      value: sec?.stat1?.value?.[lang] || stats[lang][0].value,
+      label: sec?.stat1?.label?.[lang] || stats[lang][0].label,
+    },
+    {
+      icon: sec?.stat2?.icon?.[lang] || stats[lang][1].icon,
+      value: sec?.stat2?.value?.[lang] || stats[lang][1].value,
+      label: sec?.stat2?.label?.[lang] || stats[lang][1].label,
+    },
+    {
+      icon: sec?.stat3?.icon?.[lang] || stats[lang][2].icon,
+      value: sec?.stat3?.value?.[lang] || stats[lang][2].value,
+      label: sec?.stat3?.label?.[lang] || stats[lang][2].label,
+    },
+    {
+      icon: sec?.stat4?.icon?.[lang] || stats[lang][3].icon,
+      value: sec?.stat4?.value?.[lang] || stats[lang][3].value,
+      label: sec?.stat4?.label?.[lang] || stats[lang][3].label,
+    },
+  ];
 
   return (
     <section className="py-16 bg-primary-50">

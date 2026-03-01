@@ -22,7 +22,20 @@ const PAGE_LABELS: Record<string, string> = {
 // Secciones y claves que el frontend realmente lee de la API
 const VALID_SECTIONS: Record<string, Record<string, string[]>> = {
   'home': {
+    'hero': ['quote', 'quoteRef', 'tagline', 'stat1Value', 'stat1Label', 'stat2Value', 'stat2Label', 'stat3Value', 'stat3Label'],
     'mission': ['title', 'text'],
+    'pillar1': ['icon', 'title', 'desc'],
+    'pillar2': ['icon', 'title', 'desc'],
+    'pillar3': ['icon', 'title', 'desc'],
+    'stat1': ['icon', 'value', 'label'],
+    'stat2': ['icon', 'value', 'label'],
+    'stat3': ['icon', 'value', 'label'],
+    'stat4': ['icon', 'value', 'label'],
+    'donationCta': ['sectionTitle', 'bottomText'],
+    'impact1': ['amount', 'icon', 'text'],
+    'impact2': ['amount', 'icon', 'text'],
+    'impact3': ['amount', 'icon', 'text'],
+    'impact4': ['amount', 'icon', 'text'],
   },
   'que-hacemos': {
     'hero': ['title', 'subtitle'],
@@ -44,6 +57,18 @@ const VALID_SECTIONS: Record<string, Record<string, string[]>> = {
 const SECTION_LABELS: Record<string, string> = {
   'hero': 'Cabecera',
   'mission': 'Bloque de Misión',
+  'pillar1': 'Pilar 1',
+  'pillar2': 'Pilar 2',
+  'pillar3': 'Pilar 3',
+  'stat1': 'Estadística 1',
+  'stat2': 'Estadística 2',
+  'stat3': 'Estadística 3',
+  'stat4': 'Estadística 4',
+  'donationCta': 'CTA de Donación',
+  'impact1': 'Impacto — 1er importe',
+  'impact2': 'Impacto — 2º importe',
+  'impact3': 'Impacto — 3er importe',
+  'impact4': 'Impacto — 4º importe',
   'education': 'Pilar — Educación',
   'health': 'Pilar — Salud',
   'development': 'Pilar — Desarrollo',
@@ -57,6 +82,21 @@ const KEY_LABELS: Record<string, string> = {
   'title': 'Título',
   'subtitle': 'Subtítulo',
   'text': 'Texto',
+  'desc': 'Descripción',
+  'quote': 'Cita bíblica',
+  'quoteRef': 'Referencia bíblica',
+  'tagline': 'Eslogan',
+  'stat1Value': 'Stat 1 — Valor',
+  'stat1Label': 'Stat 1 — Etiqueta',
+  'stat2Value': 'Stat 2 — Valor',
+  'stat2Label': 'Stat 2 — Etiqueta',
+  'stat3Value': 'Stat 3 — Valor',
+  'stat3Label': 'Stat 3 — Etiqueta',
+  'value': 'Valor',
+  'label': 'Etiqueta',
+  'sectionTitle': 'Título de sección',
+  'bottomText': 'Texto inferior',
+  'amount': 'Importe',
   '10eur': 'Con 10 €',
   '30eur': 'Con 30 €',
   '100eur': 'Con 100 €',
@@ -65,7 +105,7 @@ const KEY_LABELS: Record<string, string> = {
 
 // Aviso sobre contenido fijo en el código para cada página
 const PAGE_NOTES: Record<string, string> = {
-  'home': 'La cabecera principal y las estadísticas son fijas en el código. Aquí puedes editar el bloque de misión que aparece bajo ellas.',
+  'home': 'Puedes editar todos los textos de la página de inicio: cita bíblica, eslogan, estadísticas rápidas del hero, pilares de misión, contador de estadísticas y bloque de donación.',
   'que-hacemos': 'Los pasos de metodología son fijos en el código. Aquí puedes editar la cabecera y los tres pilares de trabajo.',
   'quienes-somos': 'Los hitos del timeline y los valores (Compromiso, Sostenibilidad, Transparencia, Dignidad) son fijos en el código. Aquí puedes editar la cabecera y el texto introductorio de historia.',
   'colabora': 'Las tarjetas de voluntariado, empresas y difusión son fijas en el código. Aquí puedes editar la cabecera, la sección de donación bancaria y los textos de impacto.',
@@ -196,7 +236,7 @@ export default function PagesEditor() {
                             [editLang === 'es' ? 'valueEs' : 'valueFr']: e.target.value,
                           }
                         }))}
-                        rows={item.key === 'text' || item.key.endsWith('eur') ? 3 : 2}
+                        rows={['text', 'desc', 'quote', 'tagline', 'bottomText'].includes(item.key) || item.key.endsWith('eur') ? 3 : 2}
                         className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
                       />
                     )}

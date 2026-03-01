@@ -4,6 +4,7 @@ import { t } from '@/lib/i18n';
 
 interface Props {
   lang: Lang;
+  sec?: any;
 }
 
 const ladder = {
@@ -21,7 +22,16 @@ const ladder = {
   ],
 };
 
-export default function DonationCTA({ lang }: Props) {
+export default function DonationCTA({ lang, sec }: Props) {
+  const sectionTitle = sec?.donationCta?.sectionTitle?.[lang] || (lang === 'es' ? 'Tu donación en acción' : 'Votre don en action');
+  const bottomText = sec?.donationCta?.bottomText?.[lang] || (lang === 'es' ? 'Transferencia bancaria · 100% destinado a proyectos' : 'Virement bancaire · 100% destiné aux projets');
+  const items = [
+    { amount: sec?.impact1?.amount?.[lang] || ladder[lang][0].amount, icon: sec?.impact1?.icon?.[lang] || ladder[lang][0].icon, impact: sec?.impact1?.text?.[lang] || ladder[lang][0].impact },
+    { amount: sec?.impact2?.amount?.[lang] || ladder[lang][1].amount, icon: sec?.impact2?.icon?.[lang] || ladder[lang][1].icon, impact: sec?.impact2?.text?.[lang] || ladder[lang][1].impact },
+    { amount: sec?.impact3?.amount?.[lang] || ladder[lang][2].amount, icon: sec?.impact3?.icon?.[lang] || ladder[lang][2].icon, impact: sec?.impact3?.text?.[lang] || ladder[lang][2].impact },
+    { amount: sec?.impact4?.amount?.[lang] || ladder[lang][3].amount, icon: sec?.impact4?.icon?.[lang] || ladder[lang][3].icon, impact: sec?.impact4?.text?.[lang] || ladder[lang][3].impact },
+  ];
+
   return (
     <section className="py-20 bg-gradient-to-br from-primary-900 to-primary-800 text-white">
       <div className="max-w-4xl mx-auto px-4">
@@ -29,7 +39,7 @@ export default function DonationCTA({ lang }: Props) {
         {/* Header */}
         <div className="text-center mb-12">
           <p className="text-accent text-sm font-semibold uppercase tracking-widest mb-3">
-            {lang === 'es' ? 'Tu donación en acción' : 'Votre don en action'}
+            {sectionTitle}
           </p>
           <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">
             {t(lang, 'home.donationCTA.title')}
@@ -41,7 +51,7 @@ export default function DonationCTA({ lang }: Props) {
 
         {/* Impact ladder */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-          {ladder[lang].map(({ amount, icon, impact }) => (
+          {items.map(({ amount, icon, impact }) => (
             <div key={amount} className="bg-white/10 hover:bg-white/15 border border-white/10 rounded-2xl p-5 text-center transition-colors cursor-default">
               <div className="text-4xl mb-3">{icon}</div>
               <div className="text-2xl font-extrabold text-accent mb-2">{amount}</div>
@@ -59,9 +69,7 @@ export default function DonationCTA({ lang }: Props) {
             {t(lang, 'home.donationCTA.button')} →
           </Link>
           <p className="text-primary-300 text-sm mt-4">
-            {lang === 'es'
-              ? 'Transferencia bancaria · 100% destinado a proyectos'
-              : 'Virement bancaire · 100% destiné aux projets'}
+            {bottomText}
           </p>
         </div>
       </div>
