@@ -21,7 +21,7 @@ export default function ImageUpload({ value, onChange, multiple = true }: Props)
         const r = await api.post('/admin/upload', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        urls.push(`http://localhost:3001${r.data.url}`);
+        urls.push(r.data.url);
       } catch (e) {
         console.error('Upload failed:', e);
       }
