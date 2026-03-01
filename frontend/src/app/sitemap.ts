@@ -12,8 +12,6 @@ const STATIC_ROUTES = [
   { path: '/proyectos', priority: 0.9, changeFrequency: 'weekly' as const },
   { path: '/blog', priority: 0.8, changeFrequency: 'weekly' as const },
   { path: '/contacto', priority: 0.6, changeFrequency: 'yearly' as const },
-  { path: '/apadrina-gallina', priority: 0.8, changeFrequency: 'monthly' as const },
-  { path: '/apadrina-oveja', priority: 0.8, changeFrequency: 'monthly' as const },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -54,5 +52,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     );
   } catch { /* skip if API unavailable at build time */ }
 
-  return [...staticEntries, ...projectEntries, ...blogEntries];
+  let campaignEntries: MetadataRoute.Sitemap = [];
+  try {
+    const campaigns = await api.getCampaigns();
+    campaignEntries = campaigns.flatMap(c =>
+      LANGS.map(lang => ({
+        url: `${SITE_URL}/${lang}/campanas/${c.slug}/`,
+        lastModified: now,
+        changeFrequency: 'monthly' as const,
+        priority: 0.8,
+      }))
+    );
+  } catch { /* skip if API unavailable at build time */ }
+
+  return [...staticEntries, ...projectEntries, ...blogEntries, ...campaignEntries];
 }

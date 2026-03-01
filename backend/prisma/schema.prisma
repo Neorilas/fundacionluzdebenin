@@ -75,6 +75,66 @@ model AdminUser {
   createdAt    DateTime @default(now())
 }
 
+model Campaign {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  emoji       String   @default("🐾")
+  amountCents Int
+  colorScheme String   @default("amber")
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+
+  // Hero
+  tagEs       String   @default("")
+  tagFr       String   @default("")
+  titleEs     String   @default("")
+  titleFr     String   @default("")
+  taglineEs   String   @default("")
+  taglineFr   String   @default("")
+  priceLabel  String   @default("")
+  periodEs    String   @default("")
+  periodFr    String   @default("")
+  ctaEs       String   @default("")
+  ctaFr       String   @default("")
+  fineEs      String   @default("")
+  fineFr      String   @default("")
+
+  // "¿Qué cubre?" — JSON: [{icon, textEs, textFr}, ...]
+  coverItems  String   @default("[]")
+
+  // Sección proyecto
+  projectTitleEs  String  @default("")
+  projectTitleFr  String  @default("")
+  projectTextEs   String  @default("")
+  projectTextFr   String  @default("")
+  projectBadgeEs  String  @default("")
+  projectBadgeFr  String  @default("")
+  projectLinkEs   String  @default("")
+  projectLinkFr   String  @default("")
+  projectHref     String  @default("")
+
+  // Sección extra (stats | why | vacío)
+  extraType       String  @default("")
+  extraTitleEs    String  @default("")
+  extraTitleFr    String  @default("")
+  extraItems      String  @default("[]")
+
+  // CTA final
+  ctaBottomEs     String  @default("")
+  ctaBottomFr     String  @default("")
+  ctaBottomNoteEs String  @default("")
+  ctaBottomNoteFr String  @default("")
+
+  // Meta SEO
+  metaTitleEs     String  @default("")
+  metaTitleFr     String  @default("")
+  metaDescEs      String  @default("")
+  metaDescFr      String  @default("")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model StripeProduct {
   id              String     @id @default(cuid())
   stripeProductId String?

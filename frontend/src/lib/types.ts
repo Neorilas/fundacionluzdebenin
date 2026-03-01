@@ -50,6 +50,42 @@ export interface Settings {
 
 export type Lang = 'es' | 'fr';
 
+export interface CoverItem { icon: string; textEs: string; textFr: string; }
+export interface StatItem  { value: string; labelEs: string; labelFr: string; }
+export interface WhyItem   { icon: string; textEs: string; textFr: string; }
+
+export interface Campaign {
+  id: string;
+  slug: string;
+  emoji: string;
+  amountCents: number;
+  colorScheme: string;
+  active: boolean;
+  sortOrder: number;
+  tagEs: string; tagFr: string;
+  titleEs: string; titleFr: string;
+  taglineEs: string; taglineFr: string;
+  priceLabel: string;
+  periodEs: string; periodFr: string;
+  ctaEs: string; ctaFr: string;
+  fineEs: string; fineFr: string;
+  coverItems: CoverItem[];
+  projectTitleEs: string; projectTitleFr: string;
+  projectTextEs: string; projectTextFr: string;
+  projectBadgeEs: string; projectBadgeFr: string;
+  projectLinkEs: string; projectLinkFr: string;
+  projectHref: string;
+  extraType: string;
+  extraTitleEs: string; extraTitleFr: string;
+  extraItems: (StatItem | WhyItem)[];
+  ctaBottomEs: string; ctaBottomFr: string;
+  ctaBottomNoteEs: string; ctaBottomNoteFr: string;
+  metaTitleEs: string; metaTitleFr: string;
+  metaDescEs: string; metaDescFr: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface StripeProduct {
   id: string;
   nameEs: string;

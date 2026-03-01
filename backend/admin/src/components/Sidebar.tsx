@@ -6,6 +6,7 @@ const links = [
   { to: '/admin/blog', label: 'Blog', icon: '✍️' },
   { to: '/admin/pages', label: 'Páginas', icon: '📄' },
   { to: '/admin/contacts', label: 'Mensajes', icon: '📬' },
+  { to: '/admin/campaigns', label: 'Campañas', icon: '🐾' },
   { to: '/admin/donations', label: 'Donaciones', icon: '💚' },
   { to: '/admin/settings', label: 'Configuración', icon: '⚙️' },
 ];

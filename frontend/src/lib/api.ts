@@ -1,4 +1,4 @@
-import { Project, BlogPost, PageSections, Settings, StripeProduct, CheckoutPayload } from './types';
+import { Project, BlogPost, PageSections, Settings, StripeProduct, CheckoutPayload, Campaign } from './types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -28,6 +28,8 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     }).then(r => r.json()),
+  getCampaigns: () => fetchAPI<Campaign[]>('/api/campaigns'),
+  getCampaign: (slug: string) => fetchAPI<Campaign>(`/api/campaigns/${slug}`),
   getStripeProducts: () =>
     fetch(`${API_URL}/api/stripe/products`).then(r => r.json()) as Promise<StripeProduct[]>,
   createCheckout: (payload: CheckoutPayload) =>

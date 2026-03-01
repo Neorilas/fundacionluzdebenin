@@ -1,53 +1,30 @@
 import Link from 'next/link';
-import { Lang } from '@/lib/types';
+import { Lang, Campaign } from '@/lib/types';
 
 interface Props {
   lang: Lang;
+  campaigns: Campaign[];
 }
 
-const copy = {
+const strip = {
   es: {
     label: '✨ Campañas especiales',
     title: 'Apadrina, no dona. Hay diferencia.',
     subtitle: 'Elige tu animal, ponle nombre si quieres, y sabe exactamente qué financia tu dinero cada mes.',
-    gallina: {
-      emoji: '🐔',
-      title: 'Apadrina una gallina',
-      tagline: 'Tu gallina pone huevos. Los huevos alimentan niños.',
-      price: '5€/mes',
-      cta: 'Apadrinar una gallina',
-    },
-    oveja: {
-      emoji: '🐑',
-      title: 'Apadrina una oveja',
-      tagline: 'Tu oveja. Un rebaño. Un futuro para una comunidad.',
-      price: '10€/mes',
-      cta: 'Apadrinar una oveja',
-    },
+    cta: 'Apadrinar',
   },
   fr: {
     label: '✨ Campagnes spéciales',
     title: 'Parraine, ne donne pas. La différence est importante.',
     subtitle: 'Choisis ton animal, donne-lui un nom si tu veux, et sache exactement ce que finance ton argent chaque mois.',
-    gallina: {
-      emoji: '🐔',
-      title: 'Parraine une poule',
-      tagline: 'Ta poule pond des œufs. Les œufs nourrissent des enfants.',
-      price: '5€/mois',
-      cta: 'Parrainer une poule',
-    },
-    oveja: {
-      emoji: '🐑',
-      title: 'Parraine une brebis',
-      tagline: 'Ta brebis. Un troupeau. Un avenir pour une communauté.',
-      price: '10€/mois',
-      cta: 'Parrainer une brebis',
-    },
+    cta: 'Parrainer',
   },
 };
 
-export default function CampaignsStrip({ lang }: Props) {
-  const c = copy[lang];
+export default function CampaignsStrip({ lang, campaigns }: Props) {
+  const c = strip[lang];
+
+  if (!campaigns.length) return null;
 
   return (
     <section className="py-16 bg-amber-50 border-y border-amber-100">
@@ -61,34 +38,40 @@ export default function CampaignsStrip({ lang }: Props) {
           <p className="text-gray-600 max-w-xl mx-auto">{c.subtitle}</p>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-6">
-          {/* Gallina */}
-          <Link
-            href={`/${lang}/apadrina-gallina/`}
-            className="group bg-white rounded-2xl border-2 border-amber-200 hover:border-accent hover:shadow-lg p-8 transition-all flex flex-col items-center text-center"
-          >
-            <div className="text-7xl mb-4 group-hover:scale-110 transition-transform">{c.gallina.emoji}</div>
-            <h3 className="text-xl font-extrabold text-gray-900 mb-2">{c.gallina.title}</h3>
-            <p className="text-gray-500 text-sm mb-5 leading-relaxed">{c.gallina.tagline}</p>
-            <span className="text-3xl font-extrabold text-accent mb-4">{c.gallina.price}</span>
-            <span className="inline-block bg-accent text-white font-bold px-6 py-2.5 rounded-full group-hover:bg-accent-700 transition-colors">
-              {c.gallina.cta} →
-            </span>
-          </Link>
+        <div className={`grid gap-6 ${campaigns.length === 1 ? 'max-w-sm mx-auto' : 'sm:grid-cols-2'}`}>
+          {campaigns.map(campaign => {
+            const isAmber = campaign.colorScheme === 'amber';
+            const title   = lang === 'fr' ? campaign.titleFr   : campaign.titleEs;
+            const tagline = lang === 'fr' ? campaign.taglineFr : campaign.taglineEs;
+            const ctaText = lang === 'fr' ? campaign.ctaFr     : campaign.ctaEs;
+            const price   = `${campaign.priceLabel}/${lang === 'fr' ? 'mois' : 'mes'}`;
 
-          {/* Oveja */}
-          <Link
-            href={`/${lang}/apadrina-oveja/`}
-            className="group bg-white rounded-2xl border-2 border-green-200 hover:border-primary-800 hover:shadow-lg p-8 transition-all flex flex-col items-center text-center"
-          >
-            <div className="text-7xl mb-4 group-hover:scale-110 transition-transform">{c.oveja.emoji}</div>
-            <h3 className="text-xl font-extrabold text-gray-900 mb-2">{c.oveja.title}</h3>
-            <p className="text-gray-500 text-sm mb-5 leading-relaxed">{c.oveja.tagline}</p>
-            <span className="text-3xl font-extrabold text-primary-800 mb-4">{c.oveja.price}</span>
-            <span className="inline-block bg-primary-800 text-white font-bold px-6 py-2.5 rounded-full group-hover:bg-primary-900 transition-colors">
-              {c.oveja.cta} →
-            </span>
-          </Link>
+            return (
+              <Link
+                key={campaign.slug}
+                href={`/${lang}/campanas/${campaign.slug}/`}
+                className={`group bg-white rounded-2xl border-2 p-8 transition-all flex flex-col items-center text-center hover:shadow-lg ${
+                  isAmber
+                    ? 'border-amber-200 hover:border-accent'
+                    : 'border-green-200 hover:border-primary-800'
+                }`}
+              >
+                <div className="text-7xl mb-4 group-hover:scale-110 transition-transform">{campaign.emoji}</div>
+                <h3 className="text-xl font-extrabold text-gray-900 mb-2">{title}</h3>
+                <p className="text-gray-500 text-sm mb-5 leading-relaxed">{tagline}</p>
+                <span className={`text-3xl font-extrabold mb-4 ${isAmber ? 'text-accent' : 'text-primary-800'}`}>
+                  {price}
+                </span>
+                <span className={`inline-block text-white font-bold px-6 py-2.5 rounded-full transition-colors ${
+                  isAmber
+                    ? 'bg-accent group-hover:bg-accent-700'
+                    : 'bg-primary-800 group-hover:bg-primary-900'
+                }`}>
+                  {ctaText} →
+                </span>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>

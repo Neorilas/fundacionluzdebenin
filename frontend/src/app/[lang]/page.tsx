@@ -48,15 +48,17 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
   const { lang } = await params;
   const l = lang as Lang;
 
-  const [sections, projects, posts] = await Promise.allSettled([
+  const [sections, projects, posts, campaignsResult] = await Promise.allSettled([
     api.getPageSections('home'),
     api.getProjects({ featured: true }),
     api.getBlogPosts(),
+    api.getCampaigns(),
   ]);
 
   const sec = sections.status === 'fulfilled' ? sections.value : {};
   const proj = projects.status === 'fulfilled' ? projects.value : [];
   const blog = posts.status === 'fulfilled' ? posts.value : [];
+  const campaigns = campaignsResult.status === 'fulfilled' ? campaignsResult.value : [];
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -94,7 +96,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       <Hero lang={l} sec={sec} />
       <MissionStrip lang={l} sec={sec} />
       <StatsCounter lang={l} sec={sec} />
-      <CampaignsStrip lang={l} />
+      <CampaignsStrip lang={l} campaigns={campaigns} />
       <FeaturedProjects lang={l} projects={proj} />
       <LatestBlog lang={l} posts={blog} />
       <DonationCTA lang={l} sec={sec} />
