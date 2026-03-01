@@ -64,10 +64,13 @@ async function main() {
     // Que hacemos
     { page: 'que-hacemos', section: 'hero', key: 'title', valueEs: 'Qué Hacemos', valueFr: 'Ce Que Nous Faisons' },
     { page: 'que-hacemos', section: 'hero', key: 'subtitle', valueEs: 'Tres pilares fundamentales guían cada uno de nuestros proyectos', valueFr: 'Trois piliers fondamentaux guident chacun de nos projets' },
+    { page: 'que-hacemos', section: 'education', key: 'icon', valueEs: '📚', valueFr: '📚' },
     { page: 'que-hacemos', section: 'education', key: 'title', valueEs: 'Educación', valueFr: 'Éducation' },
     { page: 'que-hacemos', section: 'education', key: 'text', valueEs: 'Construimos escuelas, formamos maestros y becamos a niños y jóvenes con talento para que puedan acceder a una educación de calidad.', valueFr: 'Nous construisons des écoles, formons des enseignants et accordons des bourses aux enfants et jeunes talentueux pour accéder à une éducation de qualité.' },
+    { page: 'que-hacemos', section: 'health', key: 'icon', valueEs: '🏥', valueFr: '🏥' },
     { page: 'que-hacemos', section: 'health', key: 'title', valueEs: 'Salud', valueFr: 'Santé' },
     { page: 'que-hacemos', section: 'health', key: 'text', valueEs: 'Apoyamos centros de salud rurales, campañas de vacunación y formación en higiene y nutrición para las comunidades más alejadas.', valueFr: 'Nous soutenons les centres de santé ruraux, les campagnes de vaccination et la formation en hygiène et nutrition pour les communautés les plus éloignées.' },
+    { page: 'que-hacemos', section: 'development', key: 'icon', valueEs: '🌱', valueFr: '🌱' },
     { page: 'que-hacemos', section: 'development', key: 'title', valueEs: 'Desarrollo', valueFr: 'Développement' },
     { page: 'que-hacemos', section: 'development', key: 'text', valueEs: 'Promovemos la agricultura sostenible, la microempresa y la formación profesional para que las comunidades sean económicamente independientes.', valueFr: 'Nous promouvons l\'agriculture durable, la micro-entreprise et la formation professionnelle pour que les communautés soient économiquement indépendantes.' },
     // Quienes somos

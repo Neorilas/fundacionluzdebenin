@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { Lang } from '@/lib/types';
 import { t } from '@/lib/i18n';
@@ -47,6 +48,20 @@ export default function Hero({ lang }: Props) {
       </div>
 
       <div className="relative max-w-4xl mx-auto px-6 py-20 sm:py-28 text-center">
+
+        {/* Logo */}
+        <div className="flex justify-center mb-10">
+          <div className="bg-white rounded-2xl px-8 py-4 shadow-xl shadow-black/40 ring-1 ring-white/20">
+            <Image
+              src="/logo.jpg"
+              alt="Fundación Luz de Benín"
+              width={220}
+              height={110}
+              className="h-24 w-auto"
+              priority
+            />
+          </div>
+        </div>
 
         {/* Bible quote */}
         <div className="mb-10">

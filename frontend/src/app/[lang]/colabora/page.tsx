@@ -2,6 +2,7 @@ import { Lang, Settings } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import SectionTitle from '@/components/ui/SectionTitle';
+import TaxDeduction from '@/components/colabora/TaxDeduction';
 
 export const revalidate = 60;
 
@@ -56,6 +57,9 @@ export default async function ColaboraPage({ params }: { params: Promise<{ lang:
           </div>
         </div>
       </section>
+
+      {/* Tax deduction */}
+      <TaxDeduction lang={l} />
 
       {/* Impact per donation */}
       <section className="py-16 bg-bg">

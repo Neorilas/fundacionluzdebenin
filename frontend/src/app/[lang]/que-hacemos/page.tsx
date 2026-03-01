@@ -15,9 +15,9 @@ export default async function QueHacemosPage({ params }: { params: Promise<{ lan
   };
 
   const pillars = [
-    { key: 'education', icon: '📚', color: 'bg-blue-50 border-blue-200' },
-    { key: 'health', icon: '🏥', color: 'bg-green-50 border-green-200' },
-    { key: 'development', icon: '🌱', color: 'bg-yellow-50 border-yellow-200' },
+    { key: 'education', icon: get('education', 'icon') || '📚', color: 'bg-blue-50 border-blue-200' },
+    { key: 'health', icon: get('health', 'icon') || '🏥', color: 'bg-green-50 border-green-200' },
+    { key: 'development', icon: get('development', 'icon') || '🌱', color: 'bg-yellow-50 border-yellow-200' },
   ];
 
   const methodology = l === 'es'

@@ -17,12 +17,13 @@ export default function Header({ lang }: Props) {
   const pathname = usePathname();
 
   const links = [
-    { href: `/${lang}/`, label: t(lang, 'nav.home') },
-    { href: `/${lang}/que-hacemos/`, label: t(lang, 'nav.whatWeDo') },
-    { href: `/${lang}/proyectos/`, label: t(lang, 'nav.projects') },
-    { href: `/${lang}/quienes-somos/`, label: t(lang, 'nav.whoWeAre') },
-    { href: `/${lang}/blog/`, label: t(lang, 'nav.blog') },
-    { href: `/${lang}/contacto/`, label: t(lang, 'nav.contact') },
+    { href: `/${lang}/`, label: t(lang, 'nav.home'), cta: false },
+    { href: `/${lang}/que-hacemos/`, label: t(lang, 'nav.whatWeDo'), cta: false },
+    { href: `/${lang}/proyectos/`, label: t(lang, 'nav.projects'), cta: false },
+    { href: `/${lang}/quienes-somos/`, label: t(lang, 'nav.whoWeAre'), cta: false },
+    { href: `/${lang}/blog/`, label: t(lang, 'nav.blog'), cta: false },
+    { href: `/${lang}/contacto/`, label: t(lang, 'nav.contact'), cta: false },
+    { href: `/${lang}/colabora/`, label: t(lang, 'common.donate'), cta: true },
   ];
 
   const isActive = (href: string) => pathname === href || pathname === href.slice(0, -1);
@@ -46,12 +47,14 @@ export default function Header({ lang }: Props) {
 
           {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-1">
-            {links.map(({ href, label }) => (
+            {links.map(({ href, label, cta }) => (
               <Link
                 key={href}
                 href={href}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive(href)
+                className={`px-3 py-2 rounded-full text-sm font-medium transition-colors ${
+                  cta
+                    ? 'bg-accent hover:bg-accent-700 text-white font-semibold ml-2'
+                    : isActive(href)
                     ? 'bg-primary-700 text-white'
                     : 'text-primary-100 hover:bg-primary-700 hover:text-white'
                 }`}
@@ -63,12 +66,6 @@ export default function Header({ lang }: Props) {
 
           <div className="flex items-center gap-3">
             <LangSwitcher lang={lang} />
-            <Link
-              href={`/${lang}/colabora/`}
-              className="hidden sm:inline-flex bg-accent hover:bg-accent-700 text-white px-4 py-1.5 rounded-full text-sm font-semibold transition-colors"
-            >
-              {t(lang, 'common.donate')}
-            </Link>
             {/* Mobile menu button */}
             <button
               onClick={() => setOpen(!open)}
@@ -88,25 +85,22 @@ export default function Header({ lang }: Props) {
         {/* Mobile menu */}
         {open && (
           <div className="lg:hidden py-3 border-t border-primary-700">
-            {links.map(({ href, label }) => (
+            {links.map(({ href, label, cta }) => (
               <Link
                 key={href}
                 href={href}
                 onClick={() => setOpen(false)}
                 className={`block px-3 py-2 rounded-md text-sm font-medium ${
-                  isActive(href) ? 'bg-primary-700 text-white' : 'text-primary-100 hover:bg-primary-700'
+                  cta
+                    ? 'mt-2 bg-accent text-white font-semibold text-center'
+                    : isActive(href)
+                    ? 'bg-primary-700 text-white'
+                    : 'text-primary-100 hover:bg-primary-700'
                 }`}
               >
                 {label}
               </Link>
             ))}
-            <Link
-              href={`/${lang}/colabora/`}
-              onClick={() => setOpen(false)}
-              className="block mt-2 bg-accent text-white px-3 py-2 rounded-md text-sm font-semibold text-center"
-            >
-              {t(lang, 'common.donate')}
-            </Link>
           </div>
         )}
       </div>
