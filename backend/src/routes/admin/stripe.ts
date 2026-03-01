@@ -6,9 +6,15 @@ import { authMiddleware, AuthRequest } from '../../middleware/authMiddleware';
 const router = Router();
 router.use(authMiddleware);
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2026-02-25.clover',
-});
+let _stripe: Stripe | null = null;
+function getStripe(): Stripe {
+  if (!_stripe) {
+    const key = process.env.STRIPE_SECRET_KEY;
+    if (!key) throw new Error('STRIPE_SECRET_KEY is not configured');
+    _stripe = new Stripe(key, { apiVersion: '2026-02-25.clover' });
+  }
+  return _stripe;
+}
 
 // GET /api/admin/stripe/products
 router.get('/products', async (_req: AuthRequest, res: Response, next) => {
@@ -46,8 +52,8 @@ router.post('/products', async (req: AuthRequest, res: Response, next) => {
     }
 
     // Create in Stripe
-    const stripeProduct = await stripe.products.create({ name: nameEs });
-    const stripePrice = await stripe.prices.create({
+    const stripeProduct = await getStripe().products.create({ name: nameEs });
+    const stripePrice = await getStripe().prices.create({
       unit_amount: amount,
       currency: 'eur',
       recurring: { interval },
@@ -125,7 +131,7 @@ router.delete('/products/:id', async (req: AuthRequest, res: Response, next) => 
 
     // Archive in Stripe if we have the ID
     if (existing.stripeProductId) {
-      await stripe.products.update(existing.stripeProductId, { active: false }).catch(console.error);
+      await getStripe().products.update(existing.stripeProductId, { active: false }).catch(console.error);
     }
 
     const product = await prisma.stripeProduct.update({
