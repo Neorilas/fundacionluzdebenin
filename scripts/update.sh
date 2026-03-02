@@ -17,9 +17,10 @@ git pull --ff-only
 docker compose build --parallel
 
 # Restart con zero-downtime (Caddy sigue funcionando)
-docker compose up -d --no-deps backend
+# --force-recreate evita conflictos de nombre con contenedores huérfanos
+docker compose up -d --no-deps --force-recreate backend
 sleep 5
-docker compose up -d --no-deps frontend
+docker compose up -d --no-deps --force-recreate frontend
 
 echo "✅ Actualización completada"
 docker compose ps

@@ -88,7 +88,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ lang: 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           {project.images.map((img, i) => (
             <div key={i} className="relative h-64 rounded-2xl overflow-hidden">
-              <Image src={img} alt={`${title} - ${i + 1}`} fill sizes="(max-width: 640px) 100vw, 50vw" className="object-cover" />
+              <Image src={img} alt={`${title} - ${i + 1}`} fill unoptimized sizes="(max-width: 640px) 100vw, 50vw" className="object-cover" />
             </div>
           ))}
         </div>

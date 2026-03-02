@@ -22,7 +22,7 @@ export default function BlogCard({ post, lang }: Props) {
       {/* Cover */}
       <div className="h-40 bg-gradient-to-br from-primary-100 to-accent-100 relative overflow-hidden">
         {post.coverImage ? (
-          <Image src={post.coverImage} alt={title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+          <Image src={post.coverImage} alt={title} fill unoptimized sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-5xl">📰</div>
         )}
