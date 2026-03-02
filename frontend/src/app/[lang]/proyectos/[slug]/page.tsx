@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Lang } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
@@ -86,7 +87,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ lang: 
       {project.images?.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           {project.images.map((img, i) => (
-            <img key={i} src={img} alt={`${title} - ${i + 1}`} className="w-full h-64 object-cover rounded-2xl" />
+            <div key={i} className="relative h-64 rounded-2xl overflow-hidden">
+              <Image src={img} alt={`${title} - ${i + 1}`} fill sizes="(max-width: 640px) 100vw, 50vw" className="object-cover" />
+            </div>
           ))}
         </div>
       )}

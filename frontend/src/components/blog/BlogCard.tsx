@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Lang, BlogPost } from '@/lib/types';
 import { t } from '@/lib/i18n';
 
@@ -21,7 +22,7 @@ export default function BlogCard({ post, lang }: Props) {
       {/* Cover */}
       <div className="h-40 bg-gradient-to-br from-primary-100 to-accent-100 relative overflow-hidden">
         {post.coverImage ? (
-          <img src={post.coverImage} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          <Image src={post.coverImage} alt={title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-5xl">📰</div>
         )}

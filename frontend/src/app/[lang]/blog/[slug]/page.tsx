@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import { Lang } from '@/lib/types';
 import { api } from '@/lib/api';
@@ -82,7 +83,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lang:
       </Link>
 
       {post.coverImage && (
-        <img src={post.coverImage} alt={title} className="w-full h-72 object-cover rounded-2xl mb-8" />
+        <div className="relative h-72 rounded-2xl overflow-hidden mb-8">
+          <Image src={post.coverImage} alt={title} fill priority sizes="(max-width: 768px) 100vw, 768px" className="object-cover" />
+        </div>
       )}
 
       {date && (

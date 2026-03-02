@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Lang, Project } from '@/lib/types';
 import { t } from '@/lib/i18n';
 import Badge from '../ui/Badge';
@@ -18,16 +19,18 @@ export default function ProjectCard({ project, lang }: Props) {
       {/* Image */}
       <div className="h-48 bg-gradient-to-br from-primary-100 to-primary-200 relative overflow-hidden shrink-0">
         {project.images?.[0] ? (
-          <img
+          <Image
             src={project.images[0]}
             alt={title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-6xl">🏗️</div>
         )}
         {project.featured && (
-          <div className="absolute top-3 right-3 bg-accent text-white text-xs font-bold px-2 py-1 rounded-full">
+          <div className="absolute top-3 right-3 bg-orange-700 text-white text-xs font-bold px-2 py-1 rounded-full">
             ⭐ {lang === 'es' ? 'Destacado' : 'En vedette'}
           </div>
         )}

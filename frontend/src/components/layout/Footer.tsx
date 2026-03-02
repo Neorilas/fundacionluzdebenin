@@ -29,11 +29,13 @@ export default function Footer({ lang }: Props) {
             <p className="text-sm text-primary-200 leading-relaxed">
               {t(lang, 'footer.tagline')}
             </p>
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-1 mt-4">
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
-                className="text-primary-300 hover:text-white transition-colors text-xl">f</a>
+                aria-label="Facebook"
+                className="inline-flex items-center justify-center w-11 h-11 rounded-lg text-primary-300 hover:text-white hover:bg-primary-800 transition-colors text-xl">f</a>
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
-                className="text-primary-300 hover:text-white transition-colors text-xl">ig</a>
+                aria-label="Instagram"
+                className="inline-flex items-center justify-center w-11 h-11 rounded-lg text-primary-300 hover:text-white hover:bg-primary-800 transition-colors text-lg">ig</a>
             </div>
           </div>
 

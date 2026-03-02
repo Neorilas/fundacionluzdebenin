@@ -70,7 +70,7 @@ export default async function CampaignPage({
 
   // Color tokens based on scheme
   const heroBg     = isAmber ? 'bg-amber-50 border-amber-100' : 'bg-green-50 border-green-100';
-  const tagBg      = isAmber ? 'bg-accent text-white' : 'bg-primary-800 text-white';
+  const tagBg      = isAmber ? 'bg-orange-700 text-white' : 'bg-primary-800 text-white';
   const priceColor = isAmber ? 'text-accent' : 'text-primary-800';
   const backColor  = isAmber ? 'text-amber-700 hover:text-accent' : 'text-green-700 hover:text-primary-800';
   const coverBg    = isAmber ? 'bg-amber-50 border-amber-100' : 'bg-green-50 border-green-100';

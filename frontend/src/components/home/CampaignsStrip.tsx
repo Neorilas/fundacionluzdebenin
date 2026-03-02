@@ -31,7 +31,7 @@ export default function CampaignsStrip({ lang, campaigns }: Props) {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <div className="text-center mb-10">
-          <span className="inline-block bg-accent text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-3">
+          <span className="inline-block bg-orange-700 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-3">
             {c.label}
           </span>
           <h2 className="text-3xl font-extrabold text-gray-900 mb-3">{c.title}</h2>
