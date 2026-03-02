@@ -109,11 +109,22 @@ export default function GeneralSettings() {
                   <button
                     type="button"
                     onClick={() => setValues(v => ({ ...v, [f.key]: on ? '0' : '1' }))}
-                    className={`relative w-10 h-5 rounded-full transition-colors ${on ? 'bg-primary-800' : 'bg-gray-300'}`}
+                    className="relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-800 focus:ring-offset-1"
+                    style={{ backgroundColor: on ? '#065F46' : '#9CA3AF' }}
+                    aria-checked={on}
+                    role="switch"
                   >
-                    <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${on ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                    <span
+                      className="absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"
+                      style={{ transform: on ? 'translateX(1.375rem)' : 'translateX(0.25rem)' }}
+                    />
                   </button>
-                  <span className="text-sm text-gray-700">{f.label}</span>
+                  <span className="text-sm text-gray-700">
+                    {f.label}
+                    <span className={`ml-2 text-xs font-medium ${on ? 'text-green-600' : 'text-gray-400'}`}>
+                      {on ? 'visible' : 'oculto'}
+                    </span>
+                  </span>
                 </label>
               );
             })}

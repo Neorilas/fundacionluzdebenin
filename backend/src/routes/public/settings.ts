@@ -6,6 +6,8 @@ const router = Router();
 const PUBLIC_KEYS = [
   'siteName', 'siteNameFr', 'emailContact', 'phoneContact', 'address',
   'socialFacebook', 'socialInstagram', 'bankAccount', 'bankIban', 'bankBic',
+  'showEmail', 'showPhone', 'showAddress',
+  'foundationNif', 'foundationRegistry',
 ];
 
 // GET /api/settings

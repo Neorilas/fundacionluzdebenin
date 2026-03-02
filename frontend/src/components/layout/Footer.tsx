@@ -1,14 +1,19 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Lang } from '@/lib/types';
+import { Lang, Settings } from '@/lib/types';
 import { t } from '@/lib/i18n';
+import { api } from '@/lib/api';
 
 interface Props {
   lang: Lang;
 }
 
-export default function Footer({ lang }: Props) {
+export default async function Footer({ lang }: Props) {
   const currentYear = new Date().getFullYear();
+  const settings: Settings = await api.getSettings().catch(() => ({} as Settings));
+
+  const fbUrl = settings.socialFacebook || 'https://facebook.com';
+  const igUrl = settings.socialInstagram || 'https://instagram.com';
 
   return (
     <footer className="bg-primary-900 text-primary-100">
@@ -30,10 +35,10 @@ export default function Footer({ lang }: Props) {
               {t(lang, 'footer.tagline')}
             </p>
             <div className="flex gap-1 mt-4">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
+              <a href={fbUrl} target="_blank" rel="noopener noreferrer"
                 aria-label="Facebook"
                 className="inline-flex items-center justify-center w-11 h-11 rounded-lg text-primary-300 hover:text-white hover:bg-primary-800 transition-colors text-xl">f</a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
+              <a href={igUrl} target="_blank" rel="noopener noreferrer"
                 aria-label="Instagram"
                 className="inline-flex items-center justify-center w-11 h-11 rounded-lg text-primary-300 hover:text-white hover:bg-primary-800 transition-colors text-lg">ig</a>
             </div>
@@ -89,9 +94,15 @@ export default function Footer({ lang }: Props) {
               {lang === 'es' ? 'Contacto' : 'Contact'}
             </h3>
             <ul className="space-y-2 text-sm text-primary-300">
-              <li>📧 info@fundacionluzdebenin.org</li>
-              <li>📞 +34 612 345 678</li>
-              <li>📍 Madrid, España</li>
+              {settings.showEmail !== '0' && (
+                <li>📧 {settings.emailContact || 'info@fundacionluzdebenin.org'}</li>
+              )}
+              {settings.showPhone !== '0' && (
+                <li>📞 {settings.phoneContact || '+34 612 345 678'}</li>
+              )}
+              {settings.showAddress !== '0' && (
+                <li>📍 {settings.address || 'Madrid, España'}</li>
+              )}
             </ul>
           </div>
         </div>
