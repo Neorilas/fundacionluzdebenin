@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function ContactForm({ lang }: Props) {
-  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '', website: '' });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
 
   const handleSubmit = async (e: FormEvent) => {
@@ -19,7 +19,7 @@ export default function ContactForm({ lang }: Props) {
     try {
       await api.sendContact(form);
       setStatus('success');
-      setForm({ name: '', email: '', subject: '', message: '' });
+      setForm({ name: '', email: '', subject: '', message: '', website: '' });
     } catch {
       setStatus('error');
     }
@@ -29,6 +29,17 @@ export default function ContactForm({ lang }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Honeypot: hidden field for bots — humans never fill this */}
+      <input
+        type="text"
+        name="website"
+        value={form.website}
+        onChange={(e) => set('website', e.target.value)}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0, pointerEvents: 'none' }}
+      />
       {status === 'success' && (
         <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm">
           ✓ {t(lang, 'contact.form.success')}

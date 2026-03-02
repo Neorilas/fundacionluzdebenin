@@ -115,6 +115,19 @@
     "loading": "Chargement...",
     "error": "Erreur lors du chargement du contenu"
   },
+  "newsletter": {
+    "title": "Restez informé",
+    "subtitle": "Recevez des nouvelles sur nos projets au Bénin, nos progrès et comment vous pouvez continuer à aider.",
+    "placeholder": "Votre email",
+    "button": "M'abonner",
+    "sending": "Envoi...",
+    "success": "Abonné ! Bienvenue dans notre communauté.",
+    "alreadySubscribed": "Vous êtes déjà abonné ! Merci pour votre soutien.",
+    "error": "Erreur lors de l'abonnement. Veuillez réessayer.",
+    "privacy": "Pas de spam. Vous pouvez vous désabonner à tout moment.",
+    "donorTitle": "Recevez des nouvelles de votre impact",
+    "donorSubtitle": "Abonnez-vous à la newsletter et nous vous dirons comment votre don améliore des vies au Bénin."
+  },
   "donation": {
     "title": "Faire un don",
     "subtitle": "Choisissez comment collaborer",

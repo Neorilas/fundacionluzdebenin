@@ -33,6 +33,12 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     }).then(r => r.json()),
+  subscribeNewsletter: (email: string, lang: string) =>
+    fetch(`${API_URL}/api/newsletter/subscribe`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, lang }),
+    }).then(r => r.json()) as Promise<{ success?: boolean; error?: string; alreadySubscribed?: boolean }>,
   getCampaigns: () => fetchAPI<Campaign[]>('/api/campaigns'),
   getCampaign: (slug: string) => fetchAPI<Campaign>(`/api/campaigns/${slug}`),
   getStripeProducts: () =>

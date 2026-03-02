@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Lang } from '@/lib/types';
+import NewsletterInline from '@/components/ui/NewsletterInline';
 
 export const revalidate = 0;
 
@@ -49,6 +50,7 @@ export default async function SuccessPage({ params }: { params: Promise<{ lang: 
             {L.seeProjects}
           </Link>
         </div>
+        <NewsletterInline lang={l} />
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ import contactPublic from './routes/public/contact';
 import stripeWebhook from './routes/public/stripeWebhook';
 import stripePublic from './routes/public/stripe';
 import campaignsPublic from './routes/public/campaigns';
+import newsletterPublic from './routes/public/newsletter';
 
 // Admin routes
 import authAdmin from './routes/admin/auth';
@@ -63,6 +64,7 @@ app.use('/api/settings', settingsPublic);
 app.use('/api/contact', contactPublic);
 app.use('/api/stripe', stripePublic);
 app.use('/api/campaigns', campaignsPublic);
+app.use('/api/newsletter', newsletterPublic);
 
 // Admin API routes
 app.use('/api/admin/auth', authAdmin);

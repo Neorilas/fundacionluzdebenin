@@ -18,6 +18,11 @@ services:
       FRONTEND_URL: https://${DOMAIN}
       FRONTEND_INTERNAL_URL: http://frontend:3000
       REVALIDATE_SECRET: ${JWT_SECRET}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      CONTACT_EMAIL: ${CONTACT_EMAIL}
+      MAILCHIMP_API_KEY: ${MAILCHIMP_API_KEY}
+      MAILCHIMP_AUDIENCE_ID: ${MAILCHIMP_AUDIENCE_ID}
+      MAILCHIMP_SERVER: ${MAILCHIMP_SERVER}
     volumes:
       - sqlite_data:/data          # Base de datos SQLite persistente
       - uploads_data:/app/uploads  # Imágenes subidas persistentes

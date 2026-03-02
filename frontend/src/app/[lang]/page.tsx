@@ -8,6 +8,7 @@ import FeaturedProjects from '@/components/home/FeaturedProjects';
 import LatestBlog from '@/components/home/LatestBlog';
 import DonationCTA from '@/components/home/DonationCTA';
 import CampaignsStrip from '@/components/home/CampaignsStrip';
+import NewsletterStrip from '@/components/home/NewsletterStrip';
 
 export const revalidate = 60;
 
@@ -100,6 +101,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       <FeaturedProjects lang={l} projects={proj} />
       <LatestBlog lang={l} posts={blog} />
       <DonationCTA lang={l} sec={sec} />
+      <NewsletterStrip lang={l} />
     </>
   );
 }
