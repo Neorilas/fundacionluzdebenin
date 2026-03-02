@@ -44,7 +44,7 @@ async function main() {
   for (const setting of settings) {
     await prisma.setting.upsert({
       where: { key: setting.key },
-      update: { value: setting.value },
+      update: {}, // Never overwrite user-changed settings
       create: setting,
     });
   }
@@ -149,7 +149,7 @@ async function main() {
   for (const section of pageSections) {
     await prisma.pageSection.upsert({
       where: { page_section_key: { page: section.page, section: section.section, key: section.key } },
-      update: { valueEs: section.valueEs, valueFr: section.valueFr },
+      update: {}, // Never overwrite user-edited content
       create: section,
     });
   }
@@ -208,11 +208,9 @@ async function main() {
   ];
 
   for (const project of projects) {
-    // Don't overwrite images on update — users upload images via admin
-    const { images: _images, ...projectUpdate } = project;
     await prisma.project.upsert({
       where: { slug: project.slug },
-      update: projectUpdate,
+      update: {}, // Never overwrite user-edited projects
       create: project,
     });
   }
@@ -293,7 +291,7 @@ Il y a trois ans, nous avons lancé notre programme de santé materno-infantile 
   for (const post of posts) {
     await prisma.blogPost.upsert({
       where: { slug: post.slug },
-      update: post,
+      update: {}, // Never overwrite user-edited posts
       create: post,
     });
   }
@@ -411,7 +409,7 @@ Il y a trois ans, nous avons lancé notre programme de santé materno-infantile 
   for (const campaign of campaigns) {
     await prisma.campaign.upsert({
       where: { slug: campaign.slug },
-      update: campaign,
+      update: {},
       create: campaign,
     });
   }

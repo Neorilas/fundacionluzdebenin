@@ -325,10 +325,15 @@ export default function PagesEditor() {
 
   const handleSaveSection = async (sectionName: string, items: Section[]) => {
     setSaving(sectionName);
-    await Promise.all(items.map(item => api.put(`/admin/pages/${item.id}`, edits[item.id])));
-    setSaving(null);
-    setSaved(sectionName);
-    setTimeout(() => setSaved(null), 2500);
+    try {
+      await Promise.all(items.map(item => api.put(`/admin/pages/${item.id}`, edits[item.id])));
+      setSaved(sectionName);
+      setTimeout(() => setSaved(null), 2500);
+    } catch {
+      alert('Error al guardar. Comprueba que has iniciado sesión y vuelve a intentarlo.');
+    } finally {
+      setSaving(null);
+    }
   };
 
   const validSections = VALID_SECTIONS[selectedPage] || {};
