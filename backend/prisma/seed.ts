@@ -230,6 +230,16 @@ async function main() {
   }
   console.log('✅ Page sections created');
 
+  // ── Contenido gestionado por el admin (proyectos, posts, campañas) ──────────
+  // Solo se siembra la primera vez. Si el admin borra un registro, no vuelve a
+  // aparecer en el siguiente deploy. El flag _initialSeeded actúa de marcador.
+  const alreadySeeded = await prisma.setting.findUnique({ where: { key: '_initialSeeded' } });
+  if (alreadySeeded) {
+    console.log('✅ User-managed content untouched (already seeded)');
+    console.log('\n🎉 Database seeded successfully!');
+    return;
+  }
+
   // Projects
   const projects = [
     {
@@ -489,6 +499,9 @@ Il y a trois ans, nous avons lancé notre programme de santé materno-infantile 
     });
   }
   console.log('✅ Campaigns created');
+
+  // Marcar la BD como ya inicializada para que este bloque no vuelva a ejecutarse
+  await prisma.setting.create({ data: { key: '_initialSeeded', value: 'true' } });
 
   console.log('\n🎉 Database seeded successfully!');
   console.log('👤 Admin login: admin@fundacionluzdebenin.org / admin123');
