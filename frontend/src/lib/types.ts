@@ -48,6 +48,9 @@ export interface Settings {
   socialInstagram?: string;
   foundationNif?: string;
   foundationRegistry?: string;
+  showEmail?: string;
+  showPhone?: string;
+  showAddress?: string;
 }
 
 export type Lang = 'es' | 'fr';

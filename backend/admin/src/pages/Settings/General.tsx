@@ -37,6 +37,9 @@ export default function GeneralSettings() {
     updates.siteName = values.siteName || '';
     updates.siteNameFr = values.siteNameFr || '';
     for (const f of SIMPLE_FIELDS) { updates[f.key] = values[f.key] || ''; }
+    updates.showEmail   = values.showEmail   ?? '1';
+    updates.showPhone   = values.showPhone   ?? '1';
+    updates.showAddress = values.showAddress ?? '1';
     await api.put('/admin/settings', updates);
     setSaving(false);
     setSaved(true);
@@ -91,6 +94,32 @@ export default function GeneralSettings() {
             />
           </div>
         ))}
+
+        <div className="pt-2">
+          <h4 className="text-sm font-semibold text-gray-700 mb-3">Visibilidad en la página de Contacto</h4>
+          <div className="space-y-3">
+            {([
+              { key: 'showEmail',   label: 'Mostrar email' },
+              { key: 'showPhone',   label: 'Mostrar teléfono' },
+              { key: 'showAddress', label: 'Mostrar dirección' },
+            ] as const).map(f => {
+              const on = values[f.key] !== '0';
+              return (
+                <label key={f.key} className="flex items-center gap-3 cursor-pointer select-none">
+                  <button
+                    type="button"
+                    onClick={() => setValues(v => ({ ...v, [f.key]: on ? '0' : '1' }))}
+                    className={`relative w-10 h-5 rounded-full transition-colors ${on ? 'bg-primary-800' : 'bg-gray-300'}`}
+                  >
+                    <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${on ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                  </button>
+                  <span className="text-sm text-gray-700">{f.label}</span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
           {saved && <span className="text-sm text-green-600 font-medium">✓ Guardado correctamente</span>}
           <div className="ml-auto">

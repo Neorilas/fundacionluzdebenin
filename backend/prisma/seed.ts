@@ -33,6 +33,9 @@ async function main() {
     { key: 'socialInstagram', value: 'https://instagram.com/fundacionluzdebenin' },
     { key: 'foundationNif', value: 'G12345678' },
     { key: 'foundationRegistry', value: 'Registro de Fundaciones nº 1234' },
+    { key: 'showEmail',   value: '1' },
+    { key: 'showPhone',   value: '1' },
+    { key: 'showAddress', value: '1' },
   ];
 
   for (const setting of settings) {

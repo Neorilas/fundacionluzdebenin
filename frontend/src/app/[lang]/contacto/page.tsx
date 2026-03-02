@@ -63,27 +63,33 @@ export default async function ContactoPage({ params }: { params: Promise<{ lang:
             <div className="bg-primary-50 rounded-2xl p-6 border border-primary-100">
               <h3 className="font-bold text-primary-800 mb-4">{l === 'es' ? 'Información de contacto' : 'Informations de contact'}</h3>
               <div className="space-y-3 text-sm text-gray-700">
-                <div className="flex items-start gap-3">
-                  <span className="text-primary-800 text-lg">📧</span>
-                  <div>
-                    <p className="font-medium">{t(l, 'contact.info.email')}</p>
-                    <p className="text-muted">{settings.emailContact || 'info@fundacionluzdebenin.org'}</p>
+                {settings.showEmail !== '0' && (
+                  <div className="flex items-start gap-3">
+                    <span className="text-primary-800 text-lg">📧</span>
+                    <div>
+                      <p className="font-medium">{t(l, 'contact.info.email')}</p>
+                      <p className="text-muted">{settings.emailContact || 'info@fundacionluzdebenin.org'}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-primary-800 text-lg">📞</span>
-                  <div>
-                    <p className="font-medium">{t(l, 'contact.info.phone')}</p>
-                    <p className="text-muted">{settings.phoneContact || '+34 612 345 678'}</p>
+                )}
+                {settings.showPhone !== '0' && (
+                  <div className="flex items-start gap-3">
+                    <span className="text-primary-800 text-lg">📞</span>
+                    <div>
+                      <p className="font-medium">{t(l, 'contact.info.phone')}</p>
+                      <p className="text-muted">{settings.phoneContact || '+34 612 345 678'}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-primary-800 text-lg">📍</span>
-                  <div>
-                    <p className="font-medium">{t(l, 'contact.info.address')}</p>
-                    <p className="text-muted">{settings.address || 'Madrid, España'}</p>
+                )}
+                {settings.showAddress !== '0' && (
+                  <div className="flex items-start gap-3">
+                    <span className="text-primary-800 text-lg">📍</span>
+                    <div>
+                      <p className="font-medium">{t(l, 'contact.info.address')}</p>
+                      <p className="text-muted">{settings.address || 'Madrid, España'}</p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
 
