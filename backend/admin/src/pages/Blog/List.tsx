@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../api';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 interface Post {
   id: string;
@@ -14,6 +15,7 @@ interface Post {
 export default function BlogList() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [confirm, setConfirm] = useState<{ id: string; name: string } | null>(null);
 
   const load = () => {
     api.get('/admin/blog').then(r => setPosts(r.data)).finally(() => setLoading(false));
@@ -21,9 +23,10 @@ export default function BlogList() {
 
   useEffect(() => { load(); }, []);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('¿Eliminar este post?')) return;
-    await api.delete(`/admin/blog/${id}`);
+  const handleDelete = async () => {
+    if (!confirm) return;
+    await api.delete(`/admin/blog/${confirm.id}`);
+    setConfirm(null);
     load();
   };
 
@@ -72,7 +75,7 @@ export default function BlogList() {
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Link to={`/admin/blog/${p.id}`} className="text-primary-800 hover:underline text-xs">Editar</Link>
-                      <button onClick={() => handleDelete(p.id)} className="text-red-600 hover:underline text-xs">Eliminar</button>
+                      <button onClick={() => setConfirm({ id: p.id, name: p.titleEs })} className="text-red-600 hover:underline text-xs">Eliminar</button>
                     </div>
                   </td>
                 </tr>
@@ -85,6 +88,14 @@ export default function BlogList() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!confirm}
+        title="¿Eliminar post?"
+        message={`Se eliminará permanentemente "${confirm?.name}". Esta acción no se puede deshacer.`}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirm(null)}
+      />
     </div>
   );
 }

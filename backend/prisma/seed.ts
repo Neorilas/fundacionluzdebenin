@@ -4,7 +4,15 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Seeding database...');
+  // Skip seed if DB already has data (not a fresh install).
+  // This prevents re-creating deleted records and overwriting user edits on every deploy.
+  const adminCount = await prisma.adminUser.count();
+  if (adminCount > 0) {
+    console.log('✅ Database already initialized — skipping seed');
+    return;
+  }
+
+  console.log('🌱 Fresh database detected — seeding initial data...');
 
   // Admin user
   const passwordHash = await bcrypt.hash('admin123', 10);
