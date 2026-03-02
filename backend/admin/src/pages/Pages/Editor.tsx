@@ -47,12 +47,14 @@ const VALID_SECTIONS: Record<string, Record<string, string[]>> = {
   'quienes-somos': {
     'hero': ['title', 'subtitle'],
     'history': ['title', 'text'],
-    'timeline-2012': ['event'],
-    'timeline-2014': ['event'],
-    'timeline-2016': ['event'],
-    'timeline-2018': ['event'],
-    'timeline-2020': ['event'],
-    'timeline-2024': ['event'],
+    'timeline-1': ['year', 'event'],
+    'timeline-2': ['year', 'event'],
+    'timeline-3': ['year', 'event'],
+    'timeline-4': ['year', 'event'],
+    'timeline-5': ['year', 'event'],
+    'timeline-6': ['year', 'event'],
+    'timeline-7': ['year', 'event'],
+    'timeline-8': ['year', 'event'],
     'value1': ['icon', 'title', 'desc'],
     'value2': ['icon', 'title', 'desc'],
     'value3': ['icon', 'title', 'desc'],
@@ -93,12 +95,14 @@ const SECTION_LABELS: Record<string, string> = {
   'donation': '🏦 Donación por Transferencia',
   'impact': '✨ Impacto de tu Donación',
   'methodology': '🔄 Metodología (4 pasos)',
-  'timeline-2012': '📅 Hito 2012',
-  'timeline-2014': '📅 Hito 2014',
-  'timeline-2016': '📅 Hito 2016',
-  'timeline-2018': '📅 Hito 2018',
-  'timeline-2020': '📅 Hito 2020',
-  'timeline-2024': '📅 Hito 2024',
+  'timeline-1': '📅 Hito 1',
+  'timeline-2': '📅 Hito 2',
+  'timeline-3': '📅 Hito 3',
+  'timeline-4': '📅 Hito 4',
+  'timeline-5': '📅 Hito 5',
+  'timeline-6': '📅 Hito 6',
+  'timeline-7': '📅 Hito 7 (vacío = oculto)',
+  'timeline-8': '📅 Hito 8 (vacío = oculto)',
   'value1': '💎 Valor 1',
   'value2': '💎 Valor 2',
   'value3': '💎 Valor 3',
@@ -132,6 +136,7 @@ const KEY_LABELS: Record<string, string> = {
   '30eur': 'Con 30 € puedes...',
   '100eur': 'Con 100 € puedes...',
   '500eur': 'Con 500 € puedes...',
+  'year': 'Año',
   'event': 'Descripción del hito',
   'step1': 'Paso 1',
   'step2': 'Paso 2',
@@ -140,7 +145,7 @@ const KEY_LABELS: Record<string, string> = {
 };
 
 const IS_LONG: Set<string> = new Set(['text', 'desc', 'quote', 'tagline', 'bottomText', '10eur', '30eur', '100eur', '500eur', 'event']);
-const IS_NUMBERS_ONLY: Set<string> = new Set(['stat1Value', 'stat2Value', 'stat3Value', 'value', 'amount']);
+const IS_NUMBERS_ONLY: Set<string> = new Set(['stat1Value', 'stat2Value', 'stat3Value', 'value', 'amount', 'year']);
 
 const PAGE_NOTES: Record<string, string> = {
   'home': 'Edita la cita bíblica, eslogan, estadísticas, pilares de misión, contadores y bloque de donación.',
