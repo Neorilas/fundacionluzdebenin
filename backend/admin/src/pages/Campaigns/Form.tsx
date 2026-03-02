@@ -71,6 +71,7 @@ export default function CampaignsForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [form, setForm] = useState<FormData>(empty);
+  const [priceStr, setPriceStr] = useState('5.00');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const isEdit = !!id;
@@ -80,6 +81,7 @@ export default function CampaignsForm() {
       setLoading(true);
       api.get(`/admin/campaigns/${id}`).then(r => {
         const d = r.data;
+        setPriceStr((d.amountCents / 100).toFixed(2));
         setForm({
           slug: d.slug, emoji: d.emoji, amountCents: d.amountCents,
           colorScheme: d.colorScheme, active: d.active, sortOrder: d.sortOrder,
@@ -178,8 +180,17 @@ export default function CampaignsForm() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Precio (€) <span className="text-red-500">*</span></label>
               <input type="number" min="0" step="0.01"
-                value={(form.amountCents / 100).toFixed(2)}
-                onChange={e => set('amountCents', Math.round(parseFloat(e.target.value) * 100))}
+                value={priceStr}
+                onChange={e => setPriceStr(e.target.value)}
+                onBlur={() => {
+                  const cents = Math.round(parseFloat(priceStr) * 100);
+                  if (!isNaN(cents) && cents >= 0) {
+                    set('amountCents', cents);
+                    setPriceStr((cents / 100).toFixed(2));
+                  } else {
+                    setPriceStr((form.amountCents / 100).toFixed(2));
+                  }
+                }}
                 required
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800" />
               <p className="text-xs text-gray-400 mt-1">{form.amountCents} céntimos</p>
