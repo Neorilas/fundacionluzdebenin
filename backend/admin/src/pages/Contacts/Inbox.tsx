@@ -42,9 +42,9 @@ export default function ContactsInbox() {
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Mensajes de Contacto</h2>
-      <div className="flex gap-4 h-[calc(100vh-200px)]">
+      <div className="flex flex-col md:flex-row gap-4 md:h-[calc(100vh-200px)]">
         {/* List */}
-        <div className="w-80 bg-white rounded-xl border border-gray-200 overflow-y-auto">
+        <div className={`md:w-80 bg-white rounded-xl border border-gray-200 overflow-y-auto ${selected ? 'hidden md:block' : ''}`}>
           {loading ? (
             <div className="flex items-center justify-center h-40"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-800"></div></div>
           ) : messages.length === 0 ? (
@@ -70,9 +70,15 @@ export default function ContactsInbox() {
         </div>
 
         {/* Detail */}
-        <div className="flex-1 bg-white rounded-xl border border-gray-200 p-6">
+        <div className={`flex-1 bg-white rounded-xl border border-gray-200 p-6 ${!selected ? 'hidden md:flex' : ''}`}>
           {selected ? (
             <div>
+              <button
+                onClick={() => setSelected(null)}
+                className="md:hidden mb-4 text-sm text-primary-800 hover:underline"
+              >
+                ← Volver a mensajes
+              </button>
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">{selected.subject}</h3>

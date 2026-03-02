@@ -47,7 +47,8 @@ export default function BlogList() {
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[540px]">
             <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
               <tr>
                 <th className="px-4 py-3 text-left">Título</th>
@@ -81,6 +82,7 @@ export default function BlogList() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>
