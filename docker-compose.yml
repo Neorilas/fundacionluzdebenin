@@ -16,6 +16,8 @@ services:
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
       FRONTEND_URL: https://${DOMAIN}
+      FRONTEND_INTERNAL_URL: http://frontend:3000
+      REVALIDATE_SECRET: ${JWT_SECRET}
     volumes:
       - sqlite_data:/data          # Base de datos SQLite persistente
       - uploads_data:/app/uploads  # Imágenes subidas persistentes
@@ -36,9 +38,9 @@ services:
         NEXT_PUBLIC_API_URL: https://${DOMAIN}
     restart: unless-stopped
     environment:
-      # Runtime env var (not baked at build time) so ISR/SSR server-side fetches
-      # bypass the public domain DNS and call the backend directly.
+      # Runtime env vars (not baked at build time)
       API_INTERNAL_URL: http://backend:3001
+      REVALIDATE_SECRET: ${JWT_SECRET}
     expose:
       - "3000"
     depends_on:

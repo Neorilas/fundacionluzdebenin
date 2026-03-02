@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import prisma from '../../lib/prisma';
 import { authMiddleware } from '../../middleware/authMiddleware';
+import { revalidate, PATHS } from '../../lib/revalidate';
 
 const router = Router();
 router.use(authMiddleware);
@@ -79,6 +80,7 @@ router.post('/', async (req, res, next) => {
         metaDescEs: metaDescEs || '', metaDescFr: metaDescFr || '',
       },
     });
+    revalidate(PATHS.campaign(campaign.slug));
     res.status(201).json(parseCampaign(campaign));
   } catch (error) { next(error); }
 });
@@ -111,6 +113,7 @@ router.put('/:id', async (req, res, next) => {
       where: { id: req.params.id },
       data,
     });
+    revalidate(PATHS.campaign(campaign.slug));
     res.json(parseCampaign(campaign));
   } catch (error) { next(error); }
 });
@@ -118,7 +121,8 @@ router.put('/:id', async (req, res, next) => {
 // DELETE /api/admin/campaigns/:id
 router.delete('/:id', async (req, res, next) => {
   try {
-    await prisma.campaign.delete({ where: { id: req.params.id } });
+    const campaign = await prisma.campaign.delete({ where: { id: req.params.id } });
+    revalidate(PATHS.campaign(campaign.slug));
     res.json({ success: true });
   } catch (error) { next(error); }
 });

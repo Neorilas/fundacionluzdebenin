@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import prisma from '../../lib/prisma';
 import { authMiddleware } from '../../middleware/authMiddleware';
+import { revalidate, PATHS } from '../../lib/revalidate';
 
 const router = Router();
 router.use(authMiddleware);
@@ -35,6 +36,7 @@ router.post('/', async (req, res, next) => {
         order: order !== undefined ? parseInt(order, 10) : 0,
       },
     });
+    revalidate(PATHS.project(slug));
     res.status(201).json(parseProject(project));
   } catch (error) { next(error); }
 });
@@ -58,6 +60,7 @@ router.put('/:id', async (req, res, next) => {
         ...(order !== undefined && { order: parseInt(order, 10) }),
       },
     });
+    revalidate(PATHS.project(project.slug));
     res.json(parseProject(project));
   } catch (error) { next(error); }
 });
@@ -65,7 +68,8 @@ router.put('/:id', async (req, res, next) => {
 // DELETE /api/admin/projects/:id
 router.delete('/:id', async (req, res, next) => {
   try {
-    await prisma.project.delete({ where: { id: req.params.id } });
+    const project = await prisma.project.delete({ where: { id: req.params.id } });
+    revalidate(PATHS.project(project.slug));
     res.json({ success: true });
   } catch (error) { next(error); }
 });

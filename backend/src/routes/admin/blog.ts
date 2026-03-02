@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import prisma from '../../lib/prisma';
 import { authMiddleware } from '../../middleware/authMiddleware';
+import { revalidate, PATHS } from '../../lib/revalidate';
 
 const router = Router();
 router.use(authMiddleware);
@@ -36,6 +37,7 @@ router.post('/', async (req, res, next) => {
         publishedAt: published ? new Date() : null,
       },
     });
+    revalidate(PATHS.blogPost(post.slug));
     res.status(201).json(post);
   } catch (error) { next(error); }
 });
@@ -62,6 +64,7 @@ router.put('/:id', async (req, res, next) => {
         }),
       },
     });
+    revalidate(PATHS.blogPost(post.slug));
     res.json(post);
   } catch (error) { next(error); }
 });
@@ -69,7 +72,8 @@ router.put('/:id', async (req, res, next) => {
 // DELETE /api/admin/blog/:id
 router.delete('/:id', async (req, res, next) => {
   try {
-    await prisma.blogPost.delete({ where: { id: req.params.id } });
+    const post = await prisma.blogPost.delete({ where: { id: req.params.id } });
+    revalidate(PATHS.blogPost(post.slug));
     res.json({ success: true });
   } catch (error) { next(error); }
 });
