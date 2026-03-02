@@ -1,9 +1,8 @@
 import { useEffect, useState, FormEvent } from 'react';
 import api from '../../api';
+import BilingualField from '../../components/BilingualField';
 
-const FIELDS = [
-  { key: 'siteName', label: 'Nombre del sitio (ES)', placeholder: 'Fundación Luz de Benín' },
-  { key: 'siteNameFr', label: 'Nombre del sitio (FR)', placeholder: 'Fondation Lumière du Bénin' },
+const SIMPLE_FIELDS = [
   { key: 'emailContact', label: 'Email de contacto', placeholder: 'info@fundacionluzdebenin.org' },
   { key: 'phoneContact', label: 'Teléfono de contacto', placeholder: '+34 612 345 678' },
   { key: 'address', label: 'Dirección', placeholder: 'Madrid, España' },
@@ -33,7 +32,9 @@ export default function GeneralSettings() {
     e.preventDefault();
     setSaving(true);
     const updates: Record<string, string> = {};
-    for (const f of FIELDS) { updates[f.key] = values[f.key] || ''; }
+    updates.siteName = values.siteName || '';
+    updates.siteNameFr = values.siteNameFr || '';
+    for (const f of SIMPLE_FIELDS) { updates[f.key] = values[f.key] || ''; }
     await api.put('/admin/settings', updates);
     setSaving(false);
     setSaved(true);
@@ -66,7 +67,17 @@ export default function GeneralSettings() {
 
       <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
         <h3 className="font-semibold text-gray-800 mb-4">Información del sitio</h3>
-        {FIELDS.map(f => (
+
+        <BilingualField
+          label="Nombre del sitio"
+          nameEs="siteName"
+          nameFr="siteNameFr"
+          valueEs={values.siteName || ''}
+          valueFr={values.siteNameFr || ''}
+          onChange={(name, value) => setValues(v => ({ ...v, [name]: value }))}
+        />
+
+        {SIMPLE_FIELDS.map(f => (
           <div key={f.key}>
             <label className="block text-sm font-medium text-gray-700 mb-1">{f.label}</label>
             <input

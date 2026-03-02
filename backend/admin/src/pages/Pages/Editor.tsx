@@ -13,13 +13,12 @@ interface Section {
 
 const PAGES = ['home', 'que-hacemos', 'quienes-somos', 'colabora'];
 const PAGE_LABELS: Record<string, string> = {
-  'home': 'Inicio',
-  'que-hacemos': 'Qué Hacemos',
-  'quienes-somos': 'Quiénes Somos',
-  'colabora': 'Colabora',
+  'home': '🏠 Inicio',
+  'que-hacemos': '💡 Qué Hacemos',
+  'quienes-somos': '👥 Quiénes Somos',
+  'colabora': '❤️ Colabora',
 };
 
-// Secciones y claves que el frontend realmente lee de la API
 const VALID_SECTIONS: Record<string, Record<string, string[]>> = {
   'home': {
     'hero': ['quote', 'quoteRef', 'tagline', 'stat1Value', 'stat1Label', 'stat2Value', 'stat2Label', 'stat3Value', 'stat3Label'],
@@ -55,26 +54,26 @@ const VALID_SECTIONS: Record<string, Record<string, string[]>> = {
 };
 
 const SECTION_LABELS: Record<string, string> = {
-  'hero': 'Cabecera',
-  'mission': 'Bloque de Misión',
-  'pillar1': 'Pilar 1',
-  'pillar2': 'Pilar 2',
-  'pillar3': 'Pilar 3',
-  'stat1': 'Estadística 1',
-  'stat2': 'Estadística 2',
-  'stat3': 'Estadística 3',
-  'stat4': 'Estadística 4',
-  'donationCta': 'CTA de Donación',
-  'impact1': 'Impacto — 1er importe',
-  'impact2': 'Impacto — 2º importe',
-  'impact3': 'Impacto — 3er importe',
-  'impact4': 'Impacto — 4º importe',
-  'education': 'Pilar — Educación',
-  'health': 'Pilar — Salud',
-  'development': 'Pilar — Desarrollo',
-  'history': 'Historia de la Fundación',
-  'donation': 'Donación por Transferencia',
-  'impact': 'Impacto de tu Donación',
+  'hero': '🖼️ Cabecera',
+  'mission': '🎯 Bloque de Misión',
+  'pillar1': '1️⃣ Pilar 1',
+  'pillar2': '2️⃣ Pilar 2',
+  'pillar3': '3️⃣ Pilar 3',
+  'stat1': '📊 Estadística 1',
+  'stat2': '📊 Estadística 2',
+  'stat3': '📊 Estadística 3',
+  'stat4': '📊 Estadística 4',
+  'donationCta': '💝 CTA de Donación',
+  'impact1': '💰 Impacto — 10€',
+  'impact2': '💰 Impacto — 30€',
+  'impact3': '💰 Impacto — 100€',
+  'impact4': '💰 Impacto — 500€',
+  'education': '📚 Pilar — Educación',
+  'health': '🏥 Pilar — Salud',
+  'development': '🌱 Pilar — Desarrollo',
+  'history': '📖 Historia de la Fundación',
+  'donation': '🏦 Donación por Transferencia',
+  'impact': '✨ Impacto de tu Donación',
 };
 
 const KEY_LABELS: Record<string, string> = {
@@ -86,30 +85,219 @@ const KEY_LABELS: Record<string, string> = {
   'quote': 'Cita bíblica',
   'quoteRef': 'Referencia bíblica',
   'tagline': 'Eslogan',
-  'stat1Value': 'Stat 1 — Valor',
+  'stat1Value': 'Stat 1 — Número',
   'stat1Label': 'Stat 1 — Etiqueta',
-  'stat2Value': 'Stat 2 — Valor',
+  'stat2Value': 'Stat 2 — Número',
   'stat2Label': 'Stat 2 — Etiqueta',
-  'stat3Value': 'Stat 3 — Valor',
+  'stat3Value': 'Stat 3 — Número',
   'stat3Label': 'Stat 3 — Etiqueta',
-  'value': 'Valor',
+  'value': 'Número / Valor',
   'label': 'Etiqueta',
-  'sectionTitle': 'Título de sección',
+  'sectionTitle': 'Título de la sección',
   'bottomText': 'Texto inferior',
-  'amount': 'Importe',
-  '10eur': 'Con 10 €',
-  '30eur': 'Con 30 €',
-  '100eur': 'Con 100 €',
-  '500eur': 'Con 500 €',
+  'amount': 'Importe (ej: 10€)',
+  '10eur': 'Con 10 € puedes...',
+  '30eur': 'Con 30 € puedes...',
+  '100eur': 'Con 100 € puedes...',
+  '500eur': 'Con 500 € puedes...',
 };
 
-// Aviso sobre contenido fijo en el código para cada página
+const IS_LONG: Set<string> = new Set(['text', 'desc', 'quote', 'tagline', 'bottomText', '10eur', '30eur', '100eur', '500eur']);
+const IS_NUMBERS_ONLY: Set<string> = new Set(['stat1Value', 'stat2Value', 'stat3Value', 'value', 'amount']);
+
 const PAGE_NOTES: Record<string, string> = {
-  'home': 'Puedes editar todos los textos de la página de inicio: cita bíblica, eslogan, estadísticas rápidas del hero, pilares de misión, contador de estadísticas y bloque de donación.',
-  'que-hacemos': 'Los pasos de metodología son fijos en el código. Aquí puedes editar la cabecera y los tres pilares de trabajo.',
-  'quienes-somos': 'Los hitos del timeline y los valores (Compromiso, Sostenibilidad, Transparencia, Dignidad) son fijos en el código. Aquí puedes editar la cabecera y el texto introductorio de historia.',
-  'colabora': 'Las tarjetas de voluntariado, empresas y difusión son fijas en el código. Aquí puedes editar la cabecera, la sección de donación bancaria y los textos de impacto.',
+  'home': 'Edita la cita bíblica, eslogan, estadísticas, pilares de misión, contadores y bloque de donación.',
+  'que-hacemos': 'Los pasos de metodología están en el código. Aquí editas la cabecera y los tres pilares.',
+  'quienes-somos': 'Los hitos del timeline y los valores son fijos. Aquí editas la cabecera e historia.',
+  'colabora': 'Las tarjetas de voluntariado, empresas y difusión son fijas. Aquí editas cabecera, transferencia e impactos.',
 };
+
+// ─── Section Card ────────────────────────────────────────────────────────────
+
+interface SectionCardProps {
+  sectionKey: string;
+  items: Section[];
+  edits: Record<string, { valueEs: string; valueFr: string }>;
+  onEdit: (id: string, field: 'valueEs' | 'valueFr', value: string) => void;
+  onSave: () => void;
+  saving: boolean;
+  saved: boolean;
+}
+
+function SectionCard({ sectionKey, items, edits, onEdit, onSave, saving, saved }: SectionCardProps) {
+  const [translatingId, setTranslatingId] = useState<string | null>(null);
+  const [translatingAll, setTranslatingAll] = useState(false);
+
+  const translateField = async (id: string, valueEs: string) => {
+    if (!valueEs.trim()) return;
+    setTranslatingId(id);
+    try {
+      const r = await api.post('/admin/translate', { text: valueEs, from: 'es', to: 'fr' });
+      onEdit(id, 'valueFr', r.data.translatedText || valueEs);
+    } finally {
+      setTranslatingId(null);
+    }
+  };
+
+  const translateAll = async () => {
+    setTranslatingAll(true);
+    try {
+      for (const item of items) {
+        if (item.key === 'icon' || IS_NUMBERS_ONLY.has(item.key)) continue;
+        const valueEs = edits[item.id]?.valueEs || '';
+        if (!valueEs.trim()) continue;
+        const r = await api.post('/admin/translate', { text: valueEs, from: 'es', to: 'fr' });
+        onEdit(item.id, 'valueFr', r.data.translatedText || valueEs);
+      }
+    } finally {
+      setTranslatingAll(false);
+    }
+  };
+
+  const hasMissingFr = items.some(i => i.key !== 'icon' && !IS_NUMBERS_ONLY.has(i.key) && !(edits[i.id]?.valueFr?.trim()));
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-3 bg-gray-50 border-b border-gray-100">
+        <div className="flex items-center gap-2">
+          <h3 className="font-semibold text-gray-800 text-sm">{SECTION_LABELS[sectionKey] || sectionKey}</h3>
+          {hasMissingFr && (
+            <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Falta FR</span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={translateAll}
+            disabled={translatingAll}
+            title="Traducir todos los campos al francés"
+            className="text-xs text-blue-600 hover:text-blue-800 disabled:opacity-40 flex items-center gap-1 px-2 py-1 rounded hover:bg-blue-50 transition-colors"
+          >
+            {translatingAll
+              ? <span className="inline-block w-3 h-3 border border-blue-600 border-t-transparent rounded-full animate-spin" />
+              : '🌐'
+            }
+            {translatingAll ? 'Traduciendo…' : 'Traducir →FR'}
+          </button>
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={saving}
+            className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${
+              saved
+                ? 'bg-green-600 text-white'
+                : 'bg-primary-800 text-white hover:bg-primary-900 disabled:opacity-50'
+            }`}
+          >
+            {saving ? 'Guardando…' : saved ? '✓ Guardado' : 'Guardar'}
+          </button>
+        </div>
+      </div>
+
+      {/* Fields */}
+      <div className="p-5 space-y-5">
+        {items.map(item => (
+          <div key={item.id}>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium text-gray-700">
+                {KEY_LABELS[item.key] || item.key}
+              </label>
+              {item.key !== 'icon' && !IS_NUMBERS_ONLY.has(item.key) && (
+                <button
+                  type="button"
+                  onClick={() => translateField(item.id, edits[item.id]?.valueEs || '')}
+                  disabled={translatingId === item.id || !edits[item.id]?.valueEs?.trim()}
+                  className="text-xs text-blue-500 hover:text-blue-700 disabled:opacity-30 flex items-center gap-1"
+                >
+                  {translatingId === item.id
+                    ? <span className="inline-block w-3 h-3 border border-blue-500 border-t-transparent rounded-full animate-spin" />
+                    : '🌐'
+                  }
+                  ES→FR
+                </button>
+              )}
+            </div>
+
+            {item.key === 'icon' ? (
+              <div className="flex items-center gap-3">
+                <IconPicker
+                  value={edits[item.id]?.valueEs || ''}
+                  onChange={(emoji) => {
+                    onEdit(item.id, 'valueEs', emoji);
+                    onEdit(item.id, 'valueFr', emoji);
+                  }}
+                />
+                <span className="text-xs text-gray-400">Se aplica en los dos idiomas</span>
+              </div>
+            ) : IS_NUMBERS_ONLY.has(item.key) ? (
+              // Numbers: single field (same value for both langs)
+              <input
+                type="text"
+                value={edits[item.id]?.valueEs || ''}
+                onChange={e => {
+                  onEdit(item.id, 'valueEs', e.target.value);
+                  onEdit(item.id, 'valueFr', e.target.value);
+                }}
+                className="w-48 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
+              />
+            ) : IS_LONG.has(item.key) ? (
+              // Long text: stacked ES then FR
+              <div className="space-y-2">
+                <div>
+                  <div className="text-xs font-medium text-gray-400 mb-1">🇪🇸 Español</div>
+                  <textarea
+                    value={edits[item.id]?.valueEs || ''}
+                    onChange={e => onEdit(item.id, 'valueEs', e.target.value)}
+                    rows={3}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
+                  />
+                </div>
+                <div>
+                  <div className="text-xs font-medium text-gray-400 mb-1">🇫🇷 Français</div>
+                  <textarea
+                    value={edits[item.id]?.valueFr || ''}
+                    onChange={e => onEdit(item.id, 'valueFr', e.target.value)}
+                    rows={3}
+                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800 ${
+                      !edits[item.id]?.valueFr?.trim() ? 'border-amber-200 bg-amber-50' : 'border-gray-300'
+                    }`}
+                  />
+                </div>
+              </div>
+            ) : (
+              // Short text: side-by-side
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                  <div className="text-xs font-medium text-gray-400 mb-1">🇪🇸 Español</div>
+                  <input
+                    type="text"
+                    value={edits[item.id]?.valueEs || ''}
+                    onChange={e => onEdit(item.id, 'valueEs', e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
+                  />
+                </div>
+                <div>
+                  <div className="text-xs font-medium text-gray-400 mb-1">🇫🇷 Français</div>
+                  <input
+                    type="text"
+                    value={edits[item.id]?.valueFr || ''}
+                    onChange={e => onEdit(item.id, 'valueFr', e.target.value)}
+                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800 ${
+                      !edits[item.id]?.valueFr?.trim() ? 'border-amber-200 bg-amber-50' : 'border-gray-300'
+                    }`}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Editor ─────────────────────────────────────────────────────────────
 
 export default function PagesEditor() {
   const [selectedPage, setSelectedPage] = useState('home');
@@ -117,37 +305,34 @@ export default function PagesEditor() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
-  const [editLang, setEditLang] = useState<'es' | 'fr'>('es');
   const [edits, setEdits] = useState<Record<string, { valueEs: string; valueFr: string }>>({});
 
   const load = (page: string) => {
     setLoading(true);
     api.get(`/admin/pages/${page}`).then(r => {
       setSections(r.data);
-      const initEdits: Record<string, { valueEs: string; valueFr: string }> = {};
-      for (const s of r.data) {
-        initEdits[s.id] = { valueEs: s.valueEs, valueFr: s.valueFr };
-      }
-      setEdits(initEdits);
+      const init: Record<string, { valueEs: string; valueFr: string }> = {};
+      for (const s of r.data) init[s.id] = { valueEs: s.valueEs, valueFr: s.valueFr };
+      setEdits(init);
     }).finally(() => setLoading(false));
   };
 
   useEffect(() => { load(selectedPage); }, [selectedPage]);
 
-  const handleSave = async (sectionId: string) => {
-    setSaving(sectionId);
-    await api.put(`/admin/pages/${sectionId}`, edits[sectionId]);
-    setSaving(null);
-    setSaved(sectionId);
-    setTimeout(() => setSaved(null), 2000);
+  const handleEdit = (id: string, field: 'valueEs' | 'valueFr', value: string) => {
+    setEdits(prev => ({ ...prev, [id]: { ...(prev[id] || { valueEs: '', valueFr: '' }), [field]: value } }));
   };
 
-  // Filtrar solo las secciones/claves que el frontend realmente usa
+  const handleSaveSection = async (sectionName: string, items: Section[]) => {
+    setSaving(sectionName);
+    await Promise.all(items.map(item => api.put(`/admin/pages/${item.id}`, edits[item.id])));
+    setSaving(null);
+    setSaved(sectionName);
+    setTimeout(() => setSaved(null), 2500);
+  };
+
   const validSections = VALID_SECTIONS[selectedPage] || {};
-  const filtered = sections.filter(s => {
-    const validKeys = validSections[s.section];
-    return validKeys && validKeys.includes(s.key);
-  });
+  const filtered = sections.filter(s => validSections[s.section]?.includes(s.key));
 
   const grouped: Record<string, Section[]> = {};
   for (const s of filtered) {
@@ -157,21 +342,18 @@ export default function PagesEditor() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Editor de Páginas</h2>
-        <div className="flex border border-gray-300 rounded overflow-hidden text-xs">
-          <button type="button" onClick={() => setEditLang('es')} className={`px-3 py-1.5 ${editLang === 'es' ? 'bg-primary-800 text-white' : 'bg-white text-gray-600'}`}>🇪🇸 ES</button>
-          <button type="button" onClick={() => setEditLang('fr')} className={`px-3 py-1.5 ${editLang === 'fr' ? 'bg-primary-800 text-white' : 'bg-white text-gray-600'}`}>🇫🇷 FR</button>
-        </div>
-      </div>
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">Editor de Páginas</h2>
 
+      {/* Page selector */}
       <div className="flex flex-wrap gap-2 mb-4">
         {PAGES.map(page => (
           <button
             key={page}
             onClick={() => setSelectedPage(page)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              selectedPage === page ? 'bg-primary-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-primary-800'
+              selectedPage === page
+                ? 'bg-primary-800 text-white shadow-sm'
+                : 'bg-white border border-gray-200 text-gray-600 hover:border-primary-800 hover:text-primary-800'
             }`}
           >
             {PAGE_LABELS[page]}
@@ -179,12 +361,22 @@ export default function PagesEditor() {
         ))}
       </div>
 
+      {/* Note */}
       {PAGE_NOTES[selectedPage] && (
-        <div className="mb-5 flex items-start gap-2 px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
-          <span className="mt-0.5 shrink-0">ℹ️</span>
+        <div className="mb-5 flex items-start gap-2 px-4 py-3 bg-blue-50 border border-blue-100 rounded-lg text-sm text-blue-800">
+          <span className="shrink-0">ℹ️</span>
           <span>{PAGE_NOTES[selectedPage]}</span>
         </div>
       )}
+
+      {/* Legend */}
+      <div className="mb-4 flex items-center gap-4 text-xs text-gray-500">
+        <span className="flex items-center gap-1">
+          <span className="inline-block w-3 h-2 rounded bg-amber-100 border border-amber-300"></span>
+          Campo sin traducción al francés
+        </span>
+        <span className="flex items-center gap-1">🌐 Traducir →FR</span>
+      </div>
 
       {loading ? (
         <div className="flex items-center justify-center h-40">
@@ -192,58 +384,17 @@ export default function PagesEditor() {
         </div>
       ) : (
         <div className="space-y-4">
-          {Object.entries(grouped).map(([section, items]) => (
-            <div key={section} className="bg-white rounded-xl border border-gray-200 p-5">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
-                {SECTION_LABELS[section] || section}
-              </h3>
-              <div className="space-y-3">
-                {items.map(item => (
-                  <div key={item.id}>
-                    <div className="flex items-center justify-between mb-1">
-                      <label className="text-xs font-medium text-gray-600">
-                        {KEY_LABELS[item.key] || item.key}
-                      </label>
-                      <div className="flex items-center gap-2">
-                        {saved === item.id && <span className="text-xs text-green-600">✓ Guardado</span>}
-                        <button
-                          onClick={() => handleSave(item.id)}
-                          disabled={saving === item.id}
-                          className="text-xs bg-primary-800 text-white px-3 py-1 rounded hover:bg-primary-900 disabled:opacity-50"
-                        >
-                          {saving === item.id ? 'Guardando...' : 'Guardar'}
-                        </button>
-                      </div>
-                    </div>
-                    {item.key === 'icon' ? (
-                      <div className="flex items-center gap-4">
-                        <IconPicker
-                          value={edits[item.id]?.valueEs || ''}
-                          onChange={(emoji) => setEdits(prev => ({
-                            ...prev,
-                            [item.id]: { valueEs: emoji, valueFr: emoji },
-                          }))}
-                        />
-                        <span className="text-xs text-gray-400">El icono se aplica en los dos idiomas</span>
-                      </div>
-                    ) : (
-                      <textarea
-                        value={editLang === 'es' ? (edits[item.id]?.valueEs || '') : (edits[item.id]?.valueFr || '')}
-                        onChange={(e) => setEdits(prev => ({
-                          ...prev,
-                          [item.id]: {
-                            ...(prev[item.id] || { valueEs: '', valueFr: '' }),
-                            [editLang === 'es' ? 'valueEs' : 'valueFr']: e.target.value,
-                          }
-                        }))}
-                        rows={['text', 'desc', 'quote', 'tagline', 'bottomText'].includes(item.key) || item.key.endsWith('eur') ? 3 : 2}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+          {Object.entries(grouped).map(([sectionKey, items]) => (
+            <SectionCard
+              key={sectionKey}
+              sectionKey={sectionKey}
+              items={items}
+              edits={edits}
+              onEdit={handleEdit}
+              onSave={() => handleSaveSection(sectionKey, items)}
+              saving={saving === sectionKey}
+              saved={saved === sectionKey}
+            />
           ))}
         </div>
       )}

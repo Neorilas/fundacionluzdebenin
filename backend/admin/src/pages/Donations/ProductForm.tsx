@@ -1,6 +1,7 @@
 import { useEffect, useState, FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../api';
+import BilingualField from '../../components/BilingualField';
 
 export default function ProductForm() {
   const { id } = useParams<{ id: string }>();
@@ -105,53 +106,26 @@ export default function ProductForm() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nombre (ES) *</label>
-            <input
-              type="text"
-              required
-              value={form.nameEs}
-              onChange={e => setForm(f => ({ ...f, nameEs: e.target.value }))}
-              placeholder="Ej: Socio básico"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nombre (FR) *</label>
-            <input
-              type="text"
-              required
-              value={form.nameFr}
-              onChange={e => setForm(f => ({ ...f, nameFr: e.target.value }))}
-              placeholder="Ex: Membre basique"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
-            />
-          </div>
-        </div>
+        <BilingualField
+          label="Nombre"
+          nameEs="nameEs"
+          nameFr="nameFr"
+          valueEs={form.nameEs}
+          valueFr={form.nameFr}
+          onChange={(name, value) => setForm(f => ({ ...f, [name]: value }))}
+          required
+        />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Descripción (ES)</label>
-            <textarea
-              value={form.descEs}
-              onChange={e => setForm(f => ({ ...f, descEs: e.target.value }))}
-              rows={2}
-              placeholder="Breve descripción del plan"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800 resize-none"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Descripción (FR)</label>
-            <textarea
-              value={form.descFr}
-              onChange={e => setForm(f => ({ ...f, descFr: e.target.value }))}
-              rows={2}
-              placeholder="Brève description du plan"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800 resize-none"
-            />
-          </div>
-        </div>
+        <BilingualField
+          label="Descripción"
+          nameEs="descEs"
+          nameFr="descFr"
+          valueEs={form.descEs}
+          valueFr={form.descFr}
+          onChange={(name, value) => setForm(f => ({ ...f, [name]: value }))}
+          multiline
+          rows={2}
+        />
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>

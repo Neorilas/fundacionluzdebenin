@@ -3,6 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api';
 import BilingualField from '../../components/BilingualField';
 
+async function translateText(text: string): Promise<string> {
+  if (!text.trim()) return '';
+  const r = await api.post('/admin/translate', { text, from: 'es', to: 'fr' });
+  return r.data.translatedText || text;
+}
+
 interface FormData {
   slug: string;
   titleEs: string; titleFr: string;
@@ -24,6 +30,7 @@ export default function BlogForm() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [contentLang, setContentLang] = useState<'es' | 'fr'>('es');
+  const [translatingContent, setTranslatingContent] = useState(false);
 
   const isEdit = !!id;
 
@@ -118,9 +125,31 @@ export default function BlogForm() {
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-3">
             <label className="text-sm font-medium text-gray-700">Contenido (Markdown)</label>
-            <div className="flex border border-gray-300 rounded overflow-hidden text-xs">
-              <button type="button" onClick={() => setContentLang('es')} className={`px-3 py-1 ${contentLang === 'es' ? 'bg-primary-800 text-white' : 'bg-white text-gray-600'}`}>ES</button>
-              <button type="button" onClick={() => setContentLang('fr')} className={`px-3 py-1 ${contentLang === 'fr' ? 'bg-primary-800 text-white' : 'bg-white text-gray-600'}`}>FR</button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                disabled={translatingContent || !form.contentEs.trim()}
+                onClick={async () => {
+                  setTranslatingContent(true);
+                  try {
+                    const translated = await translateText(form.contentEs);
+                    set('contentFr', translated);
+                    setContentLang('fr');
+                  } catch { alert('Error al traducir'); }
+                  finally { setTranslatingContent(false); }
+                }}
+                className="text-xs text-blue-600 hover:text-blue-800 disabled:opacity-40 flex items-center gap-1"
+              >
+                {translatingContent
+                  ? <span className="inline-block w-3 h-3 border border-blue-600 border-t-transparent rounded-full animate-spin" />
+                  : '🌐'
+                }
+                {translatingContent ? 'Traduciendo…' : 'Auto-FR'}
+              </button>
+              <div className="flex border border-gray-300 rounded overflow-hidden text-xs">
+                <button type="button" onClick={() => setContentLang('es')} className={`px-3 py-1 ${contentLang === 'es' ? 'bg-primary-800 text-white' : 'bg-white text-gray-600'}`}>ES</button>
+                <button type="button" onClick={() => setContentLang('fr')} className={`px-3 py-1 ${contentLang === 'fr' ? 'bg-primary-800 text-white' : 'bg-white text-gray-600'}`}>FR</button>
+              </div>
             </div>
           </div>
           <textarea
@@ -130,6 +159,7 @@ export default function BlogForm() {
             placeholder="# Título&#10;&#10;Escribe el contenido en Markdown..."
             className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-800"
           />
+          <p className="text-xs text-gray-400 mt-1">Editando en: {contentLang === 'es' ? '🇪🇸 Español' : '🇫🇷 Français'}</p>
         </div>
 
         <div className="flex items-center justify-end gap-3">
