@@ -45,9 +45,8 @@ export default async function QueHacemosPage({ params }: { params: Promise<{ lan
     { key: 'development', icon: get('development', 'icon') || '🌱', color: 'bg-yellow-50 border-yellow-200' },
   ];
 
-  const methodology = l === 'es'
-    ? ['Diagnóstico participativo con la comunidad', 'Diseño colaborativo del proyecto', 'Implementación con personal local', 'Evaluación y transferencia a la comunidad']
-    : ['Diagnostic participatif avec la communauté', 'Conception collaborative du projet', 'Mise en œuvre avec du personnel local', 'Évaluation et transfert à la communauté'];
+  const methodology = (['step1', 'step2', 'step3', 'step4'] as const)
+    .map(k => get('methodology', k)).filter(Boolean);
 
   return (
     <div>

@@ -11,12 +11,13 @@ interface Section {
   valueFr: string;
 }
 
-const PAGES = ['home', 'que-hacemos', 'quienes-somos', 'colabora'];
+const PAGES = ['home', 'que-hacemos', 'quienes-somos', 'colabora', 'contacto'];
 const PAGE_LABELS: Record<string, string> = {
   'home': '🏠 Inicio',
   'que-hacemos': '💡 Qué Hacemos',
   'quienes-somos': '👥 Quiénes Somos',
   'colabora': '❤️ Colabora',
+  'contacto': '📞 Contacto',
 };
 
 const VALID_SECTIONS: Record<string, Record<string, string[]>> = {
@@ -41,15 +42,32 @@ const VALID_SECTIONS: Record<string, Record<string, string[]>> = {
     'education': ['icon', 'title', 'text'],
     'health': ['icon', 'title', 'text'],
     'development': ['icon', 'title', 'text'],
+    'methodology': ['step1', 'step2', 'step3', 'step4'],
   },
   'quienes-somos': {
     'hero': ['title', 'subtitle'],
     'history': ['title', 'text'],
+    'timeline-2012': ['event'],
+    'timeline-2014': ['event'],
+    'timeline-2016': ['event'],
+    'timeline-2018': ['event'],
+    'timeline-2020': ['event'],
+    'timeline-2024': ['event'],
+    'value1': ['icon', 'title', 'desc'],
+    'value2': ['icon', 'title', 'desc'],
+    'value3': ['icon', 'title', 'desc'],
+    'value4': ['icon', 'title', 'desc'],
   },
   'colabora': {
     'hero': ['title', 'subtitle'],
     'donation': ['title', 'text'],
     'impact': ['10eur', '30eur', '100eur', '500eur'],
+    'volunteer': ['title', 'desc'],
+    'companies': ['title', 'desc'],
+    'spread': ['title', 'desc'],
+  },
+  'contacto': {
+    'hero': ['title', 'subtitle'],
   },
 };
 
@@ -74,6 +92,20 @@ const SECTION_LABELS: Record<string, string> = {
   'history': '📖 Historia de la Fundación',
   'donation': '🏦 Donación por Transferencia',
   'impact': '✨ Impacto de tu Donación',
+  'methodology': '🔄 Metodología (4 pasos)',
+  'timeline-2012': '📅 Hito 2012',
+  'timeline-2014': '📅 Hito 2014',
+  'timeline-2016': '📅 Hito 2016',
+  'timeline-2018': '📅 Hito 2018',
+  'timeline-2020': '📅 Hito 2020',
+  'timeline-2024': '📅 Hito 2024',
+  'value1': '💎 Valor 1',
+  'value2': '💎 Valor 2',
+  'value3': '💎 Valor 3',
+  'value4': '💎 Valor 4',
+  'volunteer': '🙋 Otras formas — Voluntariado',
+  'companies': '🏢 Otras formas — Empresas',
+  'spread': '📣 Otras formas — Difunde',
 };
 
 const KEY_LABELS: Record<string, string> = {
@@ -100,16 +132,22 @@ const KEY_LABELS: Record<string, string> = {
   '30eur': 'Con 30 € puedes...',
   '100eur': 'Con 100 € puedes...',
   '500eur': 'Con 500 € puedes...',
+  'event': 'Descripción del hito',
+  'step1': 'Paso 1',
+  'step2': 'Paso 2',
+  'step3': 'Paso 3',
+  'step4': 'Paso 4',
 };
 
-const IS_LONG: Set<string> = new Set(['text', 'desc', 'quote', 'tagline', 'bottomText', '10eur', '30eur', '100eur', '500eur']);
+const IS_LONG: Set<string> = new Set(['text', 'desc', 'quote', 'tagline', 'bottomText', '10eur', '30eur', '100eur', '500eur', 'event']);
 const IS_NUMBERS_ONLY: Set<string> = new Set(['stat1Value', 'stat2Value', 'stat3Value', 'value', 'amount']);
 
 const PAGE_NOTES: Record<string, string> = {
   'home': 'Edita la cita bíblica, eslogan, estadísticas, pilares de misión, contadores y bloque de donación.',
-  'que-hacemos': 'Los pasos de metodología están en el código. Aquí editas la cabecera y los tres pilares.',
-  'quienes-somos': 'Los hitos del timeline y los valores son fijos. Aquí editas la cabecera e historia.',
-  'colabora': 'Las tarjetas de voluntariado, empresas y difusión son fijas. Aquí editas cabecera, transferencia e impactos.',
+  'que-hacemos': 'Edita la cabecera, los tres pilares y los 4 pasos de metodología.',
+  'quienes-somos': 'Edita la cabecera, historia, los 6 hitos del timeline y los 4 valores.',
+  'colabora': 'Edita cabecera, transferencia bancaria, impactos y las tarjetas de otras formas (voluntariado, empresas, difundir).',
+  'contacto': 'Edita el título y subtítulo de la cabecera de la página de contacto.',
 };
 
 // ─── Section Card ────────────────────────────────────────────────────────────

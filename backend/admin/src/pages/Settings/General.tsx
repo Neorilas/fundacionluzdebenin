@@ -8,6 +8,8 @@ const SIMPLE_FIELDS = [
   { key: 'address', label: 'Dirección', placeholder: 'Madrid, España' },
   { key: 'socialFacebook', label: 'Facebook URL', placeholder: 'https://facebook.com/...' },
   { key: 'socialInstagram', label: 'Instagram URL', placeholder: 'https://instagram.com/...' },
+  { key: 'foundationNif', label: 'NIF de la fundación', placeholder: 'G12345678' },
+  { key: 'foundationRegistry', label: 'Nº de registro', placeholder: 'Registro de Fundaciones nº 1234' },
 ];
 
 const PASSWORD_FIELDS = [

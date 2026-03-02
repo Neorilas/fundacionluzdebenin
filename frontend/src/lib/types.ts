@@ -46,6 +46,8 @@ export interface Settings {
   bankBic?: string;
   socialFacebook?: string;
   socialInstagram?: string;
+  foundationNif?: string;
+  foundationRegistry?: string;
 }
 
 export type Lang = 'es' | 'fr';

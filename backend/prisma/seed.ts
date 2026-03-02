@@ -4,15 +4,7 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Skip seed if DB already has data (not a fresh install).
-  // This prevents re-creating deleted records and overwriting user edits on every deploy.
-  const adminCount = await prisma.adminUser.count();
-  if (adminCount > 0) {
-    console.log('✅ Database already initialized — skipping seed');
-    return;
-  }
-
-  console.log('🌱 Fresh database detected — seeding initial data...');
+  console.log('🌱 Seeding database...');
 
   // Admin user
   const passwordHash = await bcrypt.hash('admin123', 10);
@@ -39,6 +31,8 @@ async function main() {
     { key: 'bankBic', value: 'CAIXESBBXXX' },
     { key: 'socialFacebook', value: 'https://facebook.com/fundacionluzdebenin' },
     { key: 'socialInstagram', value: 'https://instagram.com/fundacionluzdebenin' },
+    { key: 'foundationNif', value: 'G12345678' },
+    { key: 'foundationRegistry', value: 'Registro de Fundaciones nº 1234' },
   ];
 
   for (const setting of settings) {
@@ -144,6 +138,77 @@ async function main() {
     { page: 'colabora', section: 'impact', key: '30eur', valueEs: 'Con 30€ pagamos la matrícula escolar anual de un alumno', valueFr: 'Avec 30€ nous payons les frais de scolarité annuels d\'un élève' },
     { page: 'colabora', section: 'impact', key: '100eur', valueEs: 'Con 100€ equipamos un aula con material didáctico básico', valueFr: 'Avec 100€ nous équipons une salle de classe avec du matériel pédagogique de base' },
     { page: 'colabora', section: 'impact', key: '500eur', valueEs: 'Con 500€ financiamos la construcción de un pozo de agua potable', valueFr: 'Avec 500€ nous finançons la construction d\'un puits d\'eau potable' },
+    // Quiénes Somos — Timeline
+    { page: 'quienes-somos', section: 'timeline-2012', key: 'event',
+      valueEs: 'Fundación de la organización por cooperantes españoles con experiencia en Benín',
+      valueFr: 'Fondation de l\'organisation par des coopérants espagnols expérimentés au Bénin' },
+    { page: 'quienes-somos', section: 'timeline-2014', key: 'event',
+      valueEs: 'Primer proyecto de construcción de escuela en Cotonou',
+      valueFr: 'Premier projet de construction d\'école à Cotonou' },
+    { page: 'quienes-somos', section: 'timeline-2016', key: 'event',
+      valueEs: 'Ampliación del programa de salud materno-infantil',
+      valueFr: 'Expansion du programme de santé materno-infantile' },
+    { page: 'quienes-somos', section: 'timeline-2018', key: 'event',
+      valueEs: 'Lanzamiento del programa de becas universitarias',
+      valueFr: 'Lancement du programme de bourses universitaires' },
+    { page: 'quienes-somos', section: 'timeline-2020', key: 'event',
+      valueEs: 'Superamos los 1.000 beneficiarios directos anuales',
+      valueFr: 'Plus de 1 000 bénéficiaires directs annuels' },
+    { page: 'quienes-somos', section: 'timeline-2024', key: 'event',
+      valueEs: 'Más de 45 proyectos completados y 15 aldeas atendidas',
+      valueFr: 'Plus de 45 projets réalisés et 15 villages accompagnés' },
+    // Quiénes Somos — Valores
+    { page: 'quienes-somos', section: 'value1', key: 'icon', valueEs: '🤝', valueFr: '🤝' },
+    { page: 'quienes-somos', section: 'value1', key: 'title', valueEs: 'Compromiso', valueFr: 'Engagement' },
+    { page: 'quienes-somos', section: 'value1', key: 'desc',
+      valueEs: 'Comprometidos con las comunidades que servimos a largo plazo.',
+      valueFr: 'Engagés envers les communautés que nous servons sur le long terme.' },
+    { page: 'quienes-somos', section: 'value2', key: 'icon', valueEs: '🌱', valueFr: '🌱' },
+    { page: 'quienes-somos', section: 'value2', key: 'title', valueEs: 'Sostenibilidad', valueFr: 'Durabilité' },
+    { page: 'quienes-somos', section: 'value2', key: 'desc',
+      valueEs: 'Proyectos que perduran más allá de nuestra intervención.',
+      valueFr: 'Des projets qui perdurent au-delà de notre intervention.' },
+    { page: 'quienes-somos', section: 'value3', key: 'icon', valueEs: '🔍', valueFr: '🔍' },
+    { page: 'quienes-somos', section: 'value3', key: 'title', valueEs: 'Transparencia', valueFr: 'Transparence' },
+    { page: 'quienes-somos', section: 'value3', key: 'desc',
+      valueEs: 'Rendición de cuentas total a nuestros donantes y comunidades.',
+      valueFr: 'Reddition de comptes totale envers nos donateurs et communautés.' },
+    { page: 'quienes-somos', section: 'value4', key: 'icon', valueEs: '🌍', valueFr: '🌍' },
+    { page: 'quienes-somos', section: 'value4', key: 'title', valueEs: 'Dignidad', valueFr: 'Dignité' },
+    { page: 'quienes-somos', section: 'value4', key: 'desc',
+      valueEs: 'Respeto absoluto por la cultura y valores locales.',
+      valueFr: 'Respect absolu de la culture et des valeurs locales.' },
+    // Qué Hacemos — Metodología
+    { page: 'que-hacemos', section: 'methodology', key: 'step1',
+      valueEs: 'Diagnóstico participativo con la comunidad',
+      valueFr: 'Diagnostic participatif avec la communauté' },
+    { page: 'que-hacemos', section: 'methodology', key: 'step2',
+      valueEs: 'Diseño colaborativo del proyecto',
+      valueFr: 'Conception collaborative du projet' },
+    { page: 'que-hacemos', section: 'methodology', key: 'step3',
+      valueEs: 'Implementación con personal local',
+      valueFr: 'Mise en œuvre avec du personnel local' },
+    { page: 'que-hacemos', section: 'methodology', key: 'step4',
+      valueEs: 'Evaluación y transferencia a la comunidad',
+      valueFr: 'Évaluation et transfert à la communauté' },
+    // Colabora — Otras formas
+    { page: 'colabora', section: 'volunteer', key: 'title', valueEs: 'Voluntariado', valueFr: 'Bénévolat' },
+    { page: 'colabora', section: 'volunteer', key: 'desc',
+      valueEs: 'Aporta tu tiempo y talento. Buscamos perfiles de educación, salud, ingeniería y gestión de proyectos.',
+      valueFr: 'Apportez votre temps et votre talent. Nous recherchons des profils en éducation, santé, ingénierie et gestion de projets.' },
+    { page: 'colabora', section: 'companies', key: 'title', valueEs: 'Empresas', valueFr: 'Entreprises' },
+    { page: 'colabora', section: 'companies', key: 'desc',
+      valueEs: 'Acuerdos de mecenazgo, RSC y patrocinio de proyectos concretos. Deducción fiscal para personas jurídicas.',
+      valueFr: 'Accords de mécénat, RSE et parrainage de projets concrets. Déduction fiscale pour les personnes morales.' },
+    { page: 'colabora', section: 'spread', key: 'title', valueEs: 'Difunde', valueFr: 'Diffusez' },
+    { page: 'colabora', section: 'spread', key: 'desc',
+      valueEs: 'Comparte nuestra misión en tus redes y entre tus contactos. Cada persona que conoce nuestro trabajo puede convertirse en donante o voluntaria.',
+      valueFr: 'Partagez notre mission sur vos réseaux et auprès de vos contacts. Chaque personne qui connaît notre travail peut devenir donateur ou bénévole.' },
+    // Contacto — Hero
+    { page: 'contacto', section: 'hero', key: 'title', valueEs: 'Contacto', valueFr: 'Contact' },
+    { page: 'contacto', section: 'hero', key: 'subtitle',
+      valueEs: 'Estamos aquí para responder tus preguntas y recibir tu apoyo',
+      valueFr: 'Nous sommes là pour répondre à vos questions et accueillir votre soutien' },
   ];
 
   for (const section of pageSections) {

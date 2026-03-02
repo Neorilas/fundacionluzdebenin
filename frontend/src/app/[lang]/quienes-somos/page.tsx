@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Lang } from '@/lib/types';
+import { Lang, Settings } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -33,43 +33,23 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 export default async function QuienesSomosPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   const l = lang as Lang;
-  const sec = await api.getPageSections('quienes-somos').catch(() => ({}));
+  const [sec, settings] = await Promise.all([
+    api.getPageSections('quienes-somos').catch(() => ({})),
+    api.getSettings().catch(() => ({} as Settings)),
+  ]);
   const get = (section: string, key: string) => {
     const s = (sec as Record<string, Record<string, { es: string; fr: string }>>)[section]?.[key];
     return s ? (l === 'es' ? s.es : s.fr) : '';
   };
 
-  const timeline = l === 'es'
-    ? [
-        { year: '2012', event: 'Fundación de la organización por cooperantes españoles con experiencia en Benín' },
-        { year: '2014', event: 'Primer proyecto de construcción de escuela en Cotonou' },
-        { year: '2016', event: 'Ampliación del programa de salud materno-infantil' },
-        { year: '2018', event: 'Lanzamiento del programa de becas universitarias' },
-        { year: '2020', event: 'Superamos los 1.000 beneficiarios directos anuales' },
-        { year: '2024', event: 'Más de 45 proyectos completados y 15 aldeas atendidas' },
-      ]
-    : [
-        { year: '2012', event: 'Fondation de l\'organisation par des coopérants espagnols expérimentés au Bénin' },
-        { year: '2014', event: 'Premier projet de construction d\'école à Cotonou' },
-        { year: '2016', event: 'Expansion du programme de santé materno-infantile' },
-        { year: '2018', event: 'Lancement du programme de bourses universitaires' },
-        { year: '2020', event: 'Plus de 1 000 bénéficiaires directs annuels' },
-        { year: '2024', event: 'Plus de 45 projets réalisés et 15 villages accompagnés' },
-      ];
+  const years = ['2012', '2014', '2016', '2018', '2020', '2024'];
+  const timeline = years.map(year => ({ year, event: get(`timeline-${year}`, 'event') })).filter(e => e.event);
 
-  const values = l === 'es'
-    ? [
-        { icon: '🤝', title: 'Compromiso', desc: 'Comprometidos con las comunidades que servimos a largo plazo.' },
-        { icon: '🌱', title: 'Sostenibilidad', desc: 'Proyectos que perduran más allá de nuestra intervención.' },
-        { icon: '🔍', title: 'Transparencia', desc: 'Rendición de cuentas total a nuestros donantes y comunidades.' },
-        { icon: '🌍', title: 'Dignidad', desc: 'Respeto absoluto por la cultura y valores locales.' },
-      ]
-    : [
-        { icon: '🤝', title: 'Engagement', desc: 'Engagés envers les communautés que nous servons sur le long terme.' },
-        { icon: '🌱', title: 'Durabilité', desc: 'Des projets qui perdurent au-delà de notre intervention.' },
-        { icon: '🔍', title: 'Transparence', desc: 'Reddition de comptes totale envers nos donateurs et communautés.' },
-        { icon: '🌍', title: 'Dignité', desc: 'Respect absolu de la culture et des valeurs locales.' },
-      ];
+  const values = [1, 2, 3, 4].map(i => ({
+    icon: get(`value${i}`, 'icon'),
+    title: get(`value${i}`, 'title'),
+    desc: get(`value${i}`, 'desc'),
+  })).filter(v => v.title);
 
   return (
     <div>
@@ -119,8 +99,8 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
             <h3 className="font-bold text-gray-900 mb-3">{t(l, 'whoWeAre.legal')}</h3>
             <div className="grid sm:grid-cols-2 gap-3 text-sm text-gray-600">
-              <div><span className="font-medium">{t(l, 'whoWeAre.nif')}:</span> G12345678</div>
-              <div><span className="font-medium">{t(l, 'whoWeAre.registration')}:</span> {l === 'es' ? 'Registro de Fundaciones nº 1234' : 'Registre des Fondations nº 1234'}</div>
+              <div><span className="font-medium">{t(l, 'whoWeAre.nif')}:</span> {settings.foundationNif || 'G12345678'}</div>
+              <div><span className="font-medium">{t(l, 'whoWeAre.registration')}:</span> {settings.foundationRegistry || (l === 'es' ? 'Registro de Fundaciones nº 1234' : 'Registre des Fondations nº 1234')}</div>
             </div>
           </div>
         </div>

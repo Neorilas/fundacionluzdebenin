@@ -33,14 +33,21 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 export default async function ContactoPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   const l = lang as Lang;
-  const settings = await api.getSettings().catch(() => ({} as Settings));
+  const [sec, settings] = await Promise.all([
+    api.getPageSections('contacto').catch(() => ({})),
+    api.getSettings().catch(() => ({} as Settings)),
+  ]);
+  const get = (section: string, key: string) => {
+    const s = (sec as Record<string, Record<string, { es: string; fr: string }>>)[section]?.[key];
+    return s ? (l === 'es' ? s.es : s.fr) : '';
+  };
 
   return (
     <div>
       <section className="bg-primary-800 text-white py-20">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-4xl font-extrabold mb-4">{t(l, 'contact.title')}</h1>
-          <p className="text-xl text-primary-100">{t(l, 'contact.subtitle')}</p>
+          <h1 className="text-4xl font-extrabold mb-4">{get('hero', 'title') || t(l, 'contact.title')}</h1>
+          <p className="text-xl text-primary-100">{get('hero', 'subtitle') || t(l, 'contact.subtitle')}</p>
         </div>
       </section>
 

@@ -116,8 +116,8 @@ export default async function ColaboraPage({ params }: { params: Promise<{ lang:
             {otherWays.map(({ key, icon }) => (
               <div key={key} className="text-center p-6 rounded-2xl border border-gray-100 shadow-sm">
                 <div className="text-5xl mb-4">{icon}</div>
-                <h3 className="font-bold text-gray-900 mb-2">{t(l, `collaborate.${key}.title`)}</h3>
-                <p className="text-sm text-gray-600">{t(l, `collaborate.${key}.desc`)}</p>
+                <h3 className="font-bold text-gray-900 mb-2">{get(key, 'title') || t(l, `collaborate.${key}.title`)}</h3>
+                <p className="text-sm text-gray-600">{get(key, 'desc') || t(l, `collaborate.${key}.desc`)}</p>
               </div>
             ))}
           </div>
