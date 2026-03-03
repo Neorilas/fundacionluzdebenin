@@ -68,7 +68,7 @@ export default function Hero({ lang, sec }: Props) {
 
         {/* Logo */}
         <div className="flex justify-center mb-10">
-          <div className="bg-white rounded-2xl px-8 py-4 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.3)]">
+          <div className="bg-white rounded-2xl px-8 py-4 shadow-[0_12px_32px_rgba(0,0,0,0.35)]">
             <Image
               src="/logo.jpg"
               alt="Fundación Luz de Benín"
