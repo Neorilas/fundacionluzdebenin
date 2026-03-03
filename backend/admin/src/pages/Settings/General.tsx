@@ -2,8 +2,6 @@ import { useEffect, useState, FormEvent, useRef } from 'react';
 import api from '../../api';
 import BilingualField from '../../components/BilingualField';
 
-const API_BASE = (import.meta.env.VITE_API_URL as string | undefined) || '';
-
 const SIMPLE_FIELDS = [
   { key: 'emailContact', label: 'Email de contacto', placeholder: 'info@fundacionluzdebenin.org' },
   { key: 'phoneContact', label: 'Teléfono de contacto', placeholder: '+34 612 345 678' },
@@ -175,7 +173,7 @@ export default function GeneralSettings() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
                 {values[key] && (
                   <img
-                    src={`${API_BASE}${values[key]}`}
+                    src={values[key]}
                     alt={label}
                     className="h-16 w-auto object-contain rounded border border-gray-200 mb-2 bg-gray-50 p-1"
                   />
