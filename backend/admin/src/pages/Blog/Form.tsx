@@ -1,5 +1,6 @@
 import { useEffect, useState, FormEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import MDEditor from '@uiw/react-md-editor';
 import api from '../../api';
 import BilingualField from '../../components/BilingualField';
 
@@ -124,7 +125,7 @@ export default function BlogForm() {
 
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-3">
-            <label className="text-sm font-medium text-gray-700">Contenido (Markdown)</label>
+            <label className="text-sm font-medium text-gray-700">Contenido</label>
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -152,13 +153,14 @@ export default function BlogForm() {
               </div>
             </div>
           </div>
-          <textarea
-            value={contentLang === 'es' ? form.contentEs : form.contentFr}
-            onChange={(e) => set(contentLang === 'es' ? 'contentEs' : 'contentFr', e.target.value)}
-            rows={20}
-            placeholder="# Título&#10;&#10;Escribe el contenido en Markdown..."
-            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary-800"
-          />
+          <div data-color-mode="light">
+            <MDEditor
+              value={contentLang === 'es' ? form.contentEs : form.contentFr}
+              onChange={(val) => set(contentLang === 'es' ? 'contentEs' : 'contentFr', val || '')}
+              height={480}
+              preview="edit"
+            />
+          </div>
           <p className="text-xs text-gray-400 mt-1">Editando en: {contentLang === 'es' ? '🇪🇸 Español' : '🇫🇷 Français'}</p>
         </div>
 
