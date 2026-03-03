@@ -6,6 +6,7 @@ import { t } from '@/lib/i18n';
 interface Props {
   lang: Lang;
   sec?: any;
+  logoUrl?: string;
 }
 
 const quotes = {
@@ -37,7 +38,7 @@ const heroStats = {
   ],
 };
 
-export default function Hero({ lang, sec }: Props) {
+export default function Hero({ lang, sec, logoUrl = '/logo.jpg' }: Props) {
   const text = sec?.hero?.quote?.[lang] || quotes[lang].text;
   const reference = sec?.hero?.quoteRef?.[lang] || quotes[lang].reference;
   const tagline = sec?.hero?.tagline?.[lang] || taglines[lang];
@@ -70,7 +71,7 @@ export default function Hero({ lang, sec }: Props) {
         <div className="flex justify-center mb-10">
           <div className="bg-white rounded-2xl px-8 py-4 shadow-[0_12px_32px_rgba(0,0,0,0.35)]">
             <Image
-              src="/logo.jpg"
+              src={logoUrl}
               alt="Fundación Luz de Benín"
               width={800}
               height={533}

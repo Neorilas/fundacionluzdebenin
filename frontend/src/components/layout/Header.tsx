@@ -10,9 +10,10 @@ import LangSwitcher from './LangSwitcher';
 
 interface Props {
   lang: Lang;
+  logoUrl?: string;
 }
 
-export default function Header({ lang }: Props) {
+export default function Header({ lang, logoUrl = '/logo.jpg' }: Props) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -35,7 +36,7 @@ export default function Header({ lang }: Props) {
           {/* Logo */}
           <Link href={`/${lang}/`} className="flex items-center gap-2 font-bold text-lg">
             <Image
-              src="/logo.jpg"
+              src={logoUrl}
               alt="Fundación Luz de Benín"
               width={800}
               height={533}

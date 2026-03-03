@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { isValidLang } from '@/lib/i18n';
-import { Lang } from '@/lib/types';
+import { Lang, Settings } from '@/lib/types';
+import { api } from '@/lib/api';
 
 export async function generateStaticParams() {
   return [{ lang: 'es' }, { lang: 'fr' }];
@@ -56,9 +57,12 @@ export default async function LangLayout({
   const { lang } = await params;
   if (!isValidLang(lang)) notFound();
 
+  const settings: Settings = await api.getSettings().catch(() => ({} as Settings));
+  const logoUrl = settings.logoUrl || '/logo.jpg';
+
   return (
     <div lang={lang}>
-      <Header lang={lang as Lang} />
+      <Header lang={lang as Lang} logoUrl={logoUrl} />
       <main>{children}</main>
       <Footer lang={lang as Lang} />
     </div>

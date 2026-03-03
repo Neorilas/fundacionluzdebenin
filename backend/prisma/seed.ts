@@ -36,6 +36,8 @@ async function main() {
     { key: 'showEmail',   value: '1' },
     { key: 'showPhone',   value: '1' },
     { key: 'showAddress', value: '1' },
+    { key: 'logoUrl',    value: '/logo.jpg' },
+    { key: 'faviconUrl', value: '/logo.jpg' },
   ];
 
   for (const setting of settings) {

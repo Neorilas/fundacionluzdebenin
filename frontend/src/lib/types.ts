@@ -51,6 +51,8 @@ export interface Settings {
   showEmail?: string;
   showPhone?: string;
   showAddress?: string;
+  logoUrl?: string;
+  faviconUrl?: string;
 }
 
 export type Lang = 'es' | 'fr';

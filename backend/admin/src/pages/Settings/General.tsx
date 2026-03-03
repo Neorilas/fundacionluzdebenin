@@ -1,6 +1,8 @@
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState, FormEvent, useRef } from 'react';
 import api from '../../api';
 import BilingualField from '../../components/BilingualField';
+
+const API_BASE = (import.meta.env.VITE_API_URL as string | undefined) || '';
 
 const SIMPLE_FIELDS = [
   { key: 'emailContact', label: 'Email de contacto', placeholder: 'info@fundacionluzdebenin.org' },
@@ -25,6 +27,35 @@ export default function GeneralSettings() {
   const [pwForm, setPwForm] = useState({ currentPassword: '', newPassword: '' });
   const [pwSaving, setPwSaving] = useState(false);
   const [pwMessage, setPwMessage] = useState('');
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingFavicon, setUploadingFavicon] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const faviconInputRef = useRef<HTMLInputElement>(null);
+
+  const uploadImage = async (file: File, key: 'logoUrl' | 'faviconUrl') => {
+    const setUploading = key === 'logoUrl' ? setUploadingLogo : setUploadingFavicon;
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      const token = localStorage.getItem('admin_token');
+      const r = await fetch('/api/admin/upload', {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
+      const data = await r.json();
+      if (data.url) {
+        setValues(v => ({ ...v, [key]: data.url }));
+      } else {
+        alert('Error al subir la imagen');
+      }
+    } catch {
+      alert('Error al subir la imagen');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     api.get('/admin/settings').then(r => setValues(r.data)).finally(() => setLoading(false));
@@ -40,6 +71,8 @@ export default function GeneralSettings() {
     updates.showEmail   = values.showEmail   ?? '1';
     updates.showPhone   = values.showPhone   ?? '1';
     updates.showAddress = values.showAddress ?? '1';
+    updates.logoUrl    = values.logoUrl    || '/logo.jpg';
+    updates.faviconUrl = values.faviconUrl || '/logo.jpg';
     await api.put('/admin/settings', updates);
     setSaving(false);
     setSaved(true);
@@ -128,6 +161,53 @@ export default function GeneralSettings() {
                 </label>
               );
             })}
+          </div>
+        </div>
+
+        <div className="pt-4 border-t border-gray-100">
+          <h4 className="text-sm font-semibold text-gray-700 mb-3">Identidad visual</h4>
+          <div className="grid grid-cols-2 gap-6">
+            {([
+              { key: 'logoUrl' as const, label: 'Logo del sitio', ref: logoInputRef, uploading: uploadingLogo },
+              { key: 'faviconUrl' as const, label: 'Favicon / icono', ref: faviconInputRef, uploading: uploadingFavicon },
+            ]).map(({ key, label, ref, uploading }) => (
+              <div key={key}>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+                {values[key] && (
+                  <img
+                    src={`${API_BASE}${values[key]}`}
+                    alt={label}
+                    className="h-16 w-auto object-contain rounded border border-gray-200 mb-2 bg-gray-50 p-1"
+                  />
+                )}
+                <input
+                  ref={ref}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={e => {
+                    const file = e.target.files?.[0];
+                    if (file) uploadImage(file, key);
+                    e.target.value = '';
+                  }}
+                />
+                <button
+                  type="button"
+                  disabled={uploading}
+                  onClick={() => ref.current?.click()}
+                  className="text-xs px-3 py-1.5 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                >
+                  {uploading ? 'Subiendo…' : 'Cambiar imagen'}
+                </button>
+                <input
+                  type="text"
+                  value={values[key] || ''}
+                  onChange={e => setValues(v => ({ ...v, [key]: e.target.value }))}
+                  placeholder="/logo.jpg"
+                  className="mt-2 w-full border border-gray-300 rounded-md px-3 py-1.5 text-xs text-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-800"
+                />
+              </div>
+            ))}
           </div>
         </div>
 

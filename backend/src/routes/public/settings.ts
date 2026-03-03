@@ -8,6 +8,7 @@ const PUBLIC_KEYS = [
   'socialFacebook', 'socialInstagram', 'bankAccount', 'bankIban', 'bankBic',
   'showEmail', 'showPhone', 'showAddress',
   'foundationNif', 'foundationRegistry',
+  'logoUrl', 'faviconUrl',
 ];
 
 // GET /api/settings

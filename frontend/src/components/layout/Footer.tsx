@@ -14,6 +14,7 @@ export default async function Footer({ lang }: Props) {
 
   const fbUrl = settings.socialFacebook || 'https://facebook.com';
   const igUrl = settings.socialInstagram || 'https://instagram.com';
+  const logoUrl = settings.logoUrl || '/logo.jpg';
 
   return (
     <footer className="bg-primary-900 text-primary-100">
@@ -23,7 +24,7 @@ export default async function Footer({ lang }: Props) {
           <div>
             <div className="flex items-center gap-2 font-bold text-white text-lg mb-3">
               <Image
-                src="/logo.jpg"
+                src={logoUrl}
                 alt="Fundación Luz de Benín"
                 width={800}
                 height={533}
