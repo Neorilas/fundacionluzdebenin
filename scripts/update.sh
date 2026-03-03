@@ -16,11 +16,9 @@ git pull --ff-only
 # Rebuild solo los servicios que hayan cambiado
 docker compose build --parallel
 
-# Restart con zero-downtime (Caddy sigue funcionando)
-# --force-recreate evita conflictos de nombre con contenedores huérfanos
-docker compose up -d --no-deps --force-recreate backend
-sleep 5
-docker compose up -d --no-deps --force-recreate frontend
+# Limpiar contenedores huérfanos y reiniciar
+docker compose down --remove-orphans
+docker compose up -d
 
 echo "✅ Actualización completada"
 docker compose ps
