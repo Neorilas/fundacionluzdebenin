@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 
 export async function generateStaticParams() {
   try {
-    const posts = await api.getBlogPosts();
+    const { posts } = await api.getBlogPosts(1, 1000);
     return posts.flatMap(p => [
       { lang: 'es', slug: p.slug },
       { lang: 'fr', slug: p.slug },

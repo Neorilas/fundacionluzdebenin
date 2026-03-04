@@ -43,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let blogEntries: MetadataRoute.Sitemap = [];
   try {
-    const posts = await api.getBlogPosts();
+    const { posts } = await api.getBlogPosts(1, 1000);
     blogEntries = posts.flatMap(p =>
       LANGS.map(lang => ({
         url: `${SITE_URL}/${lang}/blog/${p.slug}/`,

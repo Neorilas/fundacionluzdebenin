@@ -59,7 +59,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
 
   const sec = sections.status === 'fulfilled' ? sections.value : {};
   const proj = projects.status === 'fulfilled' ? projects.value : [];
-  const blog = posts.status === 'fulfilled' ? posts.value : [];
+  const blog = posts.status === 'fulfilled' ? posts.value.posts : [];
   const campaigns = campaignsResult.status === 'fulfilled' ? campaignsResult.value : [];
   const settings = settingsResult.status === 'fulfilled' ? settingsResult.value : {};
   const logoUrl = (settings as { logoUrl?: string }).logoUrl || '/logo.jpg';

@@ -23,7 +23,10 @@ export const api = {
     return fetchAPI<Project[]>(`/api/projects${qs.toString() ? '?' + qs : ''}`);
   },
   getProject: (slug: string) => fetchAPI<Project>(`/api/projects/${slug}`),
-  getBlogPosts: () => fetchAPI<BlogPost[]>('/api/blog'),
+  getBlogPosts: (page = 1, limit = 9) =>
+    fetchAPI<{ posts: BlogPost[]; total: number; page: number; limit: number; totalPages: number }>(
+      `/api/blog?page=${page}&limit=${limit}`
+    ),
   getBlogPost: (slug: string) => fetchAPI<BlogPost>(`/api/blog/${slug}`),
   getPageSections: (page: string) => fetchAPI<PageSections>(`/api/pages/${page}`),
   getSettings: () => fetchAPI<Settings>('/api/settings'),

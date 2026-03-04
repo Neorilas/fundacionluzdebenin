@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Lang } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import BlogCard from '@/components/blog/BlogCard';
-import SectionTitle from '@/components/ui/SectionTitle';
 
 export const revalidate = 60;
 
 const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
+const LIMIT = 9;
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
@@ -31,10 +32,21 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   };
 }
 
-export default async function BlogPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function BlogPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ lang: string }>;
+  searchParams: Promise<{ page?: string }>;
+}) {
   const { lang } = await params;
+  const { page: pageParam } = await searchParams;
   const l = lang as Lang;
-  const posts = await api.getBlogPosts().catch(() => []);
+  const page = Math.max(parseInt(pageParam || '1'), 1);
+
+  const { posts, totalPages } = await api.getBlogPosts(page, LIMIT).catch(() => ({
+    posts: [], total: 0, page: 1, limit: LIMIT, totalPages: 0,
+  }));
 
   return (
     <div>
@@ -48,12 +60,46 @@ export default async function BlogPage({ params }: { params: Promise<{ lang: str
       <section className="py-16 bg-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {posts.length === 0 ? (
-            <div className="text-center py-20 text-muted">
-              {l === 'es' ? 'No hay artículos publicados aún.' : 'Aucun article publié pour l\'instant.'}
+            <div className="text-center py-20 text-gray-400">
+              {l === 'es' ? 'No hay artículos publicados aún.' : "Aucun article publié pour l'instant."}
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map(p => <BlogCard key={p.id} post={p} lang={l} />)}
+            </div>
+          )}
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-12">
+              {page > 1 && (
+                <Link
+                  href={`/${l}/blog/?page=${page - 1}`}
+                  className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  ← {l === 'es' ? 'Anterior' : 'Précédent'}
+                </Link>
+              )}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+                <Link
+                  key={n}
+                  href={`/${l}/blog/?page=${n}`}
+                  className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+                    n === page
+                      ? 'bg-primary-800 text-white'
+                      : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  {n}
+                </Link>
+              ))}
+              {page < totalPages && (
+                <Link
+                  href={`/${l}/blog/?page=${page + 1}`}
+                  className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  {l === 'es' ? 'Siguiente' : 'Suivant'} →
+                </Link>
+              )}
             </div>
           )}
         </div>

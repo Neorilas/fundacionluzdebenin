@@ -42,8 +42,9 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
     return s ? (l === 'es' ? s.es : s.fr) : '';
   };
 
-  const timelineJson = get('timeline', 'data');
-  const timeline: { year: string; event: string }[] = timelineJson ? JSON.parse(timelineJson) : [];
+  const timeline = ['2012', '2014', '2016', '2018', '2020', '2024']
+    .map(year => ({ year, event: get(`timeline-${year}`, 'event') }))
+    .filter(e => e.event);
 
   const values = [1, 2, 3, 4].map(i => ({
     icon: get(`value${i}`, 'icon'),
