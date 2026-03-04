@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Lang, Settings } from '@/lib/types';
+import { Lang, Settings, Campaign } from '@/lib/types';
 import { t } from '@/lib/i18n';
 import { api } from '@/lib/api';
 
@@ -10,7 +10,10 @@ interface Props {
 
 export default async function Footer({ lang }: Props) {
   const currentYear = new Date().getFullYear();
-  const settings: Settings = await api.getSettings().catch(() => ({} as Settings));
+  const [settings, campaigns] = await Promise.all([
+    api.getSettings().catch(() => ({} as Settings)),
+    api.getCampaigns().catch(() => [] as Campaign[]),
+  ]);
 
   const fbUrl = settings.socialFacebook || 'https://facebook.com';
   const igUrl = settings.socialInstagram || 'https://instagram.com';
@@ -68,27 +71,26 @@ export default async function Footer({ lang }: Props) {
           </div>
 
           {/* Campañas */}
-          <div>
-            <h3 className="font-semibold text-white mb-3">
-              {lang === 'es' ? 'Apadrina' : 'Parraine'}
-            </h3>
-            <ul className="space-y-2 text-sm">
-              {[
-                {
-                  href: `/${lang}/campanas/apadrina-gallina/`,
-                  label: lang === 'es' ? '🐔 Apadrina una gallina — 5€/mes' : '🐔 Parraine une poule — 5€/mois',
-                },
-                {
-                  href: `/${lang}/campanas/apadrina-oveja/`,
-                  label: lang === 'es' ? '🐑 Apadrina una oveja — 10€/mes' : '🐑 Parraine une brebis — 10€/mois',
-                },
-              ].map(({ href, label }) => (
-                <li key={href}>
-                  <Link href={href} className="text-primary-300 hover:text-white transition-colors">{label}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {campaigns.length > 0 && (
+            <div>
+              <h3 className="font-semibold text-white mb-3">
+                {lang === 'es' ? 'Apadrina' : 'Parraine'}
+              </h3>
+              <ul className="space-y-2 text-sm">
+                {campaigns.filter(c => c.active).map(c => {
+                  const title = lang === 'es' ? c.titleEs : c.titleFr;
+                  const period = lang === 'es' ? c.periodEs : c.periodFr;
+                  return (
+                    <li key={c.slug}>
+                      <Link href={`/${lang}/campanas/${c.slug}/`} className="text-primary-300 hover:text-white transition-colors">
+                        {c.emoji} {title} — {c.priceLabel}/{period}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
 
           {/* Contact */}
           <div>
