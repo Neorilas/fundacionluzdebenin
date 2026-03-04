@@ -99,8 +99,9 @@ router.post('/checkout', async (req: Request, res: Response, next) => {
     });
 
     // Build Stripe session params
-    const successUrl = `${FRONTEND_URL}/${lang}/colabora/success?session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${FRONTEND_URL}/${lang}/colabora/cancel`;
+    const thankType = type === 'one_time' ? 'donation' : stripeProductId ? 'apadrinamiento' : 'subscription';
+    const successUrl = `${FRONTEND_URL}/${lang}/gracias?type=${thankType}&session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${FRONTEND_URL}/${lang}/colabora/`;
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: type === 'one_time' ? 'payment' : 'subscription',
