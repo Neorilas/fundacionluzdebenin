@@ -97,10 +97,6 @@ const CONTENT: Record<ThanksType, Content> = {
       es: 'Tu apadrinamiento mensual marca una diferencia real y duradera. Las familias de Benín agradecen tu compromiso continuo.',
       fr: 'Votre parrainage mensuel fait une vraie différence durable. Les familles du Bénin vous remercient pour votre engagement continu.',
     },
-    details: {
-      es: 'Recibirás actualizaciones periódicas sobre el impacto de tu apadrinamiento. Stripe te enviará confirmación por email.',
-      fr: 'Vous recevrez des mises à jour régulières sur l\'impact de votre parrainage. Stripe vous enverra une confirmation par email.',
-    },
     cta1: {
       es: { label: 'Ver todas las campañas', href: '/es/campanas/' },
       fr: { label: 'Voir toutes les campagnes', href: '/fr/campanas/' },
