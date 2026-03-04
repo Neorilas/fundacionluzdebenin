@@ -27,6 +27,7 @@ import uploadAdmin from './routes/admin/upload';
 import stripeAdmin from './routes/admin/stripe';
 import campaignsAdmin from './routes/admin/campaigns';
 import translateAdmin from './routes/admin/translate';
+import usersAdmin from './routes/admin/users';
 
 import { errorHandler } from './middleware/errorHandler';
 
@@ -77,6 +78,7 @@ app.use('/api/admin/upload', uploadAdmin);
 app.use('/api/admin/stripe', stripeAdmin);
 app.use('/api/admin/campaigns', campaignsAdmin);
 app.use('/api/admin/translate', translateAdmin);
+app.use('/api/admin/users', usersAdmin);
 
 // Health check
 app.get('/api/health', (_req, res) => {
