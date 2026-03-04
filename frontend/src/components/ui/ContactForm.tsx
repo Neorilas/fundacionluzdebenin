@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import { Lang } from '@/lib/types';
 import { t } from '@/lib/i18n';
 import { api } from '@/lib/api';
@@ -10,16 +11,16 @@ interface Props {
 }
 
 export default function ContactForm({ lang }: Props) {
+  const router = useRouter();
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '', website: '' });
-  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setStatus('sending');
     try {
       await api.sendContact(form);
-      setStatus('success');
-      setForm({ name: '', email: '', subject: '', message: '', website: '' });
+      router.push(`/${lang}/contacto/gracias/`);
     } catch {
       setStatus('error');
     }
@@ -40,11 +41,6 @@ export default function ContactForm({ lang }: Props) {
         aria-hidden="true"
         style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0, pointerEvents: 'none' }}
       />
-      {status === 'success' && (
-        <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm">
-          ✓ {t(lang, 'contact.form.success')}
-        </div>
-      )}
       {status === 'error' && (
         <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
           ✗ {t(lang, 'contact.form.error')}

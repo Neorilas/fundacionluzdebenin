@@ -64,25 +64,48 @@ export default async function ColaboraPage({ params }: { params: Promise<{ lang:
         </div>
       </section>
 
-      {/* Donation widget — shown first */}
-      <DonationWidget lang={l} stripeProducts={stripeProducts} />
+      {/* Donation widget + Bank transfer side by side */}
+      <section className="py-16 bg-bg">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-5 gap-8 items-start">
 
-      {/* Bank transfer */}
-      <section className="py-16 bg-white">
-        <div className="max-w-3xl mx-auto px-4">
-          <SectionTitle title={get('donation', 'title') || t(l, 'collaborate.bankTransfer')} centered={false} />
-          <p className="text-gray-600 mb-6">{get('donation', 'text')}</p>
-          <div className="bg-primary-50 border border-primary-200 rounded-2xl p-6 space-y-3">
-            {[
-              { label: t(l, 'collaborate.holder'), value: settings.bankAccount || 'Fundación Luz de Benín' },
-              { label: t(l, 'collaborate.iban'), value: settings.bankIban || 'ES12 3456 7890 1234 5678 9012' },
-              { label: t(l, 'collaborate.bic'), value: settings.bankBic || 'CAIXESBBXXX' },
-            ].map(({ label, value }) => (
-              <div key={label} className="flex items-center justify-between py-2 border-b border-primary-100 last:border-0">
-                <span className="text-sm font-medium text-gray-600">{label}</span>
-                <span className="font-mono font-semibold text-primary-800">{value}</span>
+            {/* Donation widget — main column */}
+            <div className="lg:col-span-3">
+              <DonationWidget lang={l} stripeProducts={stripeProducts} />
+            </div>
+
+            {/* Bank transfer — visible column */}
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-2xl border-2 border-primary-200 p-6 shadow-sm sticky top-24">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-2xl">🏦</span>
+                  <h2 className="text-lg font-bold text-gray-900">
+                    {get('donation', 'title') || t(l, 'collaborate.bankTransfer')}
+                  </h2>
+                </div>
+                {get('donation', 'text') && (
+                  <p className="text-sm text-gray-500 mb-4">{get('donation', 'text')}</p>
+                )}
+                <div className="space-y-3">
+                  {[
+                    { label: t(l, 'collaborate.holder'), value: settings.bankAccount || 'Fundación Luz de Benín' },
+                    { label: t(l, 'collaborate.iban'),   value: settings.bankIban    || 'ES12 3456 7890 1234 5678 9012' },
+                    { label: t(l, 'collaborate.bic'),    value: settings.bankBic     || 'CAIXESBBXXX' },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="py-2 border-b border-gray-100 last:border-0">
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-0.5">{label}</p>
+                      <p className="font-mono font-semibold text-primary-800 text-sm break-all">{value}</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400 mt-4 leading-relaxed">
+                  {l === 'es'
+                    ? 'Indica tu nombre y correo en el concepto para que podamos enviarte el certificado de donación.'
+                    : 'Indiquez votre nom et email dans la référence pour que nous puissions vous envoyer le reçu fiscal.'}
+                </p>
               </div>
-            ))}
+            </div>
+
           </div>
         </div>
       </section>
