@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Lang, Campaign, StatItem, WhyItem } from '@/lib/types';
 import { api } from '@/lib/api';
 import SponsorButton from '@/components/campaigns/SponsorButton';
+import ShareButtons from '@/components/campaigns/ShareButtons';
 
 export const revalidate = 3600;
 
@@ -46,7 +47,14 @@ export async function generateMetadata({
         'x-default': `${SITE_URL}/es/campanas/${slug}/`,
       },
     },
-    openGraph: { title, description, url: `${SITE_URL}/${lang}/campanas/${slug}/` },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/${lang}/campanas/${slug}/`,
+      images: [{ url: `${SITE_URL}/logo.jpg`, width: 800, height: 533, alt: title }],
+      type: 'website',
+    },
+    twitter: { card: 'summary_large_image', title, description, images: [`${SITE_URL}/logo.jpg`] },
   };
 }
 
@@ -121,6 +129,11 @@ export default async function CampaignPage({
             <SponsorButton lang={l} amount={campaign.amountCents} label={cta} className={btnClass} />
           </div>
           <p className="text-xs text-gray-400">{fine}</p>
+          <ShareButtons
+            lang={l}
+            title={title}
+            url={`${SITE_URL}/${l}/campanas/${slug}/`}
+          />
         </div>
       </section>
 
@@ -227,6 +240,11 @@ export default async function CampaignPage({
           <div className="text-6xl mb-6">{campaign.emoji}</div>
           <SponsorButton lang={l} amount={campaign.amountCents} label={ctaBottom} className={`${btnClass} mb-4`} />
           <p className="text-xs text-gray-400 mt-4 leading-relaxed">{ctaBottomNote}</p>
+          <ShareButtons
+            lang={l}
+            title={title}
+            url={`${SITE_URL}/${l}/campanas/${slug}/`}
+          />
         </div>
       </section>
     </div>
