@@ -16,9 +16,8 @@ git pull --ff-only
 # Rebuild solo los servicios que hayan cambiado
 docker compose build --parallel
 
-# Parar contenedores existentes por nombre (forzado)
-docker stop fundacion-backend-1 fundacion-frontend-1 fundacion-caddy-1 2>/dev/null || true
-docker rm -f fundacion-backend-1 fundacion-frontend-1 fundacion-caddy-1 2>/dev/null || true
+# Eliminar todos los contenedores del proyecto (evita conflictos de nombres)
+docker ps -aq --filter 'name=fundacion' | xargs -r docker rm -f
 docker network rm fundacion_default 2>/dev/null || true
 
 # Levantar (--remove-orphans limpia contenedores huérfanos de versiones anteriores)
