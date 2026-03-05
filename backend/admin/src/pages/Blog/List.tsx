@@ -7,8 +7,10 @@ interface Post {
   id: string;
   slug: string;
   titleEs: string;
+  category: string;
   published: boolean;
   publishedAt: string | null;
+  scheduledAt: string | null;
   createdAt: string;
 }
 
@@ -57,6 +59,7 @@ export default function BlogList() {
                 <th className="px-4 py-3 text-left">Título</th>
                 <th className="px-4 py-3 text-left">Slug</th>
                 <th className="px-4 py-3 text-left">Estado</th>
+                <th className="px-4 py-3 text-left">Categoría</th>
                 <th className="px-4 py-3 text-left">Publicado</th>
                 <th className="px-4 py-3 text-right">Acciones</th>
               </tr>
@@ -67,10 +70,14 @@ export default function BlogList() {
                   <td className="px-4 py-3 font-medium text-gray-900">{p.titleEs}</td>
                   <td className="px-4 py-3 text-gray-500 font-mono text-xs">{p.slug}</td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${p.published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
-                      {p.published ? 'Publicado' : 'Borrador'}
-                    </span>
+                    {p.published
+                      ? <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">✅ Publicado</span>
+                      : p.scheduledAt
+                      ? <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">🕐 {formatDate(p.scheduledAt)}</span>
+                      : <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">📝 Borrador</span>
+                    }
                   </td>
+                  <td className="px-4 py-3 text-gray-500">{p.category || '—'}</td>
                   <td className="px-4 py-3 text-gray-500">{p.publishedAt ? formatDate(p.publishedAt) : '—'}</td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
@@ -81,7 +88,7 @@ export default function BlogList() {
                 </tr>
               ))}
               {posts.length === 0 && (
-                <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-400">No hay posts aún</td></tr>
+                <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400">No hay posts aún</td></tr>
               )}
             </tbody>
           </table>

@@ -30,6 +30,7 @@ import translateAdmin from './routes/admin/translate';
 import usersAdmin from './routes/admin/users';
 
 import { errorHandler } from './middleware/errorHandler';
+import { startScheduler } from './lib/scheduler';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -92,6 +93,7 @@ app.listen(PORT, () => {
   console.log(`\n🚀 Backend API running at http://localhost:${PORT}`);
   console.log(`📊 Admin panel: http://localhost:${PORT}/admin`);
   console.log(`🔗 API health: http://localhost:${PORT}/api/health`);
+  startScheduler();
 });
 
 export default app;

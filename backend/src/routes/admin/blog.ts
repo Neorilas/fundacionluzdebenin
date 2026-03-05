@@ -28,13 +28,20 @@ router.get('/:id', async (req, res, next) => {
 // POST /api/admin/blog
 router.post('/', async (req, res, next) => {
   try {
-    const { slug, titleEs, titleFr, excerptEs, excerptFr, contentEs, contentFr, coverImage, published } = req.body;
+    const { slug, titleEs, titleFr, excerptEs, excerptFr, contentEs, contentFr,
+            coverImage, category, tags, published, scheduledAt } = req.body;
+
+    const isScheduled = !published && scheduledAt;
     const post = await prisma.blogPost.create({
       data: {
-        slug, titleEs, titleFr, excerptEs, excerptFr, contentEs, contentFr,
+        slug, titleEs, titleFr, excerptEs: excerptEs || '', excerptFr: excerptFr || '',
+        contentEs: contentEs || '', contentFr: contentFr || '',
         coverImage: coverImage || '',
+        category: category || '',
+        tags: Array.isArray(tags) ? JSON.stringify(tags) : (tags || '[]'),
         published: published || false,
         publishedAt: published ? new Date() : null,
+        scheduledAt: isScheduled ? new Date(scheduledAt) : null,
       },
     });
     revalidate(PATHS.blogPost(post.slug));
@@ -45,8 +52,12 @@ router.post('/', async (req, res, next) => {
 // PUT /api/admin/blog/:id
 router.put('/:id', async (req, res, next) => {
   try {
-    const { slug, titleEs, titleFr, excerptEs, excerptFr, contentEs, contentFr, coverImage, published } = req.body;
+    const { slug, titleEs, titleFr, excerptEs, excerptFr, contentEs, contentFr,
+            coverImage, category, tags, published, scheduledAt } = req.body;
+
     const existing = await prisma.blogPost.findUnique({ where: { id: req.params.id } });
+    const isScheduled = !published && scheduledAt;
+
     const post = await prisma.blogPost.update({
       where: { id: req.params.id },
       data: {
@@ -58,10 +69,15 @@ router.put('/:id', async (req, res, next) => {
         ...(contentEs !== undefined && { contentEs }),
         ...(contentFr !== undefined && { contentFr }),
         ...(coverImage !== undefined && { coverImage }),
+        ...(category !== undefined && { category }),
+        ...(tags !== undefined && {
+          tags: Array.isArray(tags) ? JSON.stringify(tags) : tags,
+        }),
         ...(published !== undefined && {
           published,
           publishedAt: published && !existing?.publishedAt ? new Date() : existing?.publishedAt,
         }),
+        scheduledAt: isScheduled ? new Date(scheduledAt) : (published ? null : (scheduledAt === null ? null : existing?.scheduledAt)),
       },
     });
     revalidate(PATHS.blogPost(post.slug));
