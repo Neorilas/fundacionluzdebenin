@@ -19,6 +19,7 @@ export default function MediaPicker({ onSelect, onClose }: Props) {
   const [files, setFiles] = useState<MediaFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -46,6 +47,18 @@ export default function MediaPicker({ onSelect, onClose }: Props) {
         setSelected(data.url);
       }
     } finally { setUploading(false); }
+  };
+
+  const handleDelete = async (filename: string) => {
+    if (!confirm(`¿Eliminar "${filename}"? Esta acción no se puede deshacer.`)) return;
+    setDeleting(filename);
+    try {
+      await api.delete(`/admin/upload/${filename}`);
+      if (selected?.endsWith(`/${filename}`)) setSelected(null);
+      setFiles(f => f.filter(x => x.filename !== filename));
+    } finally {
+      setDeleting(null);
+    }
   };
 
   const fmt = (bytes: number) =>
@@ -107,29 +120,44 @@ export default function MediaPicker({ onSelect, onClose }: Props) {
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
               {files.map(f => (
-                <button
-                  key={f.filename}
-                  type="button"
-                  onClick={() => setSelected(f.url === selected ? null : f.url)}
-                  className={`relative rounded-lg overflow-hidden border-2 aspect-square transition-all ${
-                    selected === f.url
-                      ? 'border-primary-800 ring-2 ring-primary-800 ring-offset-1'
-                      : 'border-transparent hover:border-gray-300'
-                  }`}
-                >
-                  <img
-                    src={f.url}
-                    alt={f.filename}
-                    className="w-full h-full object-cover"
-                  />
-                  {selected === f.url && (
-                    <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-primary-800 rounded-full flex items-center justify-center">
-                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                  )}
-                </button>
+                <div key={f.filename} className="relative group">
+                  <button
+                    type="button"
+                    onClick={() => setSelected(f.url === selected ? null : f.url)}
+                    className={`relative rounded-lg overflow-hidden border-2 aspect-square transition-all w-full ${
+                      selected === f.url
+                        ? 'border-primary-800 ring-2 ring-primary-800 ring-offset-1'
+                        : 'border-transparent hover:border-gray-300'
+                    }`}
+                  >
+                    <img
+                      src={f.url}
+                      alt={f.filename}
+                      className="w-full h-full object-cover"
+                    />
+                    {selected === f.url && (
+                      <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-primary-800 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                  </button>
+
+                  {/* Delete button */}
+                  <button
+                    type="button"
+                    disabled={deleting === f.filename}
+                    onClick={() => handleDelete(f.filename)}
+                    title="Eliminar imagen"
+                    className="absolute bottom-1 left-1 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 disabled:opacity-50 text-xs"
+                  >
+                    {deleting === f.filename ? '…' : '×'}
+                  </button>
+
+                  <p className="text-[10px] text-gray-400 truncate mt-0.5 px-0.5">{fmt(f.size)}</p>
+                </div>
               ))}
             </div>
           )}

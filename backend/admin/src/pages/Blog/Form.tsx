@@ -1,9 +1,22 @@
-import { useEffect, useState, FormEvent, KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, FormEvent, KeyboardEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import MDEditor from '@uiw/react-md-editor';
 import api from '../../api';
 import BilingualField from '../../components/BilingualField';
 import MediaPicker from '../../components/MediaPicker';
+
+function toSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+const FRONTEND_URL = typeof window !== 'undefined'
+  ? (window.location.port === '5173' ? 'http://localhost:3000' : window.location.origin)
+  : '';
 
 async function translateText(text: string): Promise<string> {
   if (!text.trim()) return '';
@@ -43,6 +56,9 @@ export default function BlogForm() {
   const [translatingContent, setTranslatingContent] = useState(false);
   const [showSchedule, setShowSchedule] = useState(false);
   const [showMediaPicker, setShowMediaPicker] = useState(false);
+  const [slugTouched, setSlugTouched] = useState(!!id);
+  const [isDirty, setIsDirty] = useState(false);
+  const initialLoadedRef = useRef(!id);
 
   const isEdit = !!id;
 
@@ -64,12 +80,23 @@ export default function BlogForm() {
           scheduledAt: scheduled,
         });
         if (scheduled) setShowSchedule(true);
-      }).finally(() => setLoading(false));
+      }).finally(() => {
+        setLoading(false);
+        initialLoadedRef.current = true;
+      });
     }
   }, [id, isEdit]);
 
-  const set = (name: string, value: string | string[]) =>
-    setForm(f => ({ ...f, [name]: value }));
+  const set = (name: string, value: string | string[]) => {
+    setForm(f => {
+      const next: Partial<FormData> = { [name]: value };
+      if (name === 'titleEs' && !slugTouched) {
+        next.slug = toSlug(value as string);
+      }
+      return { ...f, ...next };
+    });
+    if (initialLoadedRef.current) setIsDirty(true);
+  };
 
   // Tags
   const addTag = (tag: string) => {
@@ -101,6 +128,7 @@ export default function BlogForm() {
       } else {
         await api.post('/admin/blog', payload);
       }
+      setIsDirty(false);
       navigate('/admin/blog');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error al guardar';
@@ -109,6 +137,13 @@ export default function BlogForm() {
       setSaving(null);
     }
   };
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isDirty]);
 
   const handleSubmit = (e: FormEvent) => { e.preventDefault(); };
 
@@ -119,10 +154,26 @@ export default function BlogForm() {
       {/* Top bar */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate('/admin/blog')} className="text-gray-400 hover:text-gray-600 text-lg">←</button>
+          <button
+            onClick={() => {
+              if (isDirty && !confirm('¿Salir sin guardar? Se perderán los cambios.')) return;
+              navigate('/admin/blog');
+            }}
+            className="text-gray-400 hover:text-gray-600 text-lg"
+          >←</button>
           <h2 className="text-2xl font-bold text-gray-900">{isEdit ? 'Editar post' : 'Nuevo post'}</h2>
         </div>
         <div className="flex items-center gap-2">
+          {form.slug && (
+            <a
+              href={`${FRONTEND_URL}/es/blog/${form.slug}/`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-gray-400 hover:text-primary-800 transition-colors px-2 py-1"
+            >
+              👁 Ver en la web
+            </a>
+          )}
           <button
             type="button"
             onClick={() => save(false)}
@@ -154,7 +205,7 @@ export default function BlogForm() {
               <input
                 type="text"
                 value={form.slug}
-                onChange={e => set('slug', e.target.value)}
+                onChange={e => { setSlugTouched(true); set('slug', e.target.value); }}
                 required
                 placeholder="mi-articulo"
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800 font-mono"

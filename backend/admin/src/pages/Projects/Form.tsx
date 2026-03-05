@@ -1,8 +1,17 @@
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useRef, useState, FormEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api';
 import BilingualField from '../../components/BilingualField';
 import ImageUpload from '../../components/ImageUpload';
+
+function toSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 
 interface FormData {
   slug: string;
@@ -27,6 +36,9 @@ export default function ProjectsForm() {
   const [form, setForm] = useState<FormData>(empty);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [slugTouched, setSlugTouched] = useState(!!id);
+  const [isDirty, setIsDirty] = useState(false);
+  const initialLoadedRef = useRef(!id);
 
   const isEdit = !!id;
 
@@ -40,12 +52,29 @@ export default function ProjectsForm() {
           descEs: p.descEs, descFr: p.descFr, status: p.status,
           featured: p.featured, images: p.images, order: p.order,
         });
-      }).finally(() => setLoading(false));
+      }).finally(() => {
+        setLoading(false);
+        initialLoadedRef.current = true;
+      });
     }
   }, [id, isEdit]);
 
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isDirty]);
+
   const set = (name: string, value: string | boolean) => {
-    setForm(f => ({ ...f, [name]: value }));
+    setForm(f => {
+      const next: Partial<FormData> = { [name]: value };
+      if (name === 'titleEs' && !slugTouched) {
+        next.slug = toSlug(value as string);
+      }
+      return { ...f, ...next };
+    });
+    if (initialLoadedRef.current) setIsDirty(true);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -57,6 +86,7 @@ export default function ProjectsForm() {
       } else {
         await api.post('/admin/projects', form);
       }
+      setIsDirty(false);
       navigate('/admin/projects');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error al guardar';
@@ -71,7 +101,13 @@ export default function ProjectsForm() {
   return (
     <div className="max-w-3xl">
       <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => navigate('/admin/projects')} className="text-gray-400 hover:text-gray-600">←</button>
+        <button
+          onClick={() => {
+            if (isDirty && !confirm('¿Salir sin guardar? Se perderán los cambios.')) return;
+            navigate('/admin/projects');
+          }}
+          className="text-gray-400 hover:text-gray-600"
+        >←</button>
         <h2 className="text-2xl font-bold text-gray-900">{isEdit ? 'Editar proyecto' : 'Nuevo proyecto'}</h2>
       </div>
 
@@ -82,7 +118,7 @@ export default function ProjectsForm() {
             <input
               type="text"
               value={form.slug}
-              onChange={(e) => set('slug', e.target.value)}
+              onChange={(e) => { setSlugTouched(true); set('slug', e.target.value); }}
               required
               placeholder="mi-proyecto"
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
@@ -130,11 +166,14 @@ export default function ProjectsForm() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Imágenes</label>
-          <ImageUpload value={form.images} onChange={(urls) => setForm(f => ({ ...f, images: urls }))} />
+          <ImageUpload value={form.images} onChange={(urls) => { setForm(f => ({ ...f, images: urls })); if (initialLoadedRef.current) setIsDirty(true); }} />
         </div>
 
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
-          <button type="button" onClick={() => navigate('/admin/projects')} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancelar</button>
+          <button type="button" onClick={() => {
+            if (isDirty && !confirm('¿Salir sin guardar? Se perderán los cambios.')) return;
+            navigate('/admin/projects');
+          }} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancelar</button>
           <button type="submit" disabled={saving} className="bg-primary-800 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary-900 disabled:opacity-50 transition-colors">
             {saving ? 'Guardando...' : 'Guardar proyecto'}
           </button>

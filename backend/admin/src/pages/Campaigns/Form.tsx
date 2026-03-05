@@ -1,4 +1,13 @@
 import { useEffect, useState, FormEvent } from 'react';
+
+function toSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api';
 import BilingualField from '../../components/BilingualField';
@@ -74,6 +83,7 @@ export default function CampaignsForm() {
   const [priceStr, setPriceStr] = useState('5.00');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [slugTouched, setSlugTouched] = useState(!!id);
   const isEdit = !!id;
 
   useEffect(() => {
@@ -111,7 +121,13 @@ export default function CampaignsForm() {
   }, [id, isEdit]);
 
   const set = (name: string, value: unknown) => {
-    setForm(f => ({ ...f, [name]: value }));
+    setForm(f => {
+      const next: Record<string, unknown> = { [name]: value };
+      if (name === 'titleEs' && !slugTouched) {
+        next.slug = toSlug(value as string);
+      }
+      return { ...f, ...next };
+    });
   };
 
   const handleExtraTypeChange = (type: string) => {
@@ -165,7 +181,7 @@ export default function CampaignsForm() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Slug <span className="text-red-500">*</span></label>
-              <input type="text" value={form.slug} onChange={e => set('slug', e.target.value)}
+              <input type="text" value={form.slug} onChange={e => { setSlugTouched(true); set('slug', e.target.value); }}
                 required placeholder="apadrina-gallina"
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800" />
             </div>

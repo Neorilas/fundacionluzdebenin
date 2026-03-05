@@ -70,4 +70,20 @@ router.post('/', upload.single('image'), (req: Request & { file?: Express.Multer
   }
 });
 
+// DELETE /api/admin/upload/:filename
+router.delete('/:filename', (req, res, next) => {
+  try {
+    const filename = path.basename(req.params.filename);
+    const filepath = path.join(UPLOAD_DIR, filename);
+    if (!fs.existsSync(filepath)) {
+      res.status(404).json({ error: 'Archivo no encontrado' });
+      return;
+    }
+    fs.unlinkSync(filepath);
+    res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;

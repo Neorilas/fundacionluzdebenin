@@ -28,6 +28,7 @@ import stripeAdmin from './routes/admin/stripe';
 import campaignsAdmin from './routes/admin/campaigns';
 import translateAdmin from './routes/admin/translate';
 import usersAdmin from './routes/admin/users';
+import dashboardAdmin from './routes/admin/dashboard';
 
 import { errorHandler } from './middleware/errorHandler';
 import { startScheduler } from './lib/scheduler';
@@ -80,6 +81,7 @@ app.use('/api/admin/stripe', stripeAdmin);
 app.use('/api/admin/campaigns', campaignsAdmin);
 app.use('/api/admin/translate', translateAdmin);
 app.use('/api/admin/users', usersAdmin);
+app.use('/api/admin/dashboard', dashboardAdmin);
 
 // Health check
 app.get('/api/health', (_req, res) => {
