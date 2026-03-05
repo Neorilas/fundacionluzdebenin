@@ -3,7 +3,7 @@
 #
 # El dominio se lee de $DOMAIN en .env  →  no toques este archivo para cambiar
 # de subdominio a dominio definitivo. Solo cambia DOMAIN en .env y ejecuta:
-#   bash scripts/switch-domain.sh
+#   bash scripts/switch-domain.sh fundacionluzdebenin.org
 # ─────────────────────────────────────────────────────────────────────────────
 
 {$DOMAIN} {
@@ -31,3 +31,17 @@
         Referrer-Policy strict-origin-when-cross-origin
     }
 }
+
+# Redirect www → dominio raíz
+www.{$DOMAIN} {
+    redir https://{$DOMAIN}{uri} permanent
+}
+
+# ── DESCOMENTAR DESPUÉS DE MIGRAR AL DOMINIO DEFINITIVO ──────────────────────
+# Mantiene funcionando los enlaces de nuevo.fundacionluzdebenin.org
+# (solo tiene efecto cuando DOMAIN=fundacionluzdebenin.org y el DNS de
+#  nuevo sigue apuntando a este servidor)
+#
+# nuevo.fundacionluzdebenin.org {
+#     redir https://fundacionluzdebenin.org{uri} permanent
+# }

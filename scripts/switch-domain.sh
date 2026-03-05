@@ -41,14 +41,14 @@ echo "────────────────────────�
 echo "🔨 Reconstruyendo frontend con NEXT_PUBLIC_API_URL=https://$DOMAIN..."
 docker compose build --no-cache frontend
 
-# ── Limpiar certificados Caddy del dominio anterior ──────────────────────────
-echo "🗑️  Limpiando certificados SSL anteriores..."
-docker compose stop caddy
-docker compose rm -f caddy
+# ── Parar y eliminar todos los contenedores (evita conflictos de nombres) ────
+echo "🛑 Deteniendo contenedores..."
+docker ps -aq --filter 'name=fundacion' | xargs -r docker rm -f
+docker network rm fundacion_default 2>/dev/null || true
 
 # ── Levantar todo con el nuevo dominio ───────────────────────────────────────
-echo "🚀 Levantando servicios..."
-docker compose up -d
+echo "🚀 Levantando servicios con nuevo dominio..."
+docker compose up -d --remove-orphans
 
 # ── Esperar a que Caddy obtenga el certificado ───────────────────────────────
 echo "⏳ Esperando certificado SSL para $DOMAIN..."

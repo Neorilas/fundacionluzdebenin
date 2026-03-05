@@ -1,0 +1,218 @@
+================================================================================
+  MIGRACIÓN: nuevo.fundacionluzdebenin.org → fundacionluzdebenin.org
+  Preparado el 2026-03-05
+================================================================================
+
+ESTADO ACTUAL
+─────────────
+  fundacionluzdebenin.org     → 82.194.68.88  (servidor antiguo / WordPress)
+  www.fundacionluzdebenin.org → 82.194.68.88  (mismo)
+  nuevo.fundacionluzdebenin.org → 91.107.235.70 (nuestro servidor Hetzner)
+
+NUESTRO SERVIDOR
+────────────────
+  IP:     91.107.235.70
+  Acceso: ssh root@91.107.235.70
+
+
+================================================================================
+  ANÁLISIS DE VIABILIDAD
+================================================================================
+
+¿Es viable?  SÍ, y es sencillo. El sistema ya está preparado para esto.
+
+¿Qué se conserva?
+  ✅ Base de datos completa (SQLite en volumen Docker — no se mueve)
+  ✅ Imágenes subidas (volumen Docker — no se mueve)
+  ✅ Todos los ajustes, campañas, blog, proyectos
+  ✅ Certificado SSL (Caddy lo renueva automáticamente para el nuevo dominio)
+  ✅ Email (Resend usa fundacionluzdebenin.org de envío — ya configurado)
+
+¿Qué cambia?
+  • La URL pública pasa de nuevo.* a fundacionluzdebenin.org
+  • El webhook de Stripe hay que actualizarlo (manual, 2 minutos)
+  • Los enlaces de nuevo.fundacionluzdebenin.org redirigirán al definitivo (301)
+
+¿Hay downtime?
+  Prácticamente ninguno. El servidor sigue corriendo durante todo el proceso.
+  El único momento sin servicio es la propagación DNS (~5-30 minutos).
+  Durante ese tiempo, quien resuelva el dominio antiguo verá el WordPress viejo,
+  y quien resuelva el nuevo ya verá la web nueva — nunca hay página caída.
+
+¿Y el WordPress antiguo?
+  Sigue en 82.194.68.88 hasta que tú decidas dar de baja ese hosting.
+  No interfiere. Puedes mantenerlo como backup durante semanas si quieres.
+
+
+================================================================================
+  LO QUE HAGO YO (ya está preparado en el código)
+================================================================================
+
+  ✅ Caddyfile actualizado:
+     - www.fundacionluzdebenin.org → redirige a fundacionluzdebenin.org (301)
+     - nuevo.fundacionluzdebenin.org → redirige a fundacionluzdebenin.org (301)
+       (este último se activa descomentando 3 líneas en el Caddyfile)
+
+  ✅ switch-domain.sh corregido (ya no tiene el bug de conflicto Docker)
+
+  El día D solo hay que ejecutar UN comando en el servidor (ver paso 3).
+
+
+================================================================================
+  LO QUE TIENES QUE HACER TÚ
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+ANTES DEL DÍA D  (hacer con días de antelación)
+────────────────────────────────────────────────────────────────────────────────
+
+PASO 1 — BAJAR EL TTL DEL DNS (tú)
+  Accede al panel donde gestionas los DNS de fundacionluzdebenin.org
+  (probablemente el registrador del dominio: GoDaddy, Namecheap, Nominalia, etc.)
+
+  Busca los registros:
+    fundacionluzdebenin.org     tipo A
+    www.fundacionluzdebenin.org tipo A
+
+  Cambia el TTL de ambos a:  300  (segundos = 5 minutos)
+
+  Luego espera el TTL ACTUAL antes de proceder al día D.
+  Para saber el TTL actual, ejecuta en tu terminal:
+    nslookup -type=SOA fundacionluzdebenin.org
+  Busca la línea "expire" o "minimum" — si era 3600, espera 1 hora antes del paso 3.
+
+PASO 2 — BACKUP DE WORDPRESS (opcional pero recomendado)
+  Si quieres conservar la web WordPress antigua:
+  - Instala el plugin UpdraftPlus en WordPress
+  - Exporta una copia completa (base de datos + archivos)
+  - Guárdala en tu ordenador
+
+
+────────────────────────────────────────────────────────────────────────────────
+DÍA D  (en orden estricto, todo en el mismo día)
+────────────────────────────────────────────────────────────────────────────────
+
+PASO 3 — ACTIVAR REDIRECTS Y PREPARAR EL SERVIDOR (yo puedo hacerlo, o tú)
+  Conecta al servidor y ejecuta:
+
+    ssh root@91.107.235.70
+    bash scripts/switch-domain.sh fundacionluzdebenin.org
+
+  Este comando:
+    a) Actualiza DOMAIN=fundacionluzdebenin.org en el .env del servidor
+    b) Reconstruye el frontend con la nueva URL canónica
+    c) Reinicia todos los contenedores
+    d) Caddy pedirá el certificado SSL en cuanto el DNS apunte al servidor
+
+  ⚠️  Haz esto ANTES de cambiar el DNS. Así el servidor ya está listo.
+
+PASO 4 — CAMBIAR EL DNS (tú, inmediatamente después del paso 3)
+  En tu panel DNS, cambia los registros A:
+
+    fundacionluzdebenin.org       →  91.107.235.70
+    www.fundacionluzdebenin.org   →  91.107.235.70
+
+  IMPORTANTE: NO toques el registro de nuevo.fundacionluzdebenin.org.
+  Ese ya apunta a 91.107.235.70 y se usará para la redirección.
+
+PASO 5 — ACTUALIZAR WEBHOOK DE STRIPE (tú)
+  Accede a: https://dashboard.stripe.com/webhooks
+
+  Edita el webhook existente y cambia la URL de:
+    https://nuevo.fundacionluzdebenin.org/api/stripe/webhook
+  a:
+    https://fundacionluzdebenin.org/api/stripe/webhook
+
+  Los eventos que debe escuchar (no cambian):
+    - checkout.session.completed
+    - invoice.payment_succeeded
+    - invoice.payment_failed
+    - customer.subscription.deleted
+
+PASO 6 — ACTIVAR REDIRECT DE "NUEVO" (yo puedo hacerlo, o tú en el servidor)
+  Una vez que el DNS haya propagado y la web funcione en el dominio definitivo,
+  activa el redirect de nuevo.fundacionluzdebenin.org editando el Caddyfile:
+
+    ssh root@91.107.235.70
+    nano /root/fundacion/Caddyfile
+
+  Busca las líneas comentadas al final y descoméntalas:
+
+    # nuevo.fundacionluzdebenin.org {
+    #     redir https://fundacionluzdebenin.org{uri} permanent
+    # }
+
+  Conviértelas en:
+
+    nuevo.fundacionluzdebenin.org {
+        redir https://fundacionluzdebenin.org{uri} permanent
+    }
+
+  Guarda y aplica:
+    docker ps -aq --filter 'name=fundacion' | xargs -r docker rm -f
+    docker network rm fundacion_default 2>/dev/null || true
+    cd /root/fundacion && docker compose up -d --remove-orphans
+
+
+────────────────────────────────────────────────────────────────────────────────
+VERIFICACIÓN (esperar 5-30 min después del cambio DNS)
+────────────────────────────────────────────────────────────────────────────────
+
+  Comprueba desde tu navegador (en modo incógnito para evitar caché):
+
+    ✅ https://fundacionluzdebenin.org/es/
+         → debe cargar la nueva web (no WordPress)
+
+    ✅ https://www.fundacionluzdebenin.org/
+         → debe redirigir a https://fundacionluzdebenin.org/es/
+
+    ✅ https://nuevo.fundacionluzdebenin.org/
+         → debe redirigir a https://fundacionluzdebenin.org/es/  (tras paso 6)
+
+    ✅ https://fundacionluzdebenin.org/admin/
+         → panel de administración
+
+    ✅ https://fundacionluzdebenin.org/api/health
+         → { "status": "ok" }
+
+  Para comprobar si el DNS ya ha propagado desde tu red:
+    nslookup fundacionluzdebenin.org
+    → debe mostrar Address: 91.107.235.70
+
+  O usa: https://dnschecker.org/#A/fundacionluzdebenin.org
+
+
+────────────────────────────────────────────────────────────────────────────────
+POST-MIGRACIÓN  (días después)
+────────────────────────────────────────────────────────────────────────────────
+
+PASO 7 — SUBIR EL TTL DE VUELTA (tú, 24-48h después)
+  En el panel DNS, vuelve a poner TTL = 3600 (1 hora) o más
+  en los registros A de fundacionluzdebenin.org y www.
+
+PASO 8 — GOOGLE SEARCH CONSOLE (tú, opcional pero recomendado para SEO)
+  - Añade https://fundacionluzdebenin.org como nueva propiedad en Search Console
+  - Solicita re-indexación de la URL principal
+  - El 301 de nuevo.* a fundacionluzdebenin.org traspasa el juice SEO automáticamente
+
+PASO 9 — DAR DE BAJA EL HOSTING ANTIGUO (tú, cuando estés seguro)
+  Solo cuando estés completamente seguro de que todo funciona.
+  Puedes esperar semanas sin problema — el servidor antiguo en 82.194.68.88
+  simplemente queda sin tráfico pero no interfiere.
+
+
+================================================================================
+  RESUMEN DE ACCIONES POR PERSONA
+================================================================================
+
+  TÚ:
+    □ Bajar TTL a 300 en panel DNS (antes del día D)
+    □ Cambiar A records de fundacionluzdebenin.org y www a 91.107.235.70 (día D)
+    □ Actualizar webhook URL en Stripe Dashboard (día D)
+    □ Subir TTL de vuelta a 3600 (días después)
+
+  YO (servidor):
+    □ bash scripts/switch-domain.sh fundacionluzdebenin.org  (día D, antes del DNS)
+    □ Descomentar bloque nuevo.fundacionluzdebenin.org en Caddyfile (día D, después)
+
+================================================================================
