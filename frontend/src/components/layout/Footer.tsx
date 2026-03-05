@@ -114,8 +114,8 @@ export default async function Footer({ lang }: Props) {
         <div className="border-t border-primary-800 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-primary-400">
           <p>© {currentYear} Fundación Luz de Benín. {t(lang, 'footer.rights')}</p>
           <div className="flex gap-4">
-            <Link href={`/${lang}/`} className="hover:text-white transition-colors">{t(lang, 'footer.legal')}</Link>
-            <Link href={`/${lang}/`} className="hover:text-white transition-colors">{t(lang, 'footer.privacy')}</Link>
+            <Link href={`/${lang}/aviso-legal/`} className="hover:text-white transition-colors">{t(lang, 'footer.legal')}</Link>
+            <Link href={`/${lang}/aviso-legal/#privacidad`} className="hover:text-white transition-colors">{t(lang, 'footer.privacy')}</Link>
           </div>
         </div>
       </div>
