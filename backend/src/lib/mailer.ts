@@ -59,6 +59,62 @@ export async function sendContactNotification(data: {
   }
 }
 
+export async function sendContactConfirmation(data: {
+  name: string;
+  email: string;
+  subject: string;
+  lang?: string;
+}): Promise<void> {
+  if (!RESEND_API_KEY) return;
+
+  const es = data.lang !== 'fr';
+  try {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: `Fundación Luz de Benín <${FROM_EMAIL}>`,
+        to: [data.email],
+        subject: es
+          ? `Hemos recibido tu mensaje — Fundación Luz de Benín`
+          : `Nous avons reçu votre message — Fondation Luz de Benín`,
+        html: `
+          <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
+            <div style="background:#065F46;padding:24px 32px;border-radius:12px 12px 0 0;">
+              <h1 style="color:#fff;margin:0;font-size:20px;">
+                ${es ? 'Gracias por contactarnos' : 'Merci de nous avoir contactés'}
+              </h1>
+            </div>
+            <div style="background:#f9fafb;padding:24px 32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 12px 12px;">
+              <p style="color:#374151;font-size:15px;line-height:1.6;">
+                ${es ? `Hola ${escapeHtml(data.name)},` : `Bonjour ${escapeHtml(data.name)},`}
+              </p>
+              <p style="color:#374151;font-size:15px;line-height:1.6;">
+                ${es
+                  ? `Hemos recibido tu mensaje sobre "<strong>${escapeHtml(data.subject)}</strong>" y te responderemos lo antes posible.`
+                  : `Nous avons reçu votre message concernant "<strong>${escapeHtml(data.subject)}</strong>" et nous vous répondrons dans les meilleurs délais.`
+                }
+              </p>
+              <p style="color:#6b7280;font-size:13px;line-height:1.6;margin-top:24px;border-top:1px solid #e5e7eb;padding-top:16px;">
+                ${es
+                  ? 'Fundación Luz de Benín · info@fundacionluzdebenin.org · fundacionluzdebenin.org'
+                  : 'Fondation Luz de Benín · info@fundacionluzdebenin.org · fundacionluzdebenin.org'
+                }
+              </p>
+            </div>
+          </div>
+        `,
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch {
+    // Non-critical
+  }
+}
+
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')

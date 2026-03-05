@@ -30,7 +30,7 @@ export const api = {
   getBlogPost: (slug: string) => fetchAPI<BlogPost>(`/api/blog/${slug}`),
   getPageSections: (page: string) => fetchAPI<PageSections>(`/api/pages/${page}`),
   getSettings: () => fetchAPI<Settings>('/api/settings'),
-  sendContact: (data: { name: string; email: string; subject: string; message: string }) =>
+  sendContact: (data: { name: string; email: string; subject: string; message: string; lang?: string; website?: string }) =>
     fetch(`${API_URL}/api/contact`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

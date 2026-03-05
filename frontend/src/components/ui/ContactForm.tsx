@@ -19,7 +19,7 @@ export default function ContactForm({ lang }: Props) {
     e.preventDefault();
     setStatus('sending');
     try {
-      await api.sendContact(form);
+      await api.sendContact({ ...form, lang });
       router.push(`/${lang}/gracias?type=contact`);
     } catch {
       setStatus('error');

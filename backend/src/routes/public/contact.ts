@@ -1,6 +1,6 @@
 import { Router, Request } from 'express';
 import prisma from '../../lib/prisma';
-import { sendContactNotification } from '../../lib/mailer';
+import { sendContactNotification, sendContactConfirmation } from '../../lib/mailer';
 
 const router = Router();
 
@@ -58,8 +58,9 @@ router.post('/', async (req, res, next) => {
       data: { name, email, subject, message },
     });
 
-    // Fire-and-forget email notification — non-blocking
+    // Fire-and-forget emails — non-blocking
     sendContactNotification({ name, email, subject, message });
+    sendContactConfirmation({ name, email, subject, lang: req.body.lang });
 
     res.status(201).json({ success: true, id: contact.id });
   } catch (error) {
