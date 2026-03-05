@@ -1,13 +1,15 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import { Lang } from '@/lib/types';
 import { t } from '@/lib/i18n';
 import { api } from '@/lib/api';
 
 export default function NewsletterStrip({ lang }: { lang: Lang }) {
+  const router = useRouter();
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'already' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -15,8 +17,7 @@ export default function NewsletterStrip({ lang }: { lang: Lang }) {
     try {
       const result = await api.subscribeNewsletter(email, lang);
       if (result.success) {
-        setStatus(result.alreadySubscribed ? 'already' : 'success');
-        setEmail('');
+        router.push(`/${lang}/gracias?type=newsletter`);
       } else {
         setStatus('error');
       }
@@ -32,15 +33,7 @@ export default function NewsletterStrip({ lang }: { lang: Lang }) {
         <h2 className="text-2xl font-extrabold text-white mb-3">{t(lang, 'newsletter.title')}</h2>
         <p className="text-primary-200 mb-8 text-sm leading-relaxed">{t(lang, 'newsletter.subtitle')}</p>
 
-        {status === 'success' && (
-          <p className="text-green-300 font-semibold text-lg">{t(lang, 'newsletter.success')}</p>
-        )}
-        {status === 'already' && (
-          <p className="text-yellow-300 font-semibold text-lg">{t(lang, 'newsletter.alreadySubscribed')}</p>
-        )}
-
-        {status !== 'success' && status !== 'already' && (
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input
               type="email"
               value={email}
@@ -57,8 +50,6 @@ export default function NewsletterStrip({ lang }: { lang: Lang }) {
               {status === 'sending' ? t(lang, 'newsletter.sending') : t(lang, 'newsletter.button')}
             </button>
           </form>
-        )}
-
         {status === 'error' && (
           <p className="text-red-300 text-sm mt-3">{t(lang, 'newsletter.error')}</p>
         )}

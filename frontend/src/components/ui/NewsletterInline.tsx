@@ -1,13 +1,15 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import { Lang } from '@/lib/types';
 import { t } from '@/lib/i18n';
 import { api } from '@/lib/api';
 
 export default function NewsletterInline({ lang }: { lang: Lang }) {
+  const router = useRouter();
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'already' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -15,8 +17,7 @@ export default function NewsletterInline({ lang }: { lang: Lang }) {
     try {
       const result = await api.subscribeNewsletter(email, lang);
       if (result.success) {
-        setStatus(result.alreadySubscribed ? 'already' : 'success');
-        setEmail('');
+        router.push(`/${lang}/gracias?type=newsletter`);
       } else {
         setStatus('error');
       }
@@ -24,16 +25,6 @@ export default function NewsletterInline({ lang }: { lang: Lang }) {
       setStatus('error');
     }
   };
-
-  if (status === 'success' || status === 'already') {
-    return (
-      <div className="mt-8 bg-green-50 border border-green-200 rounded-xl px-6 py-4 text-center">
-        <p className="text-green-800 font-semibold">
-          {status === 'already' ? t(lang, 'newsletter.alreadySubscribed') : t(lang, 'newsletter.success')}
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="mt-8 bg-primary-50 border border-primary-100 rounded-xl px-6 py-6 text-center">
