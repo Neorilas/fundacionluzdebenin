@@ -59,6 +59,57 @@ export async function sendContactNotification(data: {
   }
 }
 
+export async function sendNewsletterConfirmation(data: {
+  email: string;
+  lang?: string;
+}): Promise<void> {
+  if (!RESEND_API_KEY) return;
+
+  const es = data.lang !== 'fr';
+  try {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: `Fundación Luz de Benín <${FROM_EMAIL}>`,
+        to: [data.email],
+        subject: es
+          ? 'Ya estás suscrito/a a nuestras noticias'
+          : 'Vous êtes maintenant abonné(e) à nos actualités',
+        html: `
+          <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
+            <div style="background:#065F46;padding:24px 32px;border-radius:12px 12px 0 0;">
+              <h1 style="color:#fff;margin:0;font-size:20px;">
+                ${es ? '¡Bienvenido/a!' : 'Bienvenue !'}
+              </h1>
+            </div>
+            <div style="background:#f9fafb;padding:24px 32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 12px 12px;">
+              <p style="color:#374151;font-size:15px;line-height:1.6;">
+                ${es
+                  ? 'Gracias por suscribirte al boletín de la <strong>Fundación Luz de Benín</strong>. Te mantendremos informado/a sobre nuestros proyectos, novedades y formas de colaborar.'
+                  : 'Merci de vous être abonné(e) à la newsletter de la <strong>Fondation Luz de Benín</strong>. Nous vous tiendrons informé(e) de nos projets, actualités et façons de collaborer.'
+                }
+              </p>
+              <p style="color:#6b7280;font-size:13px;line-height:1.6;margin-top:24px;border-top:1px solid #e5e7eb;padding-top:16px;">
+                ${es
+                  ? 'Si no has solicitado esta suscripción, ignora este email. · Fundación Luz de Benín · fundacionluzdebenin.org'
+                  : 'Si vous n\'avez pas demandé cet abonnement, ignorez cet email. · Fondation Luz de Benín · fundacionluzdebenin.org'
+                }
+              </p>
+            </div>
+          </div>
+        `,
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch {
+    // Non-critical
+  }
+}
+
 export async function sendContactConfirmation(data: {
   name: string;
   email: string;

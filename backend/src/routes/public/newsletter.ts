@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { sendNewsletterConfirmation } from '../../lib/mailer';
 
 const router = Router();
 
@@ -42,6 +43,7 @@ router.post('/subscribe', async (req, res, next) => {
 
     // "Member Exists" is not an error — just respond with success
     if (response.ok || data.title === 'Member Exists') {
+      if (response.ok) sendNewsletterConfirmation({ email, lang });
       res.json({ success: true, alreadySubscribed: data.title === 'Member Exists' });
       return;
     }
