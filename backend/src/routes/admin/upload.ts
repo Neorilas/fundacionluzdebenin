@@ -39,6 +39,23 @@ const upload = multer({
   },
 });
 
+// GET /api/admin/upload — list uploaded files
+router.get('/', (_req, res, next) => {
+  try {
+    const IMAGE_EXT = /\.(jpe?g|png|gif|webp)$/i;
+    const files = fs.existsSync(UPLOAD_DIR)
+      ? fs.readdirSync(UPLOAD_DIR)
+          .filter(f => IMAGE_EXT.test(f))
+          .map(f => {
+            const stat = fs.statSync(path.join(UPLOAD_DIR, f));
+            return { url: `/uploads/${f}`, filename: f, size: stat.size, createdAt: stat.mtime.toISOString() };
+          })
+          .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+      : [];
+    res.json(files);
+  } catch (error) { next(error); }
+});
+
 // POST /api/admin/upload
 router.post('/', upload.single('image'), (req: Request & { file?: Express.Multer.File }, res, next) => {
   try {
