@@ -1,0 +1,22 @@
+name: Backup Base de Datos
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # Cada dia a las 3:00 AM UTC
+  workflow_dispatch:       # También ejecutable manualmente desde GitHub → Actions
+
+jobs:
+  backup:
+    name: Backup SQLite en servidor
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ejecutar backup en servidor
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 91.107.235.70
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            bash /root/fundacion/scripts/backup-db.sh
