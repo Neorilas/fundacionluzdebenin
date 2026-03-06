@@ -169,6 +169,7 @@ model Donation {
   donorName             String?
   donorEmail            String?
   donorDni              String?                 // para certificado fiscal anual
+  animalName            String?                 // nombre del animal apadrinado
   stripeProductId       String?
   stripeProduct         StripeProduct? @relation(fields: [stripeProductId], references: [id])
   paidAt                DateTime?

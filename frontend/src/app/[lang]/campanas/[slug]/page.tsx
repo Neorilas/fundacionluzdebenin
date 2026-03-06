@@ -126,7 +126,7 @@ export default async function CampaignPage({
             <span className="text-xl text-gray-500">{period}</span>
           </div>
           <div className="mb-4">
-            <SponsorButton lang={l} amount={campaign.amountCents} label={cta} className={btnClass} />
+            <SponsorButton lang={l} amount={campaign.amountCents} label={cta} className={btnClass} showAnimalName />
           </div>
           <p className="text-xs text-gray-400">{fine}</p>
           <ShareButtons
@@ -238,7 +238,7 @@ export default async function CampaignPage({
       <section className={`py-20 border-t ${ctaBg}`}>
         <div className="max-w-xl mx-auto px-4 text-center">
           <div className="text-6xl mb-6">{campaign.emoji}</div>
-          <SponsorButton lang={l} amount={campaign.amountCents} label={ctaBottom} className={`${btnClass} mb-4`} />
+          <SponsorButton lang={l} amount={campaign.amountCents} label={ctaBottom} className={`${btnClass} mb-4`} showAnimalName />
           <p className="text-xs text-gray-400 mt-4 leading-relaxed">{ctaBottomNote}</p>
           <ShareButtons
             lang={l}

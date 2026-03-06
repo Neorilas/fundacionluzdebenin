@@ -6,6 +6,13 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding database...');
 
+  // Skip if already seeded (prevents failures on container restarts)
+  const already = await prisma.setting.findUnique({ where: { key: '_initialSeeded' } });
+  if (already) {
+    console.log('⏭️  Database already seeded, skipping.');
+    return;
+  }
+
   // Admin user
   const passwordHash = await bcrypt.hash('admin123', 10);
   await prisma.adminUser.upsert({

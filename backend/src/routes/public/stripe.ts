@@ -32,13 +32,14 @@ router.get('/products', async (_req: Request, res: Response, next) => {
 // POST /api/stripe/checkout
 router.post('/checkout', async (req: Request, res: Response, next) => {
   try {
-    const { type, amount, stripeProductId, donorName, donorEmail, donorDni, lang } = req.body as {
+    const { type, amount, stripeProductId, donorName, donorEmail, donorDni, animalName, lang } = req.body as {
       type: 'one_time' | 'subscription';
       amount?: number;
       stripeProductId?: string;
       donorName?: string;
       donorEmail?: string;
       donorDni?: string;
+      animalName?: string;
       lang: 'es' | 'fr';
     };
 
@@ -94,6 +95,7 @@ router.post('/checkout', async (req: Request, res: Response, next) => {
         donorName: donorName || null,
         donorEmail: donorEmail || null,
         donorDni: donorDni || null,
+        animalName: animalName || null,
         stripeProductId: product?.id || null,
       },
     });

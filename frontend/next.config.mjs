@@ -9,6 +9,17 @@ const nextConfig = {
       { source: '/:lang/apadrina-oveja/', destination: '/:lang/campanas/apadrina-oveja/', permanent: true },
     ];
   },
+  async rewrites() {
+    const backendUrl = process.env.API_INTERNAL_URL
+      || process.env.NEXT_PUBLIC_API_URL
+      || 'http://localhost:3001';
+    return [
+      {
+        source: '/uploads/:path*',
+        destination: `${backendUrl}/uploads/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
