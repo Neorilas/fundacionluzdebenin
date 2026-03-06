@@ -12,7 +12,8 @@
     "db:push": "prisma db push",
     "db:seed": "ts-node prisma/seed.ts",
     "db:studio": "prisma studio",
-    "setup": "npm install && npx prisma db push && ts-node prisma/seed.ts"
+    "setup": "npm install && npx prisma db push && ts-node prisma/seed.ts",
+    "convert-uploads": "ts-node scripts/convert-uploads-to-webp.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.10.0",
