@@ -6,13 +6,6 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding database...');
 
-  // Skip if already seeded (prevents failures on container restarts)
-  const already = await prisma.setting.findUnique({ where: { key: '_initialSeeded' } });
-  if (already) {
-    console.log('⏭️  Database already seeded, skipping.');
-    return;
-  }
-
   // Admin user
   const passwordHash = await bcrypt.hash('admin123', 10);
   await prisma.adminUser.upsert({
@@ -503,7 +496,11 @@ Il y a trois ans, nous avons lancé notre programme de santé materno-infantile 
   console.log('✅ Campaigns created');
 
   // Marcar la BD como ya inicializada para que este bloque no vuelva a ejecutarse
-  await prisma.setting.create({ data: { key: '_initialSeeded', value: 'true' } });
+  await prisma.setting.upsert({
+    where:  { key: '_initialSeeded' },
+    update: {},
+    create: { key: '_initialSeeded', value: 'true' },
+  });
 
   console.log('\n🎉 Database seeded successfully!');
   console.log('👤 Admin login: admin@fundacionluzdebenin.org / admin123');
