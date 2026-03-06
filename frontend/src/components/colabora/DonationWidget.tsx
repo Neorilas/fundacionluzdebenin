@@ -161,7 +161,7 @@ export default function DonationWidget({ lang, stripeProducts }: Props) {
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden mb-4">
 
           {/* Orange header stripe */}
-          <div className="bg-accent px-6 py-3">
+          <div className="bg-orange-700 px-6 py-3">
             <p className="text-white text-sm font-semibold">{t.monthlyImpact}</p>
           </div>
 

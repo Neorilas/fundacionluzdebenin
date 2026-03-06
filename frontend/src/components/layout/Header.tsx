@@ -57,7 +57,7 @@ export default function Header({ lang, logoUrl = '/logo.jpg' }: Props) {
                 href={href}
                 className={`px-3 py-2 rounded-full text-sm font-medium transition-colors ${
                   cta
-                    ? 'bg-accent hover:bg-accent-700 text-white font-semibold ml-2'
+                    ? 'bg-orange-700 hover:bg-orange-800 text-white font-semibold ml-2'
                     : isActive(href)
                     ? 'bg-primary-700 text-white'
                     : 'text-primary-100 hover:bg-primary-700 hover:text-white'
@@ -97,7 +97,7 @@ export default function Header({ lang, logoUrl = '/logo.jpg' }: Props) {
                 onClick={() => setOpen(false)}
                 className={`block px-3 py-2 rounded-md text-sm font-medium ${
                   cta
-                    ? 'mt-2 bg-accent text-white font-semibold text-center'
+                    ? 'mt-2 bg-orange-700 text-white font-semibold text-center'
                     : isActive(href)
                     ? 'bg-primary-700 text-white'
                     : 'text-primary-100 hover:bg-primary-700'
