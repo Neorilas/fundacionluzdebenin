@@ -107,7 +107,15 @@
     "rights": "Tous droits réservés.",
     "legal": "Mentions légales",
     "privacy": "Confidentialité",
-    "cookies": "Cookies"
+    "cookies": "Cookies",
+    "faq": "Questions fréquentes"
+  },
+  "faq": {
+    "title": "Questions Fréquentes",
+    "subtitle": "Tout ce que vous devez savoir sur la Fondation Luz de Benín et comment vous pouvez collaborer.",
+    "noFaqs": "Aucune question fréquente disponible pour l'instant.",
+    "breadcrumbHome": "Accueil",
+    "breadcrumbFaq": "Questions fréquentes"
   },
   "common": {
     "learnMore": "En savoir plus",

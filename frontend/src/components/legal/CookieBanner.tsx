@@ -42,7 +42,7 @@ export default function CookieBanner({ lang }: { lang: Lang }) {
             : 'Nous utilisons des cookies analytiques (Google Analytics) pour améliorer le site. Aucun partage avec des tiers.'}
           {' '}
           <Link href={`/${lang}/aviso-legal/#cookies`} className="underline hover:text-white text-gray-400 whitespace-nowrap">
-            {es ? 'Más información' : 'En savoir plus'}
+            {es ? 'Política de cookies' : 'Politique de cookies'}
           </Link>
         </div>
         <div className="flex gap-2 shrink-0">

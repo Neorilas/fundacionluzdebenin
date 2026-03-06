@@ -71,6 +71,7 @@ import GeneralSettings from './pages/Settings/General';
 import UsersSettings from './pages/Settings/Users';
 import CampaignsList from './pages/Campaigns/List';
 import CampaignsForm from './pages/Campaigns/Form';
+import FaqsList from './pages/Faqs/List';
 
 function AdminLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -119,6 +120,7 @@ export default function App() {
                   <Route path="campaigns" element={<CampaignsList />} />
                   <Route path="campaigns/new" element={<CampaignsForm />} />
                   <Route path="campaigns/:id" element={<CampaignsForm />} />
+                  <Route path="faqs" element={<FaqsList />} />
                   <Route path="*" element={<Navigate to="/admin/" replace />} />
                 </Routes>
               </AdminLayout>

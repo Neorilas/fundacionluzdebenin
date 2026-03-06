@@ -83,7 +83,7 @@ export default async function CampaignPage({
   const backColor  = isAmber ? 'text-amber-700 hover:text-accent' : 'text-green-700 hover:text-primary-800';
   const coverBg    = isAmber ? 'bg-amber-50 border-amber-100' : 'bg-green-50 border-green-100';
   const btnClass   = isAmber
-    ? 'inline-flex items-center gap-2 bg-accent hover:bg-accent-700 text-white font-bold px-10 py-4 rounded-full text-xl transition-colors shadow-xl shadow-accent/30 disabled:opacity-60'
+    ? 'inline-flex items-center gap-2 bg-orange-700 hover:bg-orange-800 text-white font-bold px-10 py-4 rounded-full text-xl transition-colors shadow-xl shadow-orange-900/30 disabled:opacity-60'
     : 'inline-flex items-center gap-2 bg-primary-800 hover:bg-primary-900 text-white font-bold px-10 py-4 rounded-full text-xl transition-colors shadow-xl shadow-primary-900/20 disabled:opacity-60';
   const ctaBg      = isAmber ? 'bg-amber-50 border-amber-100' : 'bg-green-50 border-green-100';
 

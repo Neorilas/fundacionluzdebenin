@@ -129,12 +129,22 @@ export default async function Footer({ lang }: Props) {
           </div>
         </div>
 
-        <div className="border-t border-primary-800 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-primary-400">
-          <p>© {currentYear} Fundación Luz de Benín. {t(lang, 'footer.rights')}</p>
-          <div className="flex gap-4">
-            <Link href={`/${lang}/aviso-legal/`} className="hover:text-white transition-colors">{t(lang, 'footer.legal')}</Link>
-            <Link href={`/${lang}/aviso-legal/#privacidad`} className="hover:text-white transition-colors">{t(lang, 'footer.privacy')}</Link>
+        <div className="border-t border-primary-800 mt-8 pt-6 space-y-3 text-xs text-primary-400">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p>© {currentYear} Fundación Luz de Benín. {t(lang, 'footer.rights')}</p>
+            <div className="flex gap-4 flex-wrap justify-center">
+              <Link href={`/${lang}/faq/`} className="hover:text-white transition-colors">{t(lang, 'footer.faq')}</Link>
+              <Link href={`/${lang}/aviso-legal/`} className="hover:text-white transition-colors">{t(lang, 'footer.legal')}</Link>
+              <Link href={`/${lang}/aviso-legal/#privacidad`} className="hover:text-white transition-colors">{t(lang, 'footer.privacy')}</Link>
+            </div>
           </div>
+          {(settings.foundationNif || settings.foundationRegistry) && (
+            <p className="text-center text-primary-500">
+              {settings.foundationNif && <span>CIF: {settings.foundationNif}</span>}
+              {settings.foundationNif && settings.foundationRegistry && <span className="mx-2">·</span>}
+              {settings.foundationRegistry && <span>{settings.foundationRegistry}</span>}
+            </p>
+          )}
         </div>
       </div>
     </footer>

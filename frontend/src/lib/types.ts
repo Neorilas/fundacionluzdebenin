@@ -57,6 +57,15 @@ export interface Settings {
 
 export type Lang = 'es' | 'fr';
 
+export interface Faq {
+  id: string;
+  questionEs: string;
+  questionFr: string;
+  answerEs: string;
+  answerFr: string;
+  order: number;
+}
+
 export interface CoverItem { icon: string; textEs: string; textFr: string; }
 export interface StatItem  { value: string; labelEs: string; labelFr: string; }
 export interface WhyItem   { icon: string; textEs: string; textFr: string; }

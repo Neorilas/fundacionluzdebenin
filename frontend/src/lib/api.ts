@@ -1,4 +1,4 @@
-import { Project, BlogPost, PageSections, Settings, StripeProduct, CheckoutPayload, Campaign } from './types';
+import { Project, BlogPost, PageSections, Settings, StripeProduct, CheckoutPayload, Campaign, Faq } from './types';
 
 // API_INTERNAL_URL (non-NEXT_PUBLIC) is read at runtime on the server side,
 // allowing ISR/SSR to call the backend directly via Docker network when
@@ -44,6 +44,7 @@ export const api = {
     }).then(r => r.json()) as Promise<{ success?: boolean; error?: string; alreadySubscribed?: boolean }>,
   getCampaigns: () => fetchAPI<Campaign[]>('/api/campaigns'),
   getCampaign: (slug: string) => fetchAPI<Campaign>(`/api/campaigns/${slug}`),
+  getFaqs: () => fetchAPI<Faq[]>('/api/faqs'),
   getStripeProducts: () =>
     fetch(`${API_URL}/api/stripe/products`).then(r => r.json()) as Promise<StripeProduct[]>,
   createCheckout: (payload: CheckoutPayload) =>

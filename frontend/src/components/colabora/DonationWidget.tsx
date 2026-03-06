@@ -269,7 +269,7 @@ export default function DonationWidget({ lang, stripeProducts }: Props) {
             <button
               onClick={handleMonthly}
               disabled={loading}
-              className="w-full bg-accent hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl text-base transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-lg"
+              className="w-full bg-orange-700 hover:bg-orange-800 text-white font-bold py-4 px-6 rounded-xl text-base transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-lg"
             >
               {monthlyButtonLabel()}
             </button>
