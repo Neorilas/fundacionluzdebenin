@@ -13,12 +13,14 @@ const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
   const isFr = lang === 'fr';
-  const title = isFr ? 'Faire un Don' : 'Colabora y Dona';
+  const title = isFr
+    ? 'Faire un don à la Fondation Lumière du Bénin — Différentes façons d\'aider'
+    : 'Dona a Fundación Luz de Benín — Distintas formas de ayudar';
   const description = isFr
     ? "Faites un don à la Fondation Lumière du Bénin. Déductible fiscalement à 80 %. Chaque euro compte pour les orphelinats, les mères célibataires et les projets de développement au Bénin."
-    : 'Dona a la Fundación Luz de Benín. Deducible al 80% en el IRPF. Cada euro cuenta para los orfanatos, madres solteras y proyectos de desarrollo en Benín.';
+    : 'Donación puntual o mensual, apadrinamiento de animales o apoyo a proyectos. Deducible al 80% en el IRPF. Sin intermediarios, impacto directo en Benín.';
   return {
-    title,
+    title: { absolute: title },
     description,
     alternates: {
       canonical: `${SITE_URL}/${lang}/colabora/`,
@@ -28,7 +30,12 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         'x-default': `${SITE_URL}/es/colabora/`,
       },
     },
-    openGraph: { title, description, url: `${SITE_URL}/${lang}/colabora/` },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/${lang}/colabora/`,
+      images: [{ url: `${SITE_URL}/logo.jpg`, width: 800, height: 600, alt: title }],
+    },
   };
 }
 

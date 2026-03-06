@@ -107,12 +107,20 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lang:
     inLanguage: l === 'es' ? 'es-ES' : 'fr-FR',
   };
 
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: l === 'es' ? 'Inicio' : 'Accueil', item: `${SITE_URL}/${l}/` },
+      { '@type': 'ListItem', position: 2, name: l === 'es' ? 'Blog' : 'Actualité', item: `${SITE_URL}/${l}/blog/` },
+      { '@type': 'ListItem', position: 3, name: title, item: `${SITE_URL}/${l}/blog/${slug}/` },
+    ],
+  };
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 
       <article className="max-w-3xl mx-auto px-4 py-16">
         <Link href={`/${l}/blog/`} className="inline-flex items-center gap-1 text-sm text-primary-800 hover:text-accent mb-6 transition-colors">

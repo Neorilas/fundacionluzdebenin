@@ -13,12 +13,14 @@ const LIMIT = 9;
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
   const isFr = lang === 'fr';
-  const title = isFr ? 'Actualité' : 'Blog y Noticias';
+  const title = isFr
+    ? 'Actualité — Fondation Lumière du Bénin'
+    : 'Blog y Noticias — Fundación Luz de Benín';
   const description = isFr
     ? "Suivez l'actualité de la Fondation Lumière du Bénin : nouvelles des projets, témoignages du terrain et rapports d'activité."
     : 'Sigue la actualidad de la Fundación Luz de Benín: novedades de proyectos, testimonios del terreno e informes de actividad.';
   return {
-    title,
+    title: { absolute: title },
     description,
     alternates: {
       canonical: `${SITE_URL}/${lang}/blog/`,
@@ -28,7 +30,12 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         'x-default': `${SITE_URL}/es/blog/`,
       },
     },
-    openGraph: { title, description, url: `${SITE_URL}/${lang}/blog/` },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/${lang}/blog/`,
+      images: [{ url: `${SITE_URL}/logo.jpg`, width: 800, height: 600, alt: title }],
+    },
   };
 }
 

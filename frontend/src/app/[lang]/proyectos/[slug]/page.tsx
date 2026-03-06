@@ -71,7 +71,19 @@ export default async function ProjectPage({ params }: { params: Promise<{ lang: 
   const desc = l === 'es' ? project.descEs : project.descFr;
   const statusLabel = t(l, `projects.status.${project.status}`);
 
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: l === 'es' ? 'Inicio' : 'Accueil', item: `${SITE_URL}/${l}/` },
+      { '@type': 'ListItem', position: 2, name: l === 'es' ? 'Proyectos' : 'Projets', item: `${SITE_URL}/${l}/proyectos/` },
+      { '@type': 'ListItem', position: 3, name: title, item: `${SITE_URL}/${l}/proyectos/${slug}/` },
+    ],
+  };
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
     <article className="max-w-4xl mx-auto px-4 py-16">
       <Link href={`/${l}/proyectos/`} className="inline-flex items-center gap-1 text-sm text-primary-800 hover:text-accent mb-6 transition-colors">
         {t(l, 'projects.backToProjects')}
@@ -110,5 +122,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ lang: 
         </div>
       )}
     </article>
+    </>
   );
 }

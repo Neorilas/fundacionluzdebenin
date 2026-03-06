@@ -11,12 +11,14 @@ const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
   const isFr = lang === 'fr';
-  const title = isFr ? 'Qui Sommes-Nous' : 'Quiénes Somos';
+  const title = isFr
+    ? 'Qui sommes-nous — Fondation Lumière du Bénin'
+    : 'Quiénes somos — Fundación Luz de Benín';
   const description = isFr
     ? "Fondée en 2012 par des coopérants espagnols, la Fondation Lumière du Bénin œuvre pour le développement durable des communautés rurales du Bénin depuis plus de 12 ans."
     : 'Fundada en 2012 por cooperantes españoles, la Fundación Luz de Benín lleva más de 12 años trabajando por el desarrollo sostenible de las comunidades rurales de Benín.';
   return {
-    title,
+    title: { absolute: title },
     description,
     alternates: {
       canonical: `${SITE_URL}/${lang}/quienes-somos/`,
@@ -26,7 +28,12 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         'x-default': `${SITE_URL}/es/quienes-somos/`,
       },
     },
-    openGraph: { title, description, url: `${SITE_URL}/${lang}/quienes-somos/` },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/${lang}/quienes-somos/`,
+      images: [{ url: `${SITE_URL}/logo.jpg`, width: 800, height: 600, alt: title }],
+    },
   };
 }
 

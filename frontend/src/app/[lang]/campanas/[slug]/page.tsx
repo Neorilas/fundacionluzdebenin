@@ -121,8 +121,19 @@ export default async function CampaignPage({
     },
   };
 
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: l === 'es' ? 'Inicio' : 'Accueil', item: `${SITE_URL}/${l}/` },
+      { '@type': 'ListItem', position: 2, name: l === 'es' ? 'Campañas' : 'Campagnes', item: `${SITE_URL}/${l}/campanas/` },
+      { '@type': 'ListItem', position: 3, name: title, item: `${SITE_URL}/${l}/campanas/${slug}/` },
+    ],
+  };
+
   return (
     <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
