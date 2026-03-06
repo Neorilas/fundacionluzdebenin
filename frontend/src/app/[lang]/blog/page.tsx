@@ -5,7 +5,7 @@ import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import BlogCard from '@/components/blog/BlogCard';
 
-export const revalidate = 60;
+export const revalidate = 600;
 
 const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 const LIMIT = 9;

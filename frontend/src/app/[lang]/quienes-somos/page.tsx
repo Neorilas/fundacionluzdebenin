@@ -4,7 +4,7 @@ import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import SectionTitle from '@/components/ui/SectionTitle';
 
-export const revalidate = 60;
+export const revalidate = 86400;
 
 const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 

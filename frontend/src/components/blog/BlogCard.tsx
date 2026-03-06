@@ -18,27 +18,26 @@ export default function BlogCard({ post, lang }: Props) {
     : '';
 
   return (
-    <article className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden group">
-      {/* Cover */}
-      <div className="h-40 bg-gradient-to-br from-primary-100 to-accent-100 relative overflow-hidden">
-        {post.coverImage ? (
-          <Image src={post.coverImage} alt={title} fill unoptimized sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-5xl">📰</div>
-        )}
-      </div>
+    <Link href={`/${lang}/blog/${post.slug}/`} className="block group">
+      <article className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden h-full flex flex-col">
+        {/* Cover */}
+        <div className="h-40 bg-gradient-to-br from-primary-100 to-accent-100 relative overflow-hidden shrink-0">
+          {post.coverImage ? (
+            <Image src={post.coverImage} alt={title} fill unoptimized sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-300" />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center text-5xl">📰</div>
+          )}
+        </div>
 
-      <div className="p-5">
-        {date && <p className="text-xs text-muted mb-2">{date}</p>}
-        <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">{title}</h3>
-        <p className="text-sm text-muted line-clamp-3 mb-4">{excerpt}</p>
-        <Link
-          href={`/${lang}/blog/${post.slug}/`}
-          className="inline-flex items-center gap-1 text-sm font-semibold text-primary-800 hover:text-accent transition-colors"
-        >
-          {t(lang, 'blog.readMore')} →
-        </Link>
-      </div>
-    </article>
+        <div className="p-5 flex flex-col flex-1">
+          {date && <p className="text-xs text-muted mb-2">{date}</p>}
+          <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">{title}</h3>
+          <p className="text-sm text-muted line-clamp-3 mb-4 flex-1">{excerpt}</p>
+          <span className="inline-flex items-center gap-1 text-sm font-semibold text-primary-800 group-hover:text-accent transition-colors">
+            {t(lang, 'blog.readMore')} →
+          </span>
+        </div>
+      </article>
+    </Link>
   );
 }

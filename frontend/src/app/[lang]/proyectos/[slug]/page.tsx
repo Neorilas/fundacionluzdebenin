@@ -7,7 +7,7 @@ import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import Badge from '@/components/ui/Badge';
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 
@@ -34,9 +34,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         title,
         description,
         url: `${SITE_URL}/${lang}/proyectos/${slug}/`,
-        ...(image && {
-          images: [{ url: image.startsWith('http') ? image : `${SITE_URL}${image}`, alt: title }],
-        }),
+        images: image
+          ? [{ url: image.startsWith('http') ? image : `${SITE_URL}${image}`, alt: title }]
+          : [{ url: `${SITE_URL}/logo.jpg`, width: 800, height: 600, alt: title }],
       },
     };
   } catch {

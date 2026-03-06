@@ -6,7 +6,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import TaxDeduction from '@/components/colabora/TaxDeduction';
 import DonationWidget from '@/components/colabora/DonationWidget';
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 

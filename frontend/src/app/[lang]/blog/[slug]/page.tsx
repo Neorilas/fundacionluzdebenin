@@ -7,7 +7,7 @@ import { Lang } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 
@@ -35,9 +35,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         url: `${SITE_URL}/${lang}/blog/${slug}/`,
         type: 'article',
         ...(post.publishedAt && { publishedTime: new Date(post.publishedAt).toISOString() }),
-        ...(post.coverImage && {
-          images: [{ url: post.coverImage.startsWith('http') ? post.coverImage : `${SITE_URL}${post.coverImage}`, alt: title }],
-        }),
+        images: post.coverImage
+          ? [{ url: post.coverImage.startsWith('http') ? post.coverImage : `${SITE_URL}${post.coverImage}`, alt: title }]
+          : [{ url: `${SITE_URL}/logo.jpg`, width: 800, height: 600, alt: title }],
       },
     };
   } catch {
@@ -68,6 +68,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lang:
     notFound();
   }
 
+  // Fetch all posts for prev/next navigation
+  const allPosts = await api.getBlogPosts(1, 1000).then(r => r.posts).catch(() => []);
+  const idx = allPosts.findIndex(p => p.slug === slug);
+  const prevPost = idx > 0 ? allPosts[idx - 1] : null;
+  const nextPost = idx >= 0 && idx < allPosts.length - 1 ? allPosts[idx + 1] : null;
+
   const title = l === 'es' ? post.titleEs : post.titleFr;
   const content = l === 'es' ? (post.contentEs || '') : (post.contentFr || '');
   const date = post.publishedAt
@@ -76,27 +82,85 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lang:
       })
     : '';
 
+  const coverImageUrl = post.coverImage
+    ? (post.coverImage.startsWith('http') ? post.coverImage : `${SITE_URL}${post.coverImage}`)
+    : `${SITE_URL}/logo.jpg`;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description: l === 'es' ? post.excerptEs : post.excerptFr,
+    image: coverImageUrl,
+    url: `${SITE_URL}/${l}/blog/${slug}/`,
+    ...(post.publishedAt && { datePublished: new Date(post.publishedAt).toISOString() }),
+    author: {
+      '@type': 'Organization',
+      name: 'Fundación Luz de Benín',
+      url: SITE_URL,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Fundación Luz de Benín',
+      logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo.jpg` },
+    },
+    inLanguage: l === 'es' ? 'es-ES' : 'fr-FR',
+  };
+
   return (
-    <article className="max-w-3xl mx-auto px-4 py-16">
-      <Link href={`/${l}/blog/`} className="inline-flex items-center gap-1 text-sm text-primary-800 hover:text-accent mb-6 transition-colors">
-        {t(l, 'blog.backToBlog')}
-      </Link>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
-      {post.coverImage && (
-        <div className="relative h-72 rounded-2xl overflow-hidden mb-8">
-          <Image src={post.coverImage} alt={title} fill unoptimized priority sizes="(max-width: 768px) 100vw, 768px" className="object-cover" />
+      <article className="max-w-3xl mx-auto px-4 py-16">
+        <Link href={`/${l}/blog/`} className="inline-flex items-center gap-1 text-sm text-primary-800 hover:text-accent mb-6 transition-colors">
+          {t(l, 'blog.backToBlog')}
+        </Link>
+
+        {post.coverImage && (
+          <div className="relative h-72 rounded-2xl overflow-hidden mb-8">
+            <Image src={post.coverImage} alt={title} fill unoptimized priority sizes="(max-width: 768px) 100vw, 768px" className="object-cover" />
+          </div>
+        )}
+
+        {date && (
+          <p className="text-sm text-muted mb-3">{t(l, 'blog.publishedOn')} {date}</p>
+        )}
+
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-8">{title}</h1>
+
+        <div className="prose max-w-none">
+          <ReactMarkdown>{content}</ReactMarkdown>
         </div>
-      )}
 
-      {date && (
-        <p className="text-sm text-muted mb-3">{t(l, 'blog.publishedOn')} {date}</p>
-      )}
-
-      <h1 className="text-4xl font-extrabold text-gray-900 mb-8">{title}</h1>
-
-      <div className="prose max-w-none">
-        <ReactMarkdown>{content}</ReactMarkdown>
-      </div>
-    </article>
+        {/* Prev / Next navigation */}
+        {(prevPost || nextPost) && (
+          <nav className="mt-16 pt-8 border-t border-gray-200 grid grid-cols-2 gap-4" aria-label={l === 'es' ? 'Navegación entre artículos' : 'Navigation entre articles'}>
+            <div>
+              {prevPost && (
+                <Link href={`/${l}/blog/${prevPost.slug}/`} className="group flex flex-col gap-1 text-sm hover:text-accent transition-colors">
+                  <span className="text-xs text-muted font-medium">← {l === 'es' ? 'Anterior' : 'Précédent'}</span>
+                  <span className="font-semibold text-gray-900 group-hover:text-accent line-clamp-2 transition-colors">
+                    {l === 'es' ? prevPost.titleEs : prevPost.titleFr}
+                  </span>
+                </Link>
+              )}
+            </div>
+            <div className="text-right">
+              {nextPost && (
+                <Link href={`/${l}/blog/${nextPost.slug}/`} className="group flex flex-col gap-1 text-sm hover:text-accent transition-colors items-end">
+                  <span className="text-xs text-muted font-medium">{l === 'es' ? 'Siguiente' : 'Suivant'} →</span>
+                  <span className="font-semibold text-gray-900 group-hover:text-accent line-clamp-2 transition-colors">
+                    {l === 'es' ? nextPost.titleEs : nextPost.titleFr}
+                  </span>
+                </Link>
+              )}
+            </div>
+          </nav>
+        )}
+      </article>
+    </>
   );
 }

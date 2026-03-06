@@ -4,7 +4,7 @@ import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import ContactForm from '@/components/ui/ContactForm';
 
-export const revalidate = 60;
+export const revalidate = 86400;
 
 const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 
@@ -68,7 +68,9 @@ export default async function ContactoPage({ params }: { params: Promise<{ lang:
                     <span className="text-primary-800 text-lg">📧</span>
                     <div>
                       <p className="font-medium">{t(l, 'contact.info.email')}</p>
-                      <p className="text-muted">{settings.emailContact || 'info@fundacionluzdebenin.org'}</p>
+                      <a href={`mailto:${settings.emailContact || 'info@fundacionluzdebenin.org'}`} className="text-muted hover:text-primary-800 transition-colors">
+                        {settings.emailContact || 'info@fundacionluzdebenin.org'}
+                      </a>
                     </div>
                   </div>
                 )}
@@ -77,7 +79,9 @@ export default async function ContactoPage({ params }: { params: Promise<{ lang:
                     <span className="text-primary-800 text-lg">📞</span>
                     <div>
                       <p className="font-medium">{t(l, 'contact.info.phone')}</p>
-                      <p className="text-muted">{settings.phoneContact || '+34 612 345 678'}</p>
+                      <a href={`tel:${(settings.phoneContact || '+34612345678').replace(/\s/g, '')}`} className="text-muted hover:text-primary-800 transition-colors">
+                        {settings.phoneContact || '+34 612 345 678'}
+                      </a>
                     </div>
                   </div>
                 )}

@@ -49,8 +49,9 @@ export default function ContactForm({ lang }: Props) {
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t(lang, 'contact.form.name')}</label>
+          <label htmlFor="contact-name" className="block text-sm font-medium text-gray-700 mb-1">{t(lang, 'contact.form.name')}</label>
           <input
+            id="contact-name"
             type="text"
             value={form.name}
             onChange={(e) => set('name', e.target.value)}
@@ -59,8 +60,9 @@ export default function ContactForm({ lang }: Props) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t(lang, 'contact.form.email')}</label>
+          <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700 mb-1">{t(lang, 'contact.form.email')}</label>
           <input
+            id="contact-email"
             type="email"
             value={form.email}
             onChange={(e) => set('email', e.target.value)}
@@ -71,8 +73,9 @@ export default function ContactForm({ lang }: Props) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">{t(lang, 'contact.form.subject')}</label>
+        <label htmlFor="contact-subject" className="block text-sm font-medium text-gray-700 mb-1">{t(lang, 'contact.form.subject')}</label>
         <input
+          id="contact-subject"
           type="text"
           value={form.subject}
           onChange={(e) => set('subject', e.target.value)}
@@ -82,8 +85,9 @@ export default function ContactForm({ lang }: Props) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">{t(lang, 'contact.form.message')}</label>
+        <label htmlFor="contact-message" className="block text-sm font-medium text-gray-700 mb-1">{t(lang, 'contact.form.message')}</label>
         <textarea
+          id="contact-message"
           value={form.message}
           onChange={(e) => set('message', e.target.value)}
           required

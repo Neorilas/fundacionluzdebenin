@@ -57,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let campaignEntries: MetadataRoute.Sitemap = [];
   try {
     const campaigns = await api.getCampaigns();
-    campaignEntries = campaigns.flatMap(c =>
+    campaignEntries = campaigns.filter(c => c.active).flatMap(c =>
       LANGS.map(lang => ({
         url: `${SITE_URL}/${lang}/campanas/${c.slug}/`,
         lastModified: now,

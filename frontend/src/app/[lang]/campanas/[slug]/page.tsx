@@ -105,7 +105,28 @@ export default async function CampaignPage({
   const backLabel  = isFr ? '← Retour à l\'accueil' : '← Volver al inicio';
   const coverTitle = isFr ? 'Que couvre ton parrainage ?' : '¿Qué cubre tu apadrinamiento?';
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'DonateAction',
+    name: title,
+    description: tagline,
+    url: `${SITE_URL}/${l}/campanas/${slug}/`,
+    price: (campaign.amountCents / 100).toFixed(2),
+    priceCurrency: 'EUR',
+    recipient: {
+      '@type': 'NGO',
+      name: 'Fundación Luz de Benín',
+      alternateName: 'Fondation Lumière du Bénin',
+      url: SITE_URL,
+    },
+  };
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
     <div>
       {/* Hero */}
       <section className={`py-20 border-b ${heroBg}`}>
@@ -248,5 +269,6 @@ export default async function CampaignPage({
         </div>
       </section>
     </div>
+    </>
   );
 }

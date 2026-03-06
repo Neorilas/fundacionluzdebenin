@@ -117,7 +117,7 @@ export default async function Footer({ lang }: Props) {
               {settings.showPhone !== '0' && (
                 <li>
                   📞{' '}
-                  <a href={`tel:${(settings.phoneContact || '+34612345678').replace(/s/g, '')}`} className="hover:text-white transition-colors">
+                  <a href={`tel:${(settings.phoneContact || '+34612345678').replace(/\s/g, '')}`} className="hover:text-white transition-colors">
                     {settings.phoneContact || '+34 612 345 678'}
                   </a>
                 </li>

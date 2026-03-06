@@ -10,7 +10,7 @@ import DonationCTA from '@/components/home/DonationCTA';
 import CampaignsStrip from '@/components/home/CampaignsStrip';
 import NewsletterStrip from '@/components/home/NewsletterStrip';
 
-export const revalidate = 60;
+export const revalidate = 300;
 
 const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 
