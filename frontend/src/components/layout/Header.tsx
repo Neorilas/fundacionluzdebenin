@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -26,6 +26,8 @@ export default function Header({ lang, logoUrl = '/logo.jpg' }: Props) {
     { href: `/${lang}/contacto/`, label: t(lang, 'nav.contact'), cta: false },
     { href: `/${lang}/colabora/`, label: t(lang, 'common.donate'), cta: true },
   ];
+
+  useEffect(() => { setOpen(false); }, [pathname]);
 
   const isActive = (href: string) => pathname === href || pathname === href.slice(0, -1);
 
@@ -73,6 +75,7 @@ export default function Header({ lang, logoUrl = '/logo.jpg' }: Props) {
               onClick={() => setOpen(!open)}
               className="lg:hidden p-2 rounded-md text-primary-100 hover:bg-primary-700"
               aria-label="Menu"
+              aria-expanded={open}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {open

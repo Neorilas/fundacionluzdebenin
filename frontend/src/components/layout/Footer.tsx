@@ -107,10 +107,20 @@ export default async function Footer({ lang }: Props) {
             </h3>
             <ul className="space-y-2 text-sm text-primary-300">
               {settings.showEmail !== '0' && (
-                <li>📧 {settings.emailContact || 'info@fundacionluzdebenin.org'}</li>
+                <li>
+                  📧{' '}
+                  <a href={`mailto:${settings.emailContact || 'info@fundacionluzdebenin.org'}`} className="hover:text-white transition-colors">
+                    {settings.emailContact || 'info@fundacionluzdebenin.org'}
+                  </a>
+                </li>
               )}
               {settings.showPhone !== '0' && (
-                <li>📞 {settings.phoneContact || '+34 612 345 678'}</li>
+                <li>
+                  📞{' '}
+                  <a href={`tel:${(settings.phoneContact || '+34612345678').replace(/s/g, '')}`} className="hover:text-white transition-colors">
+                    {settings.phoneContact || '+34 612 345 678'}
+                  </a>
+                </li>
               )}
               {settings.showAddress !== '0' && (
                 <li>📍 {settings.address || 'Madrid, España'}</li>

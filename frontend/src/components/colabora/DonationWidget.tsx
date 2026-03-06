@@ -14,6 +14,7 @@ const ONE_TIME_PRESETS = [10, 25, 50, 100];
 
 const L = {
   es: {
+    recommended: 'RECOMENDADO',
     title: 'Hazte socio/a mensual',
     subtitle: 'Tu cuota mensual nos permite planificar y mantener proyectos a largo plazo. Es la forma más valiosa de ayudar.',
     monthlyImpact: '💚 Con 10€/mes educamos a un niño durante todo un año.',
@@ -34,6 +35,7 @@ const L = {
     customMonthly: 'Elige tu importe',
   },
   fr: {
+    recommended: 'RECOMMANDÉ',
     title: 'Devenez membre mensuel',
     subtitle: 'Votre cotisation mensuelle nous permet de planifier et maintenir des projets à long terme. C\'est la façon la plus précieuse d\'aider.',
     monthlyImpact: '💚 Avec 10€/mois, nous éduquons un enfant pendant toute une année.',
@@ -149,7 +151,7 @@ export default function DonationWidget({ lang, stripeProducts }: Props) {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-accent/20 text-accent-100 text-xs font-bold px-3 py-1.5 rounded-full mb-4 border border-accent/30">
-            ⭐ RECOMENDADO
+            ⭐ {t.recommended}
           </div>
           <h2 className="text-3xl font-extrabold text-white mb-3">{t.title}</h2>
           <p className="text-primary-200 text-sm leading-relaxed max-w-md mx-auto">{t.subtitle}</p>

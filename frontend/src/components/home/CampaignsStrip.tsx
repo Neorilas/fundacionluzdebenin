@@ -44,7 +44,7 @@ export default function CampaignsStrip({ lang, campaigns }: Props) {
             const title   = lang === 'fr' ? campaign.titleFr   : campaign.titleEs;
             const tagline = lang === 'fr' ? campaign.taglineFr : campaign.taglineEs;
             const ctaText = lang === 'fr' ? campaign.ctaFr     : campaign.ctaEs;
-            const price   = `${campaign.priceLabel}/${lang === 'fr' ? 'mois' : 'mes'}`;
+            const price   = `${campaign.priceLabel}/${lang === 'fr' ? campaign.periodFr : campaign.periodEs}`;
 
             return (
               <Link
