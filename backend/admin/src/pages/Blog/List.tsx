@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../../api';
 import ConfirmDialog from '../../components/ConfirmDialog';
 
@@ -15,6 +15,7 @@ interface Post {
 }
 
 export default function BlogList() {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [confirm, setConfirm] = useState<{ id: string; name: string } | null>(null);
@@ -66,20 +67,24 @@ export default function BlogList() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {posts.map((p) => (
-                <tr key={p.id} className="hover:bg-gray-50">
+                <tr
+                  key={p.id}
+                  className="hover:bg-gray-50 cursor-pointer"
+                  onClick={() => navigate(`/admin/blog/${p.id}`)}
+                >
                   <td className="px-4 py-3 font-medium text-gray-900">{p.titleEs}</td>
                   <td className="px-4 py-3 text-gray-500 font-mono text-xs">{p.slug}</td>
                   <td className="px-4 py-3">
                     {p.published
-                      ? <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">✅ Publicado</span>
+                      ? <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Publicado</span>
                       : p.scheduledAt
-                      ? <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">🕐 {formatDate(p.scheduledAt)}</span>
-                      : <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">📝 Borrador</span>
+                      ? <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">{formatDate(p.scheduledAt)}</span>
+                      : <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">Borrador</span>
                     }
                   </td>
                   <td className="px-4 py-3 text-gray-500">{p.category || '—'}</td>
                   <td className="px-4 py-3 text-gray-500">{p.publishedAt ? formatDate(p.publishedAt) : '—'}</td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3 text-right" onClick={e => e.stopPropagation()}>
                     <div className="flex items-center justify-end gap-2">
                       <Link to={`/admin/blog/${p.id}`} className="text-primary-800 hover:underline text-xs">Editar</Link>
                       <button onClick={() => setConfirm({ id: p.id, name: p.titleEs })} className="text-red-600 hover:underline text-xs">Eliminar</button>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../../api';
 import ConfirmDialog from '../../components/ConfirmDialog';
 
@@ -22,6 +22,7 @@ const statusLabels: Record<string, string> = {
 };
 
 export default function ProjectsList() {
+  const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [confirm, setConfirm] = useState<{ id: string; name: string } | null>(null);
@@ -71,7 +72,11 @@ export default function ProjectsList() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {projects.map((p) => (
-                <tr key={p.id} className="hover:bg-gray-50">
+                <tr
+                  key={p.id}
+                  className="hover:bg-gray-50 cursor-pointer"
+                  onClick={() => navigate(`/admin/projects/${p.id}`)}
+                >
                   <td className="px-4 py-3 font-medium text-gray-900">{p.titleEs}</td>
                   <td className="px-4 py-3 text-gray-500 font-mono text-xs">{p.slug}</td>
                   <td className="px-4 py-3">
@@ -79,9 +84,9 @@ export default function ProjectsList() {
                       {statusLabels[p.status]}
                     </span>
                   </td>
-                  <td className="px-4 py-3">{p.featured ? '⭐' : '—'}</td>
+                  <td className="px-4 py-3">{p.featured ? '★' : '—'}</td>
                   <td className="px-4 py-3 text-gray-500">{p.order}</td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3 text-right" onClick={e => e.stopPropagation()}>
                     <div className="flex items-center justify-end gap-2">
                       <Link to={`/admin/projects/${p.id}`} className="text-primary-800 hover:underline text-xs">Editar</Link>
                       <button onClick={() => setConfirm({ id: p.id, name: p.titleEs })} className="text-red-600 hover:underline text-xs">Eliminar</button>
