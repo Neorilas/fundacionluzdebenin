@@ -31,6 +31,20 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+// GET /api/blog/preview/:slug?secret=XXX  — returns any post (published or draft) if secret matches
+router.get('/preview/:slug', async (req, res, next) => {
+  try {
+    const PREVIEW_SECRET = process.env.PREVIEW_SECRET || 'preview-luz-benin';
+    if (req.query.secret !== PREVIEW_SECRET) {
+      res.status(401).json({ error: 'No autorizado' });
+      return;
+    }
+    const post = await prisma.blogPost.findFirst({ where: { slug: req.params.slug } });
+    if (!post) { res.status(404).json({ error: 'Post no encontrado' }); return; }
+    res.json(post);
+  } catch (error) { next(error); }
+});
+
 // GET /api/blog/:slug
 router.get('/:slug', async (req, res, next) => {
   try {

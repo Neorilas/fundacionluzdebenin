@@ -58,13 +58,32 @@ export async function generateStaticParams() {
   }
 }
 
-export default async function BlogPostPage({ params }: { params: Promise<{ lang: string; slug: string }> }) {
+export default async function BlogPostPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ lang: string; slug: string }>;
+  searchParams: Promise<{ preview?: string }>;
+}) {
   const { lang, slug } = await params;
+  const { preview } = await searchParams;
   const l = lang as Lang;
+
+  const PREVIEW_SECRET = process.env.PREVIEW_SECRET || 'preview-luz-benin';
+  const isPreview = preview === PREVIEW_SECRET;
 
   let post;
   try {
-    post = await api.getBlogPost(slug);
+    if (isPreview) {
+      const res = await fetch(
+        `${process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/blog/preview/${slug}?secret=${PREVIEW_SECRET}`,
+        { cache: 'no-store' }
+      );
+      if (!res.ok) notFound();
+      post = await res.json();
+    } else {
+      post = await api.getBlogPost(slug);
+    }
   } catch {
     notFound();
   }
@@ -122,6 +141,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lang:
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+
+      {isPreview && (
+        <div className="bg-amber-400 text-amber-900 text-sm font-semibold text-center py-2 px-4">
+          Vista previa — Este post aún no está publicado
+        </div>
+      )}
 
       <article className="max-w-3xl mx-auto px-4 py-16">
         <Link href={`/${l}/blog/`} className="inline-flex items-center gap-1 text-sm text-primary-800 hover:text-accent mb-6 transition-colors">

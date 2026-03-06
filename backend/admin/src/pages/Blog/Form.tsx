@@ -166,15 +166,19 @@ export default function BlogForm() {
           <h2 className="text-2xl font-bold text-gray-900">{isEdit ? 'Editar post' : 'Nuevo post'}</h2>
         </div>
         <div className="flex items-center gap-2">
-          {form.slug && (
-            <a
-              href={`${FRONTEND_URL}/es/blog/${form.slug}/`}
-              target="_blank"
-              rel="noopener noreferrer"
+          {form.slug && id && (
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  const r = await api.get(`/admin/blog/${id}/preview-url`);
+                  window.open(r.data.es, '_blank', 'noopener,noreferrer');
+                } catch { alert('No se pudo obtener la URL de vista previa'); }
+              }}
               className="text-xs text-gray-400 hover:text-primary-800 transition-colors px-2 py-1"
             >
-              👁 Ver en la web
-            </a>
+              Vista previa
+            </button>
           )}
           <button
             type="button"

@@ -85,6 +85,20 @@ router.put('/:id', async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
+// GET /api/admin/blog/:id/preview-url
+router.get('/:id/preview-url', async (req, res, next) => {
+  try {
+    const post = await prisma.blogPost.findUnique({ where: { id: req.params.id }, select: { slug: true } });
+    if (!post) { res.status(404).json({ error: 'Post no encontrado' }); return; }
+    const PREVIEW_SECRET = process.env.PREVIEW_SECRET || 'preview-luz-benin';
+    const FRONTEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    res.json({
+      es: `${FRONTEND_URL}/es/blog/${post.slug}/?preview=${PREVIEW_SECRET}`,
+      fr: `${FRONTEND_URL}/fr/blog/${post.slug}/?preview=${PREVIEW_SECRET}`,
+    });
+  } catch (error) { next(error); }
+});
+
 // DELETE /api/admin/blog/:id
 router.delete('/:id', async (req, res, next) => {
   try {
