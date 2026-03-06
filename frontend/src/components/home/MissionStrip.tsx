@@ -98,6 +98,7 @@ export default function MissionStrip({ lang, sec }: Props) {
               <p className="text-gray-600 leading-relaxed text-sm mb-5">{desc}</p>
               <Link
                 href={href}
+                aria-label={lang === 'es' ? `Ver proyectos de ${pTitle}` : `Voir les projets — ${pTitle}`}
                 className="inline-flex items-center gap-1 text-sm font-semibold text-primary-700 group-hover:text-accent transition-colors"
               >
                 {lang === 'es' ? 'Saber más' : 'En savoir plus'} →
