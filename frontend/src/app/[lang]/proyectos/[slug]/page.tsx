@@ -7,6 +7,7 @@ import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import Badge from '@/components/ui/Badge';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export const revalidate = 3600;
 
@@ -108,7 +109,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ lang: 
       )}
 
       <div className="prose max-w-none mb-8">
-        <ReactMarkdown>{desc}</ReactMarkdown>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{desc}</ReactMarkdown>
       </div>
 
       {Object.keys(project.stats || {}).length > 0 && (
