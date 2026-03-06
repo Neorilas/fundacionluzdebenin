@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Lang, Settings, StripeProduct } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import SectionTitle from '@/components/ui/SectionTitle';
 import TaxDeduction from '@/components/colabora/TaxDeduction';
 import DonationWidget from '@/components/colabora/DonationWidget';
+import FaqAccordion from '@/components/faq/FaqAccordion';
 
 export const revalidate = 3600;
 
@@ -43,10 +45,11 @@ export default async function ColaboraPage({ params }: { params: Promise<{ lang:
   const { lang } = await params;
   const l = lang as Lang;
 
-  const [sec, settings, stripeProducts] = await Promise.all([
+  const [sec, settings, stripeProducts, faqs] = await Promise.all([
     api.getPageSections('colabora').catch(() => ({})),
     api.getSettings().catch(() => ({} as Settings)),
     api.getStripeProducts().catch(() => [] as StripeProduct[]),
+    api.getFaqs().catch(() => []),
   ]);
 
   const get = (section: string, key: string) => {
@@ -175,6 +178,34 @@ export default async function ColaboraPage({ params }: { params: Promise<{ lang:
           </div>
         </div>
       </section>
+
+      {/* FAQ */}
+      {faqs.length > 0 && (() => {
+        const items = faqs
+          .map(f => ({ question: l === 'es' ? f.questionEs : f.questionFr, answer: l === 'es' ? f.answerEs : f.answerFr }))
+          .filter(f => f.question && f.answer);
+        if (items.length === 0) return null;
+        return (
+          <section className="py-16 bg-bg">
+            <div className="max-w-3xl mx-auto px-4">
+              <div className="text-center mb-10">
+                <h2 className="text-3xl font-extrabold text-gray-900 mb-3">
+                  {l === 'es' ? 'Preguntas frecuentes' : 'Questions fréquentes'}
+                </h2>
+                <p className="text-gray-500">
+                  {l === 'es' ? 'Resolvemos las dudas más habituales.' : 'Nous répondons aux questions les plus fréquentes.'}
+                </p>
+              </div>
+              <FaqAccordion items={items} />
+              <div className="text-center mt-8">
+                <Link href={`/${l}/faq/`} className="text-sm text-primary-800 hover:text-accent font-medium transition-colors">
+                  {l === 'es' ? 'Ver todas las preguntas →' : 'Voir toutes les questions →'}
+                </Link>
+              </div>
+            </div>
+          </section>
+        );
+      })()}
     </div>
   );
 }

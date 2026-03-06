@@ -45,7 +45,7 @@ export default function NewsletterStrip({ lang }: { lang: Lang }) {
             <button
               type="submit"
               disabled={status === 'sending'}
-              className="bg-accent text-white font-semibold px-6 py-3 rounded-xl hover:bg-orange-600 transition-colors disabled:opacity-50 whitespace-nowrap"
+              className="bg-orange-700 text-white font-semibold px-6 py-3 rounded-xl hover:bg-orange-800 transition-colors disabled:opacity-50 whitespace-nowrap"
             >
               {status === 'sending' ? t(lang, 'newsletter.sending') : t(lang, 'newsletter.button')}
             </button>

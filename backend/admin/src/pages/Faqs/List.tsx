@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 import api from '../../api';
 
+async function translateText(text: string): Promise<string> {
+  if (!text.trim()) return '';
+  const r = await api.post('/admin/translate', { text, from: 'es', to: 'fr' });
+  return r.data.translatedText || '';
+}
+
 interface Faq {
   id: string;
   questionEs: string;
@@ -21,6 +27,7 @@ export default function FaqsList() {
   const [editId, setEditId] = useState<string | 'new' | null>(null);
   const [form, setForm] = useState(empty());
   const [saving, setSaving] = useState(false);
+  const [translating, setTranslating] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
 
   const load = () => {
@@ -41,6 +48,19 @@ export default function FaqsList() {
   };
 
   const cancel = () => { setEditId(null); setForm(empty()); };
+
+  const handleTranslate = async () => {
+    setTranslating(true);
+    try {
+      const [questionFr, answerFr] = await Promise.all([
+        translateText(form.questionEs),
+        translateText(form.answerEs),
+      ]);
+      setForm(f => ({ ...f, questionFr, answerFr }));
+    } finally {
+      setTranslating(false);
+    }
+  };
 
   const save = async () => {
     if (!form.questionEs.trim() || !form.answerEs.trim()) return;
@@ -123,6 +143,22 @@ export default function FaqsList() {
             {field('questionFr', 'Pregunta (FR)')}
             {field('answerEs', 'Respuesta (ES)', true)}
             {field('answerFr', 'Respuesta (FR)', true)}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleTranslate}
+              disabled={translating || !form.questionEs.trim() || !form.answerEs.trim()}
+              className="flex items-center gap-2 text-sm px-4 py-2 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 disabled:opacity-50 transition-colors"
+            >
+              {translating ? (
+                <><span className="animate-spin inline-block w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full" /> Traduciendo...</>
+              ) : (
+                <><span>🌐</span> Traducir ES → FR</>
+              )}
+            </button>
+            <span className="text-xs text-gray-400">Rellena primero el español, luego pulsa para auto-traducir el francés.</span>
           </div>
 
           <div className="flex items-center gap-6">

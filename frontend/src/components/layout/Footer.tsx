@@ -139,7 +139,7 @@ export default async function Footer({ lang }: Props) {
             </div>
           </div>
           {(settings.foundationNif || settings.foundationRegistry) && (
-            <p className="text-center text-primary-500">
+            <p className="text-center text-primary-300">
               {settings.foundationNif && <span>CIF: {settings.foundationNif}</span>}
               {settings.foundationNif && settings.foundationRegistry && <span className="mx-2">·</span>}
               {settings.foundationRegistry && <span>{settings.foundationRegistry}</span>}

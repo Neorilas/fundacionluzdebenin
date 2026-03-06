@@ -7,12 +7,20 @@ import CookieBanner from '@/components/legal/CookieBanner';
 import { Lang } from '@/lib/types';
 import './globals.css';
 
+const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings: Settings = await api.getSettings().catch(() => ({} as Settings));
-  const icon = settings.faviconUrl || '/logo.jpg';
+  // Make icon URL absolute: uploads are served from backend (same domain in prod)
+  const rawIcon = settings.faviconUrl || '/logo.jpg';
+  const icon = rawIcon.startsWith('http') ? rawIcon : `${SITE_URL}${rawIcon}`;
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org'),
-    icons: { icon, apple: icon },
+    metadataBase: new URL(SITE_URL),
+    icons: {
+      icon: [{ url: icon }],
+      apple: [{ url: icon }],
+      shortcut: [{ url: icon }],
+    },
   };
 }
 

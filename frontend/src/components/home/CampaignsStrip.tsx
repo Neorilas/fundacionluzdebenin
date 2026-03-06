@@ -64,7 +64,7 @@ export default function CampaignsStrip({ lang, campaigns }: Props) {
                 </span>
                 <span className={`inline-block text-white font-bold px-6 py-2.5 rounded-full transition-colors ${
                   isAmber
-                    ? 'bg-accent group-hover:bg-accent-700'
+                    ? 'bg-orange-700 group-hover:bg-orange-800'
                     : 'bg-primary-800 group-hover:bg-primary-900'
                 }`}>
                   {ctaText} →
