@@ -7,7 +7,7 @@ export interface Project {
   descFr: string;
   status: 'active' | 'completed' | 'planned';
   featured: boolean;
-  images: string[];
+  images: Array<{ url: string; alt: string } | string>;
   stats: Record<string, string | number>;
   order: number;
   createdAt: string;
@@ -24,6 +24,7 @@ export interface BlogPost {
   contentEs?: string;
   contentFr?: string;
   coverImage: string;
+  coverImageAlt?: string;
   published: boolean;
   publishedAt: string | null;
   createdAt: string;
@@ -56,6 +57,12 @@ export interface Settings {
 }
 
 export type Lang = 'es' | 'fr';
+
+/** Normaliza imágenes de proyecto: admite tanto string como {url,alt} */
+export function parseProjectImage(img: { url: string; alt: string } | string): { url: string; alt: string } {
+  if (typeof img === 'string') return { url: img, alt: '' };
+  return img;
+}
 
 export interface Faq {
   id: string;

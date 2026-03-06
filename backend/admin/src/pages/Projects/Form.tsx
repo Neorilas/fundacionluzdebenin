@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import api from '../../api';
 import BilingualField from '../../components/BilingualField';
-import ImageUpload from '../../components/ImageUpload';
 import MediaPicker from '../../components/MediaPicker';
 
 function toSlug(text: string): string {
@@ -15,6 +14,8 @@ function toSlug(text: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+interface ProjectImage { url: string; alt: string; }
+
 interface FormData {
   slug: string;
   titleEs: string;
@@ -23,7 +24,7 @@ interface FormData {
   descFr: string;
   status: string;
   featured: boolean;
-  images: string[];
+  images: ProjectImage[];
   order: number;
 }
 
@@ -31,6 +32,10 @@ const empty: FormData = {
   slug: '', titleEs: '', titleFr: '', descEs: '', descFr: '',
   status: 'active', featured: false, images: [], order: 0,
 };
+
+function normalizeImages(raw: (string | ProjectImage)[]): ProjectImage[] {
+  return raw.map(img => typeof img === 'string' ? { url: img, alt: '' } : img);
+}
 
 export default function ProjectsForm() {
   const { id } = useParams();
@@ -56,7 +61,7 @@ export default function ProjectsForm() {
         if (p) setForm({
           slug: p.slug, titleEs: p.titleEs, titleFr: p.titleFr,
           descEs: p.descEs, descFr: p.descFr, status: p.status,
-          featured: p.featured, images: p.images, order: p.order,
+          featured: p.featured, images: normalizeImages(p.images), order: p.order,
         });
       }).finally(() => {
         setLoading(false);
@@ -226,7 +231,10 @@ export default function ProjectsForm() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Imágenes</label>
-          <ImageUpload value={form.images} onChange={(urls) => { setForm(f => ({ ...f, images: urls })); if (initialLoadedRef.current) setIsDirty(true); }} />
+          <ProjectImageManager
+            images={form.images}
+            onChange={imgs => { setForm(f => ({ ...f, images: imgs })); if (initialLoadedRef.current) setIsDirty(true); }}
+          />
         </div>
 
         {showImageInserter && (
@@ -255,6 +263,69 @@ export default function ProjectsForm() {
           </button>
         </div>
       </form>
+    </div>
+  );
+}
+
+// ---- Inline image manager with alt text ----
+interface ProjectImageManagerProps {
+  images: ProjectImage[];
+  onChange: (imgs: ProjectImage[]) => void;
+}
+
+function ProjectImageManager({ images, onChange }: ProjectImageManagerProps) {
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const upload = async (files: FileList) => {
+    setUploading(true);
+    const next = [...images];
+    for (const file of Array.from(files)) {
+      const formData = new FormData();
+      formData.append('image', file);
+      try {
+        const r = await api.post('/admin/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        next.push({ url: r.data.url, alt: '' });
+      } catch { /* skip */ }
+    }
+    onChange(next);
+    setUploading(false);
+  };
+
+  const remove = (idx: number) => onChange(images.filter((_, i) => i !== idx));
+
+  const updateAlt = (idx: number, alt: string) => {
+    const next = images.map((img, i) => i === idx ? { ...img, alt } : img);
+    onChange(next);
+  };
+
+  return (
+    <div className="space-y-3">
+      {images.map((img, idx) => (
+        <div key={idx} className="flex items-start gap-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
+          <img src={img.url} alt={img.alt || ''} className="w-20 h-20 object-cover rounded border border-gray-200 flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <input
+              type="text"
+              value={img.alt}
+              onChange={e => updateAlt(idx, e.target.value)}
+              placeholder="Texto alternativo (alt) — describe la imagen para SEO y accesibilidad"
+              className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary-800"
+            />
+            <p className="text-xs text-gray-400 mt-1">{img.url}</p>
+          </div>
+          <button type="button" onClick={() => remove(idx)} className="text-red-400 hover:text-red-600 text-lg leading-none flex-shrink-0">×</button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={() => fileRef.current?.click()}
+        disabled={uploading}
+        className="w-full border-2 border-dashed border-gray-300 rounded-lg py-4 text-sm text-gray-400 hover:border-primary-800 hover:text-primary-800 transition-colors disabled:opacity-50"
+      >
+        {uploading ? 'Subiendo…' : '+ Añadir imagen'}
+      </button>
+      <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={e => e.target.files && upload(e.target.files)} />
     </div>
   );
 }

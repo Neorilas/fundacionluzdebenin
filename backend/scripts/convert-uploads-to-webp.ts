@@ -15,7 +15,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR || './uploads');
-const WEBP_QUALITY = 82;
+const WEBP_QUALITY = 88;
 
 /** Replace all occurrences of oldUrl with newUrl in a string */
 function replaceUrl(text: string, oldUrl: string, newUrl: string): string {

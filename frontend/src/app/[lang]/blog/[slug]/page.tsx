@@ -155,7 +155,7 @@ export default async function BlogPostPage({
 
         {post.coverImage && (
           <div className="relative h-72 rounded-2xl overflow-hidden mb-8">
-            <Image src={post.coverImage} alt={title} fill unoptimized priority sizes="(max-width: 768px) 100vw, 768px" className="object-cover" />
+            <Image src={post.coverImage} alt={post.coverImageAlt || title} fill unoptimized priority sizes="(max-width: 768px) 100vw, 768px" className="object-cover" />
           </div>
         )}
 

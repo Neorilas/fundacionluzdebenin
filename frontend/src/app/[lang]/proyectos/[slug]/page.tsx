@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Lang } from '@/lib/types';
+import { Lang, parseProjectImage } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import Badge from '@/components/ui/Badge';
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     const project = await api.getProject(slug);
     const title = isFr ? project.titleFr : project.titleEs;
     const description = isFr ? project.descFr : project.descEs;
-    const image = project.images?.[0];
+    const image = project.images?.[0] ? parseProjectImage(project.images[0]) : null;
     return {
       title,
       description,
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         description,
         url: `${SITE_URL}/${lang}/proyectos/${slug}/`,
         images: image
-          ? [{ url: image.startsWith('http') ? image : `${SITE_URL}${image}`, alt: title }]
+          ? [{ url: image.url.startsWith('http') ? image.url : `${SITE_URL}${image.url}`, alt: image.alt || title }]
           : [{ url: `${SITE_URL}/logo.jpg`, width: 800, height: 600, alt: title }],
       },
     };
@@ -100,11 +100,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ lang: 
 
       {project.images?.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-          {project.images.map((img, i) => (
-            <div key={i} className="relative h-64 rounded-2xl overflow-hidden">
-              <Image src={img} alt={`${title} - ${i + 1}`} fill unoptimized sizes="(max-width: 640px) 100vw, 50vw" className="object-cover" />
-            </div>
-          ))}
+          {project.images.map((raw, i) => {
+            const img = parseProjectImage(raw);
+            return (
+              <div key={i} className="relative h-64 rounded-2xl overflow-hidden">
+                <Image src={img.url} alt={img.alt || `${title} — imagen ${i + 1}`} fill unoptimized sizes="(max-width: 640px) 100vw, 50vw" className="object-cover" />
+              </div>
+            );
+          })}
         </div>
       )}
 

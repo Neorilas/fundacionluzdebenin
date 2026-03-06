@@ -32,8 +32,9 @@ model BlogPost {
   excerptFr   String
   contentEs   String
   contentFr   String
-  coverImage  String    @default("")
-  category    String    @default("")
+  coverImage    String    @default("")
+  coverImageAlt String    @default("")
+  category      String    @default("")
   tags        String    @default("[]") // JSON array of strings
   published   Boolean   @default(false)
   publishedAt DateTime?

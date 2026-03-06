@@ -30,6 +30,7 @@ interface FormData {
   excerptEs: string; excerptFr: string;
   contentEs: string; contentFr: string;
   coverImage: string;
+  coverImageAlt: string;
   category: string;
   tags: string[];
   scheduledAt: string;
@@ -37,7 +38,7 @@ interface FormData {
 
 const empty: FormData = {
   slug: '', titleEs: '', titleFr: '', excerptEs: '', excerptFr: '',
-  contentEs: '', contentFr: '', coverImage: '', category: '',
+  contentEs: '', contentFr: '', coverImage: '', coverImageAlt: '', category: '',
   tags: [], scheduledAt: '',
 };
 
@@ -77,6 +78,7 @@ export default function BlogForm() {
           excerptEs: p.excerptEs, excerptFr: p.excerptFr,
           contentEs: p.contentEs, contentFr: p.contentFr,
           coverImage: p.coverImage || '',
+          coverImageAlt: p.coverImageAlt || '',
           category: p.category || '',
           tags: tagsFromJson(p.tags),
           scheduledAt: scheduled,
@@ -309,6 +311,16 @@ export default function BlogForm() {
                   >
                     Quitar
                   </button>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Texto alternativo (alt)</label>
+                  <input
+                    type="text"
+                    value={form.coverImageAlt}
+                    onChange={e => set('coverImageAlt', e.target.value)}
+                    placeholder="Describe la imagen para accesibilidad y SEO"
+                    className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary-800"
+                  />
                 </div>
               </div>
             ) : (

@@ -29,7 +29,7 @@ router.get('/:id', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     const { slug, titleEs, titleFr, excerptEs, excerptFr, contentEs, contentFr,
-            coverImage, category, tags, published, scheduledAt } = req.body;
+            coverImage, coverImageAlt, category, tags, published, scheduledAt } = req.body;
 
     const isScheduled = !published && scheduledAt;
     const post = await prisma.blogPost.create({
@@ -37,6 +37,7 @@ router.post('/', async (req, res, next) => {
         slug, titleEs, titleFr, excerptEs: excerptEs || '', excerptFr: excerptFr || '',
         contentEs: contentEs || '', contentFr: contentFr || '',
         coverImage: coverImage || '',
+        coverImageAlt: coverImageAlt || '',
         category: category || '',
         tags: Array.isArray(tags) ? JSON.stringify(tags) : (tags || '[]'),
         published: published || false,
@@ -53,7 +54,7 @@ router.post('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { slug, titleEs, titleFr, excerptEs, excerptFr, contentEs, contentFr,
-            coverImage, category, tags, published, scheduledAt } = req.body;
+            coverImage, coverImageAlt, category, tags, published, scheduledAt } = req.body;
 
     const existing = await prisma.blogPost.findUnique({ where: { id: req.params.id } });
     const isScheduled = !published && scheduledAt;
@@ -69,6 +70,7 @@ router.put('/:id', async (req, res, next) => {
         ...(contentEs !== undefined && { contentEs }),
         ...(contentFr !== undefined && { contentFr }),
         ...(coverImage !== undefined && { coverImage }),
+        ...(coverImageAlt !== undefined && { coverImageAlt }),
         ...(category !== undefined && { category }),
         ...(tags !== undefined && {
           tags: Array.isArray(tags) ? JSON.stringify(tags) : tags,

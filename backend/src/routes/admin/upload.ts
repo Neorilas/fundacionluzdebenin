@@ -68,7 +68,7 @@ router.post('/', upload.single('image'), async (req: Request & { file?: Express.
     }
 
     await sharp(req.file.buffer)
-      .webp({ quality: 82 })
+      .webp({ quality: 88 })
       .toFile(filepath);
 
     res.json({ url: `/uploads/${filename}`, filename });

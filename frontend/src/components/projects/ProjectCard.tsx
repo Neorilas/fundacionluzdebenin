@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Lang, Project } from '@/lib/types';
+import { Lang, Project, parseProjectImage } from '@/lib/types';
 import { t } from '@/lib/i18n';
 import Badge from '../ui/Badge';
 
@@ -19,16 +19,19 @@ export default function ProjectCard({ project, lang }: Props) {
       <article className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col h-full">
         {/* Image */}
         <div className="h-48 bg-gradient-to-br from-primary-100 to-primary-200 relative overflow-hidden shrink-0">
-          {project.images?.[0] ? (
-            <Image
-              src={project.images[0]}
-              alt={title}
-              fill
-              unoptimized
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-          ) : (
+          {project.images?.[0] ? (() => {
+            const img = parseProjectImage(project.images[0]);
+            return (
+              <Image
+                src={img.url}
+                alt={img.alt || title}
+                fill
+                unoptimized
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            );
+          })() : (
             <div className="absolute inset-0 flex items-center justify-center text-6xl">🏗️</div>
           )}
           {project.featured && (
