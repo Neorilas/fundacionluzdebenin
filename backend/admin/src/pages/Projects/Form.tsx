@@ -239,9 +239,10 @@ export default function ProjectsForm() {
 
         {showImageInserter && (
           <MediaPicker
-            onSelect={url => {
+            askAlt
+            onSelect={(url, alt) => {
               if (editorApiRef.current) {
-                editorApiRef.current.replaceSelection(`\n![imagen](${url})\n`);
+                editorApiRef.current.replaceSelection(`\n![${alt || ''}](${url})\n`);
                 editorApiRef.current = null;
               }
               setShowImageInserter(false);

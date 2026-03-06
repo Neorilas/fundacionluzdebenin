@@ -11,16 +11,19 @@ interface MediaFile {
 }
 
 interface Props {
-  onSelect: (url: string) => void;
+  onSelect: (url: string, alt?: string) => void;
   onClose: () => void;
+  /** When true, shows an alt text input before confirming (for markdown insertion) */
+  askAlt?: boolean;
 }
 
-export default function MediaPicker({ onSelect, onClose }: Props) {
+export default function MediaPicker({ onSelect, onClose, askAlt = false }: Props) {
   const [files, setFiles] = useState<MediaFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
+  const [altText, setAltText] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const load = () => {
@@ -164,22 +167,39 @@ export default function MediaPicker({ onSelect, onClose }: Props) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
-          <p className="text-sm text-gray-500">
-            {selected
-              ? <span className="font-medium text-gray-700">Seleccionada: <span className="font-mono text-xs">{selected.split('/').pop()}</span></span>
-              : `${files.length} imagen${files.length !== 1 ? 'es' : ''}`
-            }
-          </p>
-          <div className="flex gap-3">
-            <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancelar</button>
-            <button
-              onClick={() => { if (selected) { onSelect(selected); onClose(); } }}
-              disabled={!selected}
-              className="px-5 py-2 bg-primary-800 text-white text-sm font-medium rounded-lg hover:bg-primary-900 disabled:opacity-40 transition-colors"
-            >
-              Usar imagen seleccionada
-            </button>
+        <div className="border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+          {askAlt && selected && (
+            <div className="px-6 pt-4 pb-2">
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Texto alternativo (alt) — describe la imagen para accesibilidad y SEO
+              </label>
+              <input
+                type="text"
+                value={altText}
+                onChange={e => setAltText(e.target.value)}
+                placeholder="Ej: Niños del orfanato durante el almuerzo, Cotonou"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
+                autoFocus
+              />
+            </div>
+          )}
+          <div className="flex items-center justify-between px-6 py-4">
+            <p className="text-sm text-gray-500">
+              {selected
+                ? <span className="font-medium text-gray-700">Seleccionada: <span className="font-mono text-xs">{selected.split('/').pop()}</span></span>
+                : `${files.length} imagen${files.length !== 1 ? 'es' : ''}`
+              }
+            </p>
+            <div className="flex gap-3">
+              <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancelar</button>
+              <button
+                onClick={() => { if (selected) { onSelect(selected, altText); onClose(); } }}
+                disabled={!selected}
+                className="px-5 py-2 bg-primary-800 text-white text-sm font-medium rounded-lg hover:bg-primary-900 disabled:opacity-40 transition-colors"
+              >
+                Usar imagen seleccionada
+              </button>
+            </div>
           </div>
         </div>
       </div>
