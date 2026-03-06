@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState, FormEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import MDEditor, { commands } from '@uiw/react-md-editor';
 import api from '../../api';
 import BilingualField from '../../components/BilingualField';
 import ImageUpload from '../../components/ImageUpload';
+import MediaPicker from '../../components/MediaPicker';
 
 function toSlug(text: string): string {
   return text
@@ -39,6 +41,10 @@ export default function ProjectsForm() {
   const [slugTouched, setSlugTouched] = useState(!!id);
   const [isDirty, setIsDirty] = useState(false);
   const initialLoadedRef = useRef(!id);
+  const [descLang, setDescLang] = useState<'es' | 'fr'>('es');
+  const [translatingDesc, setTranslatingDesc] = useState(false);
+  const [showImageInserter, setShowImageInserter] = useState(false);
+  const editorApiRef = useRef<any>(null);
 
   const isEdit = !!id;
 
@@ -136,7 +142,61 @@ export default function ProjectsForm() {
         </div>
 
         <BilingualField label="Título" nameEs="titleEs" nameFr="titleFr" valueEs={form.titleEs} valueFr={form.titleFr} onChange={set} required />
-        <BilingualField label="Descripción" nameEs="descEs" nameFr="descFr" valueEs={form.descEs} valueFr={form.descFr} onChange={set} multiline rows={5} required />
+        {/* Description editor */}
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-sm font-medium text-gray-700">Descripción</label>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                disabled={translatingDesc || !form.descEs.trim()}
+                onClick={async () => {
+                  setTranslatingDesc(true);
+                  try {
+                    const r = await api.post('/admin/translate', { text: form.descEs, from: 'es', to: 'fr' });
+                    set('descFr', r.data.translatedText || form.descEs);
+                    setDescLang('fr');
+                  } catch { alert('Error al traducir'); }
+                  finally { setTranslatingDesc(false); }
+                }}
+                className="text-xs text-blue-600 hover:text-blue-800 disabled:opacity-40 flex items-center gap-1"
+              >
+                {translatingDesc ? <span className="inline-block w-3 h-3 border border-blue-600 border-t-transparent rounded-full animate-spin" /> : '🌐'}
+                {translatingDesc ? 'Traduciendo…' : 'Auto-FR'}
+              </button>
+              <div className="flex border border-gray-300 rounded overflow-hidden text-xs">
+                <button type="button" onClick={() => setDescLang('es')} className={`px-3 py-1 ${descLang === 'es' ? 'bg-primary-800 text-white' : 'bg-white text-gray-600'}`}>ES</button>
+                <button type="button" onClick={() => setDescLang('fr')} className={`px-3 py-1 ${descLang === 'fr' ? 'bg-primary-800 text-white' : 'bg-white text-gray-600'}`}>FR</button>
+              </div>
+            </div>
+          </div>
+          <div data-color-mode="light">
+            <MDEditor
+              value={descLang === 'es' ? form.descEs : form.descFr}
+              onChange={val => set(descLang === 'es' ? 'descEs' : 'descFr', val || '')}
+              height={300}
+              preview="edit"
+              extraCommands={[
+                {
+                  name: 'imageInsert',
+                  keyCommand: 'imageInsert',
+                  buttonProps: { 'aria-label': 'Insertar imagen en el texto', title: 'Insertar imagen en el texto' },
+                  icon: (
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+                      <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                    </svg>
+                  ),
+                  execute: (_state: unknown, api: any) => {
+                    editorApiRef.current = api;
+                    setShowImageInserter(true);
+                  },
+                },
+                commands.fullscreen,
+              ]}
+            />
+          </div>
+          <p className="text-xs text-gray-400 mt-1">Editando: {descLang === 'es' ? '🇪🇸 Español' : '🇫🇷 Français'}</p>
+        </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -168,6 +228,22 @@ export default function ProjectsForm() {
           <label className="block text-sm font-medium text-gray-700 mb-2">Imágenes</label>
           <ImageUpload value={form.images} onChange={(urls) => { setForm(f => ({ ...f, images: urls })); if (initialLoadedRef.current) setIsDirty(true); }} />
         </div>
+
+        {showImageInserter && (
+          <MediaPicker
+            onSelect={url => {
+              if (editorApiRef.current) {
+                editorApiRef.current.replaceSelection(`\n![imagen](${url})\n`);
+                editorApiRef.current = null;
+              }
+              setShowImageInserter(false);
+            }}
+            onClose={() => {
+              editorApiRef.current = null;
+              setShowImageInserter(false);
+            }}
+          />
+        )}
 
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
           <button type="button" onClick={() => {

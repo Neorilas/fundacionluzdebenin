@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, FormEvent, KeyboardEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import MDEditor from '@uiw/react-md-editor';
+import MDEditor, { commands } from '@uiw/react-md-editor';
 import api from '../../api';
 import BilingualField from '../../components/BilingualField';
 import MediaPicker from '../../components/MediaPicker';
@@ -56,6 +56,8 @@ export default function BlogForm() {
   const [translatingContent, setTranslatingContent] = useState(false);
   const [showSchedule, setShowSchedule] = useState(false);
   const [showMediaPicker, setShowMediaPicker] = useState(false);
+  const [showImageInserter, setShowImageInserter] = useState(false);
+  const editorApiRef = useRef<any>(null);
   const [slugTouched, setSlugTouched] = useState(!!id);
   const [isDirty, setIsDirty] = useState(false);
   const initialLoadedRef = useRef(!id);
@@ -252,6 +254,23 @@ export default function BlogForm() {
                 onChange={val => set(contentLang === 'es' ? 'contentEs' : 'contentFr', val || '')}
                 height={480}
                 preview="edit"
+                extraCommands={[
+                  {
+                    name: 'imageInsert',
+                    keyCommand: 'imageInsert',
+                    buttonProps: { 'aria-label': 'Insertar imagen en el texto', title: 'Insertar imagen en el texto' },
+                    icon: (
+                      <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+                        <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                      </svg>
+                    ),
+                    execute: (_state: unknown, api: any) => {
+                      editorApiRef.current = api;
+                      setShowImageInserter(true);
+                    },
+                  },
+                  commands.fullscreen,
+                ]}
               />
             </div>
             <p className="text-xs text-gray-400 mt-1">Editando: {contentLang === 'es' ? '🇪🇸 Español' : '🇫🇷 Français'}</p>
@@ -387,6 +406,21 @@ export default function BlogForm() {
         <MediaPicker
           onSelect={url => set('coverImage', url)}
           onClose={() => setShowMediaPicker(false)}
+        />
+      )}
+      {showImageInserter && (
+        <MediaPicker
+          onSelect={url => {
+            if (editorApiRef.current) {
+              editorApiRef.current.replaceSelection(`\n![imagen](${url})\n`);
+              editorApiRef.current = null;
+            }
+            setShowImageInserter(false);
+          }}
+          onClose={() => {
+            editorApiRef.current = null;
+            setShowImageInserter(false);
+          }}
         />
       )}
     </div>
