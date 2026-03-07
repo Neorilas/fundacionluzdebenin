@@ -17,10 +17,33 @@ async function translateChunk(text: string, from: string, to: string): Promise<s
   return text; // fallback: return original on error
 }
 
+/** Strip inline HTML tags and decode basic entities to get plain text. */
+function innerText(html: string): string {
+  return html
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** Translate a plain-text string, splitting into chunks if needed. */
+async function translateText(text: string, from: string, to: string): Promise<string> {
+  if (!text.trim()) return text;
+  const chunks = makeChunks(text);
+  const results: string[] = [];
+  for (const chunk of chunks) {
+    results.push(await translateChunk(chunk, from, to));
+  }
+  return results.join(' ');
+}
+
 // POST /api/admin/translate
 // Body: { text: string, from?: string, to?: string }
-// Uses MyMemory free API (no key required, 5000 words/day)
-// Long texts are split by paragraph → chunks to stay within the 500-char limit.
+// Supports both plain Markdown (split by \n\n) and HTML (split by block tags).
 router.post('/', async (req, res, next) => {
   try {
     const { text, from = 'es', to = 'fr' } = req.body;
@@ -30,18 +53,32 @@ router.post('/', async (req, res, next) => {
       return;
     }
 
+    // ── HTML content (TipTap output) ──────────────────────────────────────────
+    if (text.trim().startsWith('<')) {
+      const parts: string[] = [];
+      let lastIndex = 0;
+      const re = /(<(h[1-6]|p|li|blockquote)([^>]*)>)([\s\S]*?)(<\/\2>)/g;
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(text)) !== null) {
+        // preserve any HTML between blocks (e.g. <ul>, <ol> wrappers)
+        if (m.index > lastIndex) parts.push(text.slice(lastIndex, m.index));
+        const plain = innerText(m[4]);
+        const tr = plain ? await translateText(plain, from, to) : '';
+        parts.push(`${m[1]}${tr}${m[5]}`);
+        lastIndex = m.index + m[0].length;
+      }
+      if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+      res.json({ translatedText: parts.join('') || text });
+      return;
+    }
+
+    // ── Plain Markdown (legacy) ───────────────────────────────────────────────
     const paragraphs = text.split(/\n\n/);
     const translatedParagraphs = await Promise.all(paragraphs.map(async (para: string) => {
       if (!para.trim()) return para;
-      if (para.trim().startsWith('```')) return para; // don't translate code blocks
-      const chunks = makeChunks(para);
-      const results: string[] = [];
-      for (const chunk of chunks) {
-        results.push(await translateChunk(chunk, from, to));
-      }
-      return results.join(' ');
+      if (para.trim().startsWith('```')) return para;
+      return translateText(para, from, to);
     }));
-
     res.json({ translatedText: translatedParagraphs.join('\n\n') });
   } catch (error) {
     next(error);

@@ -36,6 +36,7 @@ interface Props {
   onChange: (html: string) => void;
   placeholder?: string;
   minHeight?: number;
+  maxHeight?: number;
 }
 
 function ToolbarBtn({
@@ -61,7 +62,7 @@ function ToolbarBtn({
 
 const sep = <span className="w-px h-5 bg-gray-200 mx-1 self-center" />;
 
-export default function RichTextEditor({ value, onChange, placeholder, minHeight = 320 }: Props) {
+export default function RichTextEditor({ value, onChange, placeholder, minHeight = 320, maxHeight = 600 }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
@@ -177,7 +178,9 @@ export default function RichTextEditor({ value, onChange, placeholder, minHeight
       </div>
 
       {/* Editor area */}
-      <EditorContent editor={editor} />
+      <div style={{ maxHeight, overflowY: 'auto' }}>
+        <EditorContent editor={editor} />
+      </div>
     </div>
   );
 }
