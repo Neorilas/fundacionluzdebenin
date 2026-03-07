@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { Lang } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
@@ -165,37 +163,10 @@ export default async function BlogPostPage({
 
         <h1 className="text-4xl font-extrabold text-gray-900 mb-8">{title}</h1>
 
-        <div className="prose max-w-none">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            components={{
-              table: ({ children }) => (
-                <div className="overflow-x-auto my-6">
-                  <table className="w-full text-sm border-collapse border border-gray-200 rounded-lg overflow-hidden">
-                    {children}
-                  </table>
-                </div>
-              ),
-              thead: ({ children }) => <thead className="bg-primary-50 text-primary-900 font-semibold">{children}</thead>,
-              th: ({ children }) => <th className="px-4 py-3 text-left border border-gray-200">{children}</th>,
-              td: ({ children }) => <td className="px-4 py-3 border border-gray-200">{children}</td>,
-              tr: ({ children }) => <tr className="even:bg-gray-50">{children}</tr>,
-              img: ({ src, alt, title }) => {
-                const align = title === 'left' ? 'mr-auto' : title === 'right' ? 'ml-auto' : 'mx-auto';
-                const float = title === 'left' ? 'float-left mr-6 mb-4' : title === 'right' ? 'float-right ml-6 mb-4' : '';
-                return (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={src || ''}
-                    alt={alt || ''}
-                    title={title && title !== 'left' && title !== 'right' ? title : undefined}
-                    className={`rounded-lg my-6 max-w-full h-auto ${float || align} block`}
-                  />
-                );
-              },
-            }}
-          >{content}</ReactMarkdown>
-        </div>
+        <div
+          className="prose max-w-none"
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
 
         {/* Prev / Next navigation */}
         {(prevPost || nextPost) && (

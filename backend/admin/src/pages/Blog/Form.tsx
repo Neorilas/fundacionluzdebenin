@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, FormEvent, KeyboardEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import MDEditor, { commands } from '@uiw/react-md-editor';
 import api from '../../api';
 import BilingualField from '../../components/BilingualField';
 import MediaPicker from '../../components/MediaPicker';
+import RichTextEditor from '../../components/RichTextEditor';
 
 function toSlug(text: string): string {
   return text
@@ -24,15 +24,15 @@ async function translateText(text: string): Promise<string> {
   return r.data.translatedText || text;
 }
 
-function stripMarkdown(md: string): string {
-  return md
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/`[^`]+`/g, '')
-    .replace(/!\[.*?\]\(.*?\)/g, '')
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/^#{1,6}\s+/gm, '')
-    .replace(/[*_~>#|]/g, '')
-    .replace(/\n+/g, ' ')
+function stripMarkdown(html: string): string {
+  // Strip HTML tags (content is now HTML from TipTap)
+  return html
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
@@ -89,8 +89,6 @@ export default function BlogForm() {
   const [translatingContent, setTranslatingContent] = useState(false);
   const [showSchedule, setShowSchedule] = useState(false);
   const [showMediaPicker, setShowMediaPicker] = useState(false);
-  const [showImageInserter, setShowImageInserter] = useState(false);
-  const editorApiRef = useRef<any>(null);
   const [slugTouched, setSlugTouched] = useState(!!id);
   const [isDirty, setIsDirty] = useState(false);
   const initialLoadedRef = useRef(!id);
@@ -343,31 +341,13 @@ export default function BlogForm() {
                 </div>
               </div>
             </div>
-            <div data-color-mode="light">
-              <MDEditor
-                value={contentLang === 'es' ? form.contentEs : form.contentFr}
-                onChange={val => set(contentLang === 'es' ? 'contentEs' : 'contentFr', val || '')}
-                height={480}
-                preview="edit"
-                extraCommands={[
-                  {
-                    name: 'imageInsert',
-                    keyCommand: 'imageInsert',
-                    buttonProps: { 'aria-label': 'Insertar imagen en el texto', title: 'Insertar imagen en el texto' },
-                    icon: (
-                      <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
-                        <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
-                      </svg>
-                    ),
-                    execute: (_state: unknown, api: any) => {
-                      editorApiRef.current = api;
-                      setShowImageInserter(true);
-                    },
-                  },
-                  commands.fullscreen,
-                ]}
-              />
-            </div>
+            <RichTextEditor
+              key={contentLang}
+              value={contentLang === 'es' ? form.contentEs : form.contentFr}
+              onChange={val => set(contentLang === 'es' ? 'contentEs' : 'contentFr', val)}
+              placeholder={contentLang === 'es' ? 'Escribe el contenido en español…' : 'Écrivez le contenu en français…'}
+              minHeight={480}
+            />
             <div className="flex items-center justify-between mt-1">
               <p className="text-xs text-gray-400">Editando: {contentLang === 'es' ? '🇪🇸 Español' : '🇫🇷 Français'}</p>
               {(() => {
@@ -521,22 +501,6 @@ export default function BlogForm() {
         <MediaPicker
           onSelect={url => set('coverImage', url)}
           onClose={() => setShowMediaPicker(false)}
-        />
-      )}
-      {showImageInserter && (
-        <MediaPicker
-          askAlt
-          onSelect={(url, alt) => {
-            if (editorApiRef.current) {
-              editorApiRef.current.replaceSelection(`\n![${alt || ''}](${url})\n`);
-              editorApiRef.current = null;
-            }
-            setShowImageInserter(false);
-          }}
-          onClose={() => {
-            editorApiRef.current = null;
-            setShowImageInserter(false);
-          }}
         />
       )}
     </div>
