@@ -20,8 +20,16 @@ uploads/
 # Environment files (contienen secretos)
 .env
 .env.local
+.env.production
 .env.production.local
 .env.development.local
+
+# Ficheros de diagnóstico y configuración del servidor (no publicar)
+*.txt
+cloud-init.yml
+*.html
+!frontend/**/*.html
+!backend/**/*.html
 
 # OS
 .DS_Store
@@ -37,3 +45,6 @@ npm-debug.log*
 
 # Claude
 .claude/
+
+# TypeScript build info
+*.tsbuildinfo
