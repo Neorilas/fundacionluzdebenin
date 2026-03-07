@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authMiddleware } from '../../middleware/authMiddleware';
+import { makeChunks } from '../../lib/textUtils';
 
 const router = Router();
 router.use(authMiddleware);
@@ -14,25 +15,6 @@ async function translateChunk(text: string, from: string, to: string): Promise<s
     return data.responseData.translatedText;
   }
   return text; // fallback: return original on error
-}
-
-// Split a long paragraph into sentence-bounded chunks ≤ maxLen chars
-function makeChunks(text: string, maxLen = 450): string[] {
-  if (text.length <= maxLen) return [text];
-  const sentences = text.split(/(?<=[.!?…])\s+/);
-  const chunks: string[] = [];
-  let cur = '';
-  for (const s of sentences) {
-    const candidate = cur ? `${cur} ${s}` : s;
-    if (candidate.length <= maxLen) {
-      cur = candidate;
-    } else {
-      if (cur) chunks.push(cur);
-      cur = s.length <= maxLen ? s : s.substring(0, maxLen);
-    }
-  }
-  if (cur) chunks.push(cur);
-  return chunks.length ? chunks : [text.substring(0, maxLen)];
 }
 
 // POST /api/admin/translate

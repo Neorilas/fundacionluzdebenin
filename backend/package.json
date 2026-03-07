@@ -13,7 +13,10 @@
     "db:seed": "ts-node prisma/seed.ts",
     "db:studio": "prisma studio",
     "setup": "npm install && npx prisma db push && ts-node prisma/seed.ts",
-    "convert-uploads": "ts-node scripts/convert-uploads-to-webp.ts"
+    "convert-uploads": "ts-node scripts/convert-uploads-to-webp.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@prisma/client": "^5.10.0",
@@ -38,6 +41,7 @@
     "prisma": "^5.10.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^1.6.1"
   }
 }
