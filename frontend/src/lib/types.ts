@@ -54,6 +54,7 @@ export interface Settings {
   showAddress?: string;
   logoUrl?: string;
   faviconUrl?: string;
+  colaboraEmpresasHeroImage?: string;
 }
 
 export type Lang = 'es' | 'fr';

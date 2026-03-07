@@ -136,6 +136,9 @@ export default async function Footer({ lang }: Props) {
               <Link href={`/${lang}/faq/`} className="hover:text-white transition-colors">{t(lang, 'footer.faq')}</Link>
               <Link href={`/${lang}/aviso-legal/`} className="hover:text-white transition-colors">{t(lang, 'footer.legal')}</Link>
               <Link href={`/${lang}/aviso-legal/#privacidad`} className="hover:text-white transition-colors">{t(lang, 'footer.privacy')}</Link>
+              <Link href={`/${lang}/colabora-empresas/`} className="hover:text-white transition-colors">
+                {lang === 'es' ? '¿Eres empresa o autónomo?' : 'Entreprise ou indépendant ?'}
+              </Link>
             </div>
           </div>
           {(settings.foundationNif || settings.foundationRegistry) && (
