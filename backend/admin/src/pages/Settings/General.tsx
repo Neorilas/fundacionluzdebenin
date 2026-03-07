@@ -27,11 +27,16 @@ export default function GeneralSettings() {
   const [pwMessage, setPwMessage] = useState('');
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [uploadingFavicon, setUploadingFavicon] = useState(false);
+  const [uploadingHero, setUploadingHero] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const faviconInputRef = useRef<HTMLInputElement>(null);
+  const heroInputRef = useRef<HTMLInputElement>(null);
 
-  const uploadImage = async (file: File, key: 'logoUrl' | 'faviconUrl') => {
-    const setUploading = key === 'logoUrl' ? setUploadingLogo : setUploadingFavicon;
+  const uploadImage = async (file: File, key: 'logoUrl' | 'faviconUrl' | 'colaboraEmpresasHeroImage') => {
+    const setUploading =
+      key === 'logoUrl' ? setUploadingLogo :
+      key === 'faviconUrl' ? setUploadingFavicon :
+      setUploadingHero;
     setUploading(true);
     try {
       const formData = new FormData();
@@ -71,6 +76,7 @@ export default function GeneralSettings() {
     updates.showAddress = values.showAddress ?? '1';
     updates.logoUrl    = values.logoUrl    || '/logo.jpg';
     updates.faviconUrl = values.faviconUrl || '/logo.jpg';
+    updates.colaboraEmpresasHeroImage = values.colaboraEmpresasHeroImage || '';
     await api.put('/admin/settings', updates);
     setSaving(false);
     setSaved(true);
@@ -206,6 +212,45 @@ export default function GeneralSettings() {
                 />
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="pt-4 border-t border-gray-100">
+          <h4 className="text-sm font-semibold text-gray-700 mb-3">Imagen hero — Colabora Empresas</h4>
+          <div className="space-y-2">
+            {values.colaboraEmpresasHeroImage && (
+              <img
+                src={values.colaboraEmpresasHeroImage}
+                alt="Hero colabora empresas"
+                className="h-24 w-auto object-cover rounded border border-gray-200 bg-gray-50"
+              />
+            )}
+            <input
+              ref={heroInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={e => {
+                const file = e.target.files?.[0];
+                if (file) uploadImage(file, 'colaboraEmpresasHeroImage');
+                e.target.value = '';
+              }}
+            />
+            <button
+              type="button"
+              disabled={uploadingHero}
+              onClick={() => heroInputRef.current?.click()}
+              className="text-xs px-3 py-1.5 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+            >
+              {uploadingHero ? 'Subiendo…' : 'Cambiar imagen hero'}
+            </button>
+            <input
+              type="text"
+              value={values.colaboraEmpresasHeroImage || ''}
+              onChange={e => setValues(v => ({ ...v, colaboraEmpresasHeroImage: e.target.value }))}
+              placeholder="https://... o /uploads/imagen.webp"
+              className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-xs text-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-800"
+            />
           </div>
         </div>
 
