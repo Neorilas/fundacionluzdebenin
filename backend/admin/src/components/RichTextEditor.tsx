@@ -4,7 +4,7 @@ import ImageExt from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 // Image extension with alignment attribute
 const Image = ImageExt.extend({
@@ -51,8 +51,8 @@ function ToolbarBtn({
       onMouseDown={(e) => { e.preventDefault(); onClick(); }}
       className={`px-2 py-1 rounded text-sm font-medium transition-colors ${
         active
-          ? 'bg-primary-800 text-white'
-          : 'text-gray-600 hover:bg-gray-100'
+          ? 'bg-primary-800 text-white shadow-sm ring-1 ring-primary-900'
+          : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
       }`}
     >
       {children}
@@ -64,6 +64,7 @@ const sep = <span className="w-px h-5 bg-gray-200 mx-1 self-center" />;
 
 export default function RichTextEditor({ value, onChange, placeholder, minHeight = 320, maxHeight = 600 }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imageAlign, setImageAlign] = useState<'left' | 'center' | 'right' | null>(null);
 
   const editor = useEditor({
     extensions: [
@@ -75,6 +76,15 @@ export default function RichTextEditor({ value, onChange, placeholder, minHeight
     ],
     content: value,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
+    onSelectionUpdate: ({ editor }) => {
+      const { selection } = editor.state;
+      const node = (selection as { node?: { type: { name: string }; attrs: Record<string, string> } }).node;
+      if (node?.type?.name === 'image') {
+        setImageAlign((node.attrs.align as 'left' | 'center' | 'right') || 'center');
+      } else {
+        setImageAlign(null);
+      }
+    },
     editorProps: {
       attributes: {
         class: 'outline-none prose max-w-none px-4 py-3',
@@ -132,6 +142,9 @@ export default function RichTextEditor({ value, onChange, placeholder, minHeight
         <ToolbarBtn title="Título H3" active={editor.isActive('heading', { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>
           H3
         </ToolbarBtn>
+        <ToolbarBtn title="Título H4" active={editor.isActive('heading', { level: 4 })} onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}>
+          H4
+        </ToolbarBtn>
         {sep}
         <ToolbarBtn title="Lista con viñetas" active={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()}>
           ≡
@@ -176,6 +189,31 @@ export default function RichTextEditor({ value, onChange, placeholder, minHeight
           ↪
         </ToolbarBtn>
       </div>
+
+      {/* Image alignment toolbar — visible only when an image is selected */}
+      {imageAlign !== null && (
+        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 border-b border-blue-100 text-xs">
+          <span className="text-blue-700 font-medium mr-1">Imagen:</span>
+          {(['left', 'center', 'right'] as const).map(a => (
+            <button
+              key={a}
+              type="button"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                editor.chain().focus().updateAttributes('image', { align: a }).run();
+                setImageAlign(a);
+              }}
+              className={`px-2 py-0.5 rounded font-medium transition-colors border ${
+                imageAlign === a
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white text-blue-600 border-blue-200 hover:bg-blue-100'
+              }`}
+            >
+              {a === 'left' ? '◀ Izquierda' : a === 'center' ? '■ Centro' : 'Derecha ▶'}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Editor area */}
       <div style={{ maxHeight, overflowY: 'auto' }}>

@@ -5,3 +5,19 @@
 body {
   @apply bg-gray-50 text-gray-900;
 }
+
+/* TipTap editor — separador visual entre párrafos */
+.ProseMirror p + p {
+  margin-top: 0.15rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed #e5e7eb;
+}
+
+/* TipTap — indicador de lista activa más visible */
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 1.5rem;
+}
+.ProseMirror ul { list-style: disc; }
+.ProseMirror ol { list-style: decimal; }
+.ProseMirror li { margin-bottom: 0.25rem; }
