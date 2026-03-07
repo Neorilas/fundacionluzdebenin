@@ -180,6 +180,43 @@ export default function BlogForm() {
     return () => window.removeEventListener('beforeunload', handler);
   }, [isDirty]);
 
+  const handlePreview = async () => {
+    if (!form.titleEs && !form.slug) {
+      alert('Escribe al menos el título antes de previsualizar.');
+      return;
+    }
+    const PREVIEW_SECRET = 'preview-luz-benin';
+    // If clean and already saved, open immediately
+    if (id && !isDirty) {
+      window.open(`${FRONTEND_URL}/es/blog/${form.slug}/?preview=${PREVIEW_SECRET}`, '_blank', 'noopener');
+      return;
+    }
+    // Otherwise save as draft first, then open preview
+    setSaving('draft');
+    try {
+      const payload = { ...form, tags: form.tags, published: false, scheduledAt: null };
+      let slug = form.slug;
+      let savedId = id;
+      if (id) {
+        await api.put(`/admin/blog/${id}`, payload);
+      } else {
+        const r = await api.post('/admin/blog', payload);
+        slug = r.data.slug;
+        savedId = r.data.id;
+      }
+      setIsDirty(false);
+      window.open(`${FRONTEND_URL}/es/blog/${slug}/?preview=${PREVIEW_SECRET}`, '_blank', 'noopener');
+      if (savedId !== id) {
+        // Switch URL to edit mode without adding a history entry
+        navigate(`/admin/blog/${savedId}`, { replace: true });
+      }
+    } catch {
+      alert('Error al guardar. Inténtalo de nuevo.');
+    } finally {
+      setSaving(null);
+    }
+  };
+
   const handleSubmit = (e: FormEvent) => { e.preventDefault(); };
 
   if (loading) return <div className="flex items-center justify-center h-40"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-800"></div></div>;
@@ -199,18 +236,14 @@ export default function BlogForm() {
           <h2 className="text-2xl font-bold text-gray-900">{isEdit ? 'Editar post' : 'Nuevo post'}</h2>
         </div>
         <div className="flex items-center gap-2">
-          {form.slug && id && (
+          {(form.titleEs || form.slug) && (
             <button
               type="button"
-              onClick={async () => {
-                try {
-                  const r = await api.get(`/admin/blog/${id}/preview-url`);
-                  window.open(r.data.es, '_blank', 'noopener,noreferrer');
-                } catch { alert('No se pudo obtener la URL de vista previa'); }
-              }}
-              className="text-xs text-gray-400 hover:text-primary-800 transition-colors px-2 py-1"
+              onClick={handlePreview}
+              disabled={!!saving}
+              className="text-xs text-gray-400 hover:text-primary-800 disabled:opacity-50 transition-colors px-2 py-1"
             >
-              Vista previa
+              {saving === 'draft' ? 'Guardando…' : '👁 Vista previa'}
             </button>
           )}
           <button
