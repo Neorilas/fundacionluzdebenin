@@ -1,19 +1,15 @@
 import { useEffect, useRef, useState, FormEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import MDEditor, { commands } from '@uiw/react-md-editor';
 import api from '../../api';
 import BilingualField from '../../components/BilingualField';
 import MediaPicker from '../../components/MediaPicker';
+import RichTextEditor from '../../components/RichTextEditor';
 
-function stripMarkdown(md: string): string {
-  return md
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/`[^`]+`/g, '')
-    .replace(/!\[.*?\]\(.*?\)/g, '')
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/^#{1,6}\s+/gm, '')
-    .replace(/[*_~>#|]/g, '')
-    .replace(/\n+/g, ' ')
+function stripMarkdown(html: string): string {
+  return html
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
@@ -78,8 +74,6 @@ export default function ProjectsForm() {
   const initialLoadedRef = useRef(!id);
   const [descLang, setDescLang] = useState<'es' | 'fr'>('es');
   const [translatingDesc, setTranslatingDesc] = useState(false);
-  const [showImageInserter, setShowImageInserter] = useState(false);
-  const editorApiRef = useRef<any>(null);
 
   const isEdit = !!id;
 
@@ -205,31 +199,12 @@ export default function ProjectsForm() {
               </div>
             </div>
           </div>
-          <div data-color-mode="light">
-            <MDEditor
-              value={descLang === 'es' ? form.descEs : form.descFr}
-              onChange={val => set(descLang === 'es' ? 'descEs' : 'descFr', val || '')}
-              height={300}
-              preview="edit"
-              extraCommands={[
-                {
-                  name: 'imageInsert',
-                  keyCommand: 'imageInsert',
-                  buttonProps: { 'aria-label': 'Insertar imagen en el texto', title: 'Insertar imagen en el texto' },
-                  icon: (
-                    <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
-                      <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
-                    </svg>
-                  ),
-                  execute: (_state: unknown, api: any) => {
-                    editorApiRef.current = api;
-                    setShowImageInserter(true);
-                  },
-                },
-                commands.fullscreen,
-              ]}
-            />
-          </div>
+          <RichTextEditor
+            key={descLang}
+            value={descLang === 'es' ? form.descEs : form.descFr}
+            onChange={val => set(descLang === 'es' ? 'descEs' : 'descFr', val)}
+            minHeight={300}
+          />
           <div className="flex items-center justify-between mt-1">
             <p className="text-xs text-gray-400">Editando: {descLang === 'es' ? '🇪🇸 Español' : '🇫🇷 Français'}</p>
             {(() => {
@@ -277,22 +252,6 @@ export default function ProjectsForm() {
           />
         </div>
 
-        {showImageInserter && (
-          <MediaPicker
-            askAlt
-            onSelect={(url, alt) => {
-              if (editorApiRef.current) {
-                editorApiRef.current.replaceSelection(`\n![${alt || ''}](${url})\n`);
-                editorApiRef.current = null;
-              }
-              setShowImageInserter(false);
-            }}
-            onClose={() => {
-              editorApiRef.current = null;
-              setShowImageInserter(false);
-            }}
-          />
-        )}
 
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
           <button type="button" onClick={() => {
