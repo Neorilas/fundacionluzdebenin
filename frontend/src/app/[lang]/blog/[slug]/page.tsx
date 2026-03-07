@@ -180,6 +180,19 @@ export default async function BlogPostPage({
               th: ({ children }) => <th className="px-4 py-3 text-left border border-gray-200">{children}</th>,
               td: ({ children }) => <td className="px-4 py-3 border border-gray-200">{children}</td>,
               tr: ({ children }) => <tr className="even:bg-gray-50">{children}</tr>,
+              img: ({ src, alt, title }) => {
+                const align = title === 'left' ? 'mr-auto' : title === 'right' ? 'ml-auto' : 'mx-auto';
+                const float = title === 'left' ? 'float-left mr-6 mb-4' : title === 'right' ? 'float-right ml-6 mb-4' : '';
+                return (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={src || ''}
+                    alt={alt || ''}
+                    title={title && title !== 'left' && title !== 'right' ? title : undefined}
+                    className={`rounded-lg my-6 max-w-full h-auto ${float || align} block`}
+                  />
+                );
+              },
             }}
           >{content}</ReactMarkdown>
         </div>

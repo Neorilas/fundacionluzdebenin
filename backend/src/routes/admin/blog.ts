@@ -10,7 +10,11 @@ router.use(authMiddleware);
 router.get('/', async (_req, res, next) => {
   try {
     const posts = await prisma.blogPost.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { publishedAt: { sort: 'desc', nulls: 'last' } },
+        { scheduledAt: { sort: 'desc', nulls: 'last' } },
+        { createdAt: 'desc' },
+      ],
     });
     res.json(posts);
   } catch (error) { next(error); }
