@@ -83,6 +83,7 @@ export default function BlogForm() {
   const [form, setForm] = useState<FormData>(empty);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState<'draft' | 'publish' | null>(null);
+  const [savedOk, setSavedOk] = useState(false);
   const [tagInput, setTagInput] = useState('');
   const [contentLang, setContentLang] = useState<'es' | 'fr'>('es');
   const [translatingContent, setTranslatingContent] = useState(false);
@@ -161,10 +162,19 @@ export default function BlogForm() {
       if (isEdit) {
         await api.put(`/admin/blog/${id}`, payload);
       } else {
-        await api.post('/admin/blog', payload);
+        const r = await api.post('/admin/blog', payload);
+        if (!published) {
+          // Nuevo post guardado como borrador: actualizar URL sin salir
+          navigate(`/admin/blog/${r.data.id}`, { replace: true });
+        }
       }
       setIsDirty(false);
-      navigate('/admin/blog');
+      if (published) {
+        navigate('/admin/blog');
+      } else {
+        setSavedOk(true);
+        setTimeout(() => setSavedOk(false), 3000);
+      }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error al guardar';
       alert(message);
@@ -236,6 +246,9 @@ export default function BlogForm() {
           <h2 className="text-2xl font-bold text-gray-900">{isEdit ? 'Editar post' : 'Nuevo post'}</h2>
         </div>
         <div className="flex items-center gap-2">
+          {savedOk && (
+            <span className="text-sm text-green-600 font-medium">✓ Borrador guardado</span>
+          )}
           {(form.titleEs || form.slug) && (
             <button
               type="button"
