@@ -1,6 +1,8 @@
 # ─── Stage 1: Build admin panel (React + Vite) ───────────────────────────────
 FROM node:20-alpine AS admin-builder
 
+RUN npm install -g npm@11
+
 WORKDIR /app/admin
 COPY admin/package*.json ./
 RUN npm ci --silent
@@ -12,7 +14,7 @@ RUN npm run build
 # ─── Stage 2: Build backend (TypeScript) ─────────────────────────────────────
 FROM node:20-alpine AS backend-builder
 
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl && npm install -g npm@11
 
 WORKDIR /app
 COPY package*.json ./
@@ -31,7 +33,7 @@ RUN npx tsc -p tsconfig.seed.json
 # ─── Stage 3: Production image ───────────────────────────────────────────────
 FROM node:20-alpine
 
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl && npm install -g npm@11
 
 WORKDIR /app
 
