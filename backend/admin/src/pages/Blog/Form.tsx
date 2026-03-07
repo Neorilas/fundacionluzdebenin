@@ -24,6 +24,37 @@ async function translateText(text: string): Promise<string> {
   return r.data.translatedText || text;
 }
 
+function stripMarkdown(md: string): string {
+  return md
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/`[^`]+`/g, '')
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/[*_~>#|]/g, '')
+    .replace(/\n+/g, ' ')
+    .trim();
+}
+
+function countWords(md: string): number {
+  const clean = stripMarkdown(md);
+  return clean.split(/\s+/).filter(w => w.length > 0).length;
+}
+
+function wordCountColor(n: number): string {
+  if (n < 300) return 'text-red-500';
+  if (n < 600) return 'text-amber-500';
+  if (n < 1000) return 'text-green-600';
+  return 'text-blue-600';
+}
+
+function wordCountLabel(n: number): string {
+  if (n < 300) return '· mín. 300 recomendado';
+  if (n < 600) return '· buen inicio';
+  if (n < 1000) return '· bien para SEO ✓';
+  return '· excelente ✓';
+}
+
 interface FormData {
   slug: string;
   titleEs: string; titleFr: string;
@@ -221,6 +252,18 @@ export default function BlogForm() {
             </div>
             <BilingualField label="Título" nameEs="titleEs" nameFr="titleFr" valueEs={form.titleEs} valueFr={form.titleFr} onChange={set} required />
             <BilingualField label="Extracto" nameEs="excerptEs" nameFr="excerptFr" valueEs={form.excerptEs} valueFr={form.excerptFr} onChange={set} multiline rows={2} />
+            {form.contentEs && (
+              <button
+                type="button"
+                onClick={() => {
+                  const excerpt = stripMarkdown(form.contentEs);
+                  set('excerptEs', excerpt.length <= 300 ? excerpt : excerpt.slice(0, 297) + '…');
+                }}
+                className="text-xs text-blue-600 hover:text-blue-800 -mt-2"
+              >
+                ↩ Auto-extracto del contenido
+              </button>
+            )}
           </div>
 
           {/* Content editor */}
@@ -279,7 +322,17 @@ export default function BlogForm() {
                 ]}
               />
             </div>
-            <p className="text-xs text-gray-400 mt-1">Editando: {contentLang === 'es' ? '🇪🇸 Español' : '🇫🇷 Français'}</p>
+            <div className="flex items-center justify-between mt-1">
+              <p className="text-xs text-gray-400">Editando: {contentLang === 'es' ? '🇪🇸 Español' : '🇫🇷 Français'}</p>
+              {(() => {
+                const n = countWords(contentLang === 'es' ? form.contentEs : form.contentFr);
+                return (
+                  <p className={`text-xs font-medium ${wordCountColor(n)}`}>
+                    {n} palabras {wordCountLabel(n)}
+                  </p>
+                );
+              })()}
+            </div>
           </div>
         </div>
 

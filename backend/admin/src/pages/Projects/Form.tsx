@@ -5,6 +5,36 @@ import api from '../../api';
 import BilingualField from '../../components/BilingualField';
 import MediaPicker from '../../components/MediaPicker';
 
+function stripMarkdown(md: string): string {
+  return md
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/`[^`]+`/g, '')
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/[*_~>#|]/g, '')
+    .replace(/\n+/g, ' ')
+    .trim();
+}
+
+function countWords(md: string): number {
+  return stripMarkdown(md).split(/\s+/).filter(w => w.length > 0).length;
+}
+
+function wordCountColor(n: number): string {
+  if (n < 300) return 'text-red-500';
+  if (n < 600) return 'text-amber-500';
+  if (n < 1000) return 'text-green-600';
+  return 'text-blue-600';
+}
+
+function wordCountLabel(n: number): string {
+  if (n < 300) return '· mín. 300 recomendado';
+  if (n < 600) return '· buen inicio';
+  if (n < 1000) return '· bien para SEO ✓';
+  return '· excelente ✓';
+}
+
 function toSlug(text: string): string {
   return text
     .toLowerCase()
@@ -200,7 +230,17 @@ export default function ProjectsForm() {
               ]}
             />
           </div>
-          <p className="text-xs text-gray-400 mt-1">Editando: {descLang === 'es' ? '🇪🇸 Español' : '🇫🇷 Français'}</p>
+          <div className="flex items-center justify-between mt-1">
+            <p className="text-xs text-gray-400">Editando: {descLang === 'es' ? '🇪🇸 Español' : '🇫🇷 Français'}</p>
+            {(() => {
+              const n = countWords(descLang === 'es' ? form.descEs : form.descFr);
+              return (
+                <p className={`text-xs font-medium ${wordCountColor(n)}`}>
+                  {n} palabras {wordCountLabel(n)}
+                </p>
+              );
+            })()}
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
