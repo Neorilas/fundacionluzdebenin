@@ -163,8 +163,8 @@ function TabAutonomo({ lang }: { lang: Lang }) {
           label={tx(lang, "Deducción en IRPF sobre los primeros 250€", "Déduction IRPF sur les 250 premiers €")}
         />
         <NumberCard
-          value="50€"
-          label={tx(lang, "Coste real si donas 250€/año (Hacienda pone 200€)", "Coût réel si vous donnez 250€/an")}
+          value="200€"
+          label={tx(lang, "Devuelve Hacienda por cada 250€ donados — tú solo pones 50€", "Remboursés par le fisc pour 250€ donnés — vous ne payez que 50€")}
         />
         <NumberCard
           value="40-45%"
@@ -525,13 +525,13 @@ function TabEmpresa({ lang, onContactClick }: { lang: Lang; onContactClick: () =
             items={lang === 'es'
               ? [
                   "Construcción y equipamiento del aprisco del nuevo rebaño de ovejas",
-                  "Mención destacada en la web (sección propia)",
+                  "Logo y nombre en la web como empresa colaboradora",
                   "Sello digital + certificado fiscal",
                   "Actualización semestral del estado del proyecto",
                 ]
               : [
                   "Construction et équipement de la bergerie du nouveau troupeau",
-                  "Mention mise en avant sur le site (section dédiée)",
+                  "Logo et nom sur le site comme entreprise partenaire",
                   "Badge numérique + reçu fiscal",
                   "Mise à jour semestrielle sur l'état du projet",
                 ]
@@ -544,13 +544,13 @@ function TabEmpresa({ lang, onContactClick }: { lang: Lang; onContactClick: () =
             items={lang === 'es'
               ? [
                   "Ayuda de peso para el lanzamiento de nuevos proyectos y la sustentación de los existentes",
-                  "Presencia destacada en web y materiales de la fundación",
+                  "Logo y mención en web, memorias anuales y comunicaciones de la fundación",
                   "Certificado fiscal + reunión anual de seguimiento",
                   "Posibilidad de visita al terreno (Benín)",
                 ]
               : [
                   "Soutien majeur au lancement de nouveaux projets et à la pérennisation des existants",
-                  "Présence mise en avant sur le site et les supports de la fondation",
+                  "Logo et mention sur le site, les rapports annuels et les communications de la fondation",
                   "Reçu fiscal + réunion annuelle de suivi",
                   "Possibilité de visite sur le terrain (Bénin)",
                 ]
