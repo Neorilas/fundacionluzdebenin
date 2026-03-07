@@ -31,6 +31,77 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+// GET /api/blog/rss?lang=es|fr  — RSS 2.0 feed
+router.get('/rss', async (req, res, next) => {
+  try {
+    const lang = req.query.lang === 'fr' ? 'fr' : 'es';
+    const SITE = process.env.FRONTEND_URL || 'https://fundacionluzdebenin.org';
+
+    const posts = await prisma.blogPost.findMany({
+      where: { published: true },
+      orderBy: { publishedAt: 'desc' },
+      take: 20,
+      select: {
+        slug: true, titleEs: true, titleFr: true,
+        excerptEs: true, excerptFr: true, coverImage: true,
+        publishedAt: true, category: true,
+      },
+    });
+
+    const channelTitle = lang === 'fr'
+      ? 'Fondation Luz de Benín — Blog'
+      : 'Fundación Luz de Benín — Blog';
+    const channelDesc = lang === 'fr'
+      ? 'Actualités et projets de la Fondation Luz de Benín au Bénin, Afrique occidentale.'
+      : 'Noticias y proyectos de la Fundación Luz de Benín en Benín, África Occidental.';
+
+    const escape = (s: string) =>
+      s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+    const items = posts.map(p => {
+      const title   = escape(lang === 'fr' ? (p.titleFr || p.titleEs) : p.titleEs);
+      const excerpt = escape(lang === 'fr' ? (p.excerptFr || p.excerptEs || '') : (p.excerptEs || ''));
+      const link    = `${SITE}/${lang}/blog/${p.slug}/`;
+      const pubDate = (p.publishedAt || new Date()).toUTCString();
+      const image   = p.coverImage
+        ? `<enclosure url="${escape(p.coverImage.startsWith('http') ? p.coverImage : SITE + p.coverImage)}" type="image/webp" length="0"/>`
+        : '';
+      return `
+    <item>
+      <title>${title}</title>
+      <link>${link}</link>
+      <guid isPermaLink="true">${link}</guid>
+      <description>${excerpt}</description>
+      <pubDate>${pubDate}</pubDate>
+      ${p.category ? `<category>${escape(p.category)}</category>` : ''}
+      ${image}
+    </item>`;
+    }).join('');
+
+    const rssUrl = `${SITE}/api/blog/rss?lang=${lang}`;
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>${escape(channelTitle)}</title>
+    <link>${SITE}/${lang}/blog/</link>
+    <description>${escape(channelDesc)}</description>
+    <language>${lang === 'fr' ? 'fr' : 'es'}</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <atom:link href="${rssUrl}" rel="self" type="application/rss+xml"/>
+    <image>
+      <url>${SITE}/logo.jpg</url>
+      <title>${escape(channelTitle)}</title>
+      <link>${SITE}/${lang}/blog/</link>
+    </image>${items}
+  </channel>
+</rss>`;
+
+    res.set('Content-Type', 'application/rss+xml; charset=utf-8');
+    res.set('Cache-Control', 'public, max-age=3600');
+    res.send(xml);
+  } catch (error) { next(error); }
+});
+
 // GET /api/blog/preview/:slug?secret=XXX  — returns any post (published or draft) if secret matches
 router.get('/preview/:slug', async (req, res, next) => {
   try {

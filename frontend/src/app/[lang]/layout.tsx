@@ -43,6 +43,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         'fr': `${SITE_URL}/fr/`,
         'x-default': `${SITE_URL}/es/`,
       },
+      types: {
+        'application/rss+xml': `${SITE_URL}/api/blog/rss?lang=${lang}`,
+      },
     },
   };
 }
