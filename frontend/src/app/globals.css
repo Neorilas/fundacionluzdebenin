@@ -16,9 +16,75 @@ body {
 .prose h2 { @apply text-2xl font-bold text-gray-900 mb-3 mt-6; }
 .prose h3 { @apply text-xl font-semibold text-gray-800 mb-2 mt-5; }
 .prose p { @apply text-gray-700 mb-4 leading-relaxed; }
-.prose ul { @apply list-disc list-inside mb-4 text-gray-700; }
-.prose ol { @apply list-decimal list-inside mb-4 text-gray-700; }
-.prose li { @apply mb-1; }
+/* Unordered lists */
+.prose ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: #374151;
+}
+.prose ul > li {
+  padding-left: 1.5rem;
+  position: relative;
+  line-height: 1.7;
+}
+.prose ul > li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #065F46;
+  font-weight: 700;
+}
+
+/* Ordered lists — números grandes en círculo */
+.prose ol {
+  list-style: none;
+  counter-reset: prose-ol;
+  padding-left: 0;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: #374151;
+}
+.prose ol > li {
+  counter-increment: prose-ol;
+  padding-left: 3.25rem;
+  position: relative;
+  line-height: 1.7;
+}
+.prose ol > li::before {
+  content: counter(prose-ol);
+  position: absolute;
+  left: 0;
+  top: 0.15rem;
+  width: 2rem;
+  height: 2rem;
+  background-color: #065F46;
+  color: #fff;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+/* Negrita al inicio del item → actúa como título del punto */
+.prose ol > li > strong:first-child,
+.prose ol > li > p > strong:first-child {
+  display: block;
+  color: #111827;
+  font-size: 0.975rem;
+  margin-bottom: 0.2rem;
+}
+/* Párrafos dentro de un li (salto de línea con línea en blanco en md) */
+.prose li > p {
+  margin-bottom: 0.4rem;
+}
 .prose strong { @apply font-bold text-gray-900; }
 .prose a { @apply text-primary-800 underline hover:text-accent; }
 .prose blockquote { @apply border-l-4 border-primary-100 pl-4 italic text-gray-600 my-4; }
