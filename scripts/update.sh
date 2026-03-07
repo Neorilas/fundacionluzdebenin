@@ -23,5 +23,9 @@ docker network rm fundacion_default 2>/dev/null || true
 # Levantar (--remove-orphans limpia contenedores huérfanos de versiones anteriores)
 docker compose up -d --remove-orphans
 
+# Migraciones puntuales (idempotentes: omite posts ya en HTML)
+echo "🔀 Ejecutando migración MD→HTML en posts del blog..."
+docker compose exec -T backend node scripts/migrate-md-to-html.cjs || true
+
 echo "✅ Actualización completada"
 docker compose ps
