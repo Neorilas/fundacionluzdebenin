@@ -50,6 +50,9 @@ COPY prisma ./prisma/
 # Built admin panel served by Express at /admin
 COPY --from=admin-builder /app/admin/dist ./admin/dist
 
+# Migration scripts (idempotent, run at startup)
+COPY scripts ./scripts/
+
 # Create dirs for persistent data
 RUN mkdir -p /data /app/uploads
 
@@ -61,4 +64,4 @@ ENV UPLOAD_DIR=/app/uploads
 EXPOSE 3001
 
 # On start: apply DB schema (idempotent) then run the server
-CMD ["sh", "-c", "npx prisma db push --schema=./prisma/schema.prisma && node dist/prisma/seed.js && node dist/index.js"]
+CMD ["sh", "-c", "npx prisma db push --schema=./prisma/schema.prisma && node dist/prisma/seed.js && node scripts/migrate-md-to-html.cjs && node dist/index.js"]
