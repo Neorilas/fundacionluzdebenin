@@ -114,10 +114,10 @@ model Campaign {
   fineEs      String   @default("")
   fineFr      String   @default("")
 
-  // "¿Qué cubre?" — JSON: [{icon, textEs, textFr}, ...]
+  // Cover items — JSON: [{icon, textEs, textFr}, ...]
   coverItems  String   @default("[]")
 
-  // Sección proyecto
+  // Project section
   projectTitleEs  String  @default("")
   projectTitleFr  String  @default("")
   projectTextEs   String  @default("")
@@ -128,7 +128,7 @@ model Campaign {
   projectLinkFr   String  @default("")
   projectHref     String  @default("")
 
-  // Sección extra (stats | why | vacío)
+  // Extra section (stats | why | empty)
   extraType       String  @default("")
   extraTitleEs    String  @default("")
   extraTitleFr    String  @default("")
@@ -181,7 +181,7 @@ model StripeProduct {
   nameFr          String
   descEs          String     @default("")
   descFr          String     @default("")
-  amount          Int                          // céntimos (1000 = 10€)
+  amount          Int                          // cents (1000 = 10 EUR)
   interval        String     @default("month") // "month" | "year"
   currency        String     @default("eur")
   active          Boolean    @default(true)
@@ -199,7 +199,7 @@ model Donation {
   stripeCustomerId      String?
   type                  String                  // "one_time" | "subscription"
   status                String         @default("pending") // pending|completed|failed|canceled
-  amount                Int                     // céntimos
+  amount                Int                     // cents
   currency              String         @default("eur")
   donorName             String?
   donorEmail            String?
