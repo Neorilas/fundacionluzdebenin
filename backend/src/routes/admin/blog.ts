@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { BlogPost } from '@prisma/client';
 import prisma from '../../lib/prisma';
 import { authMiddleware } from '../../middleware/authMiddleware';
 import { revalidate, PATHS } from '../../lib/revalidate';
@@ -11,7 +12,7 @@ router.get('/', async (_req, res, next) => {
   try {
     const raw = await prisma.blogPost.findMany();
     // Sort: published first (desc publishedAt) → scheduled ASC (soonest next) → drafts (desc createdAt)
-    raw.sort((a, b) => {
+    raw.sort((a: BlogPost, b: BlogPost) => {
       if (a.published && b.published)
         return new Date(b.publishedAt!).getTime() - new Date(a.publishedAt!).getTime();
       if (a.published) return -1;

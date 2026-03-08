@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { Project } from '@prisma/client';
 import prisma from '../../lib/prisma';
 
 const router = Router();
@@ -16,7 +17,7 @@ router.get('/', async (req, res, next) => {
       orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
     });
 
-    const parsed = projects.map((p) => ({
+    const parsed = projects.map((p: Project) => ({
       ...p,
       images: JSON.parse(p.images || '[]'),
       stats: JSON.parse(p.stats || '{}'),

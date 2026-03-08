@@ -1,5 +1,15 @@
 import { Router } from 'express';
+import { BlogPost, Prisma } from '@prisma/client';
 import prisma from '../../lib/prisma';
+
+type BlogCandidate = Prisma.BlogPostGetPayload<{
+  select: {
+    id: true; slug: true; titleEs: true; titleFr: true;
+    excerptEs: true; excerptFr: true; coverImage: true;
+    publishedAt: true; category: true; tags: true;
+  };
+}>;
+type BlogScored = BlogCandidate & { score: number };
 
 const router = Router();
 
@@ -58,7 +68,7 @@ router.get('/rss', async (req, res, next) => {
     const escape = (s: string) =>
       s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-    const items = posts.map(p => {
+    const items = posts.map((p: BlogPost) => {
       const title   = escape(lang === 'fr' ? (p.titleFr || p.titleEs) : p.titleEs);
       const excerpt = escape(lang === 'fr' ? (p.excerptFr || p.excerptEs || '') : (p.excerptEs || ''));
       const link    = `${SITE}/${lang}/blog/${p.slug}/`;
@@ -139,16 +149,16 @@ router.get('/:slug/related', async (req, res, next) => {
       },
     });
 
-    const scored = candidates.map(p => {
+    const scored = candidates.map((p: BlogCandidate): BlogScored => {
       let score = 0;
       if (post.category && p.category === post.category) score += 3;
       let ptags: string[] = [];
       try { ptags = JSON.parse(p.tags || '[]'); } catch { /* ignore */ }
-      score += tags.filter(t => ptags.includes(t)).length;
+      score += tags.filter((t: string) => ptags.includes(t)).length;
       return { ...p, score };
-    }).filter(p => p.score > 0).sort((a, b) => b.score - a.score).slice(0, 3);
+    }).filter((p: BlogScored) => p.score > 0).sort((a: BlogScored, b: BlogScored) => b.score - a.score).slice(0, 3);
 
-    res.json(scored.map(({ score: _s, tags: _t, ...p }) => p));
+    res.json(scored.map(({ score: _s, tags: _t, ...p }: BlogScored) => p));
   } catch (error) { next(error); }
 });
 
