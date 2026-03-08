@@ -137,7 +137,7 @@ export default function TaxDeduction({ lang }: Props) {
               <div className={`text-6xl font-extrabold mb-1 ${rate.highlight ? 'text-white' : 'text-primary-100'}`}>
                 {rate.pct}
               </div>
-              <div className="text-lg font-bold mb-2 text-white">
+              <div className={`text-lg font-bold mb-2 ${rate.highlight ? 'text-white' : 'text-white'}`}>
                 {rate.range}
               </div>
               <p className={`text-sm ${rate.highlight ? 'text-orange-100' : 'text-primary-300'}`}>

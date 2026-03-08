@@ -48,7 +48,6 @@ app.use(cors({
   origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000', 'http://localhost:5173'],
   credentials: true,
 }));
-app.disable('x-powered-by');
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 

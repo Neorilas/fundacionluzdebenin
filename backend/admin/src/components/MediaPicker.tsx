@@ -69,10 +69,8 @@ export default function MediaPicker({ onSelect, onClose, askAlt = false }: Props
 
   return (
     <div
-      role="dialog" aria-modal="true"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
-      onKeyDown={e => e.key === 'Escape' && onClose()}
     >
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-4 flex flex-col max-h-[85vh]">
 

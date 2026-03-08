@@ -1,14 +1,4 @@
 import { Router, Request } from 'express';
-
-// Safe email validation: length-bounded before regex to prevent ReDoS
-function isValidEmail(email: string): boolean {
-  if (!email || email.length > 254) return false;
-  const atIdx = email.indexOf('@');
-  if (atIdx < 1) return false;
-  const local = email.slice(0, atIdx);
-  const domain = email.slice(atIdx + 1);
-  return local.length <= 64 && domain.includes('.') && domain.length >= 3;
-}
 import prisma from '../../lib/prisma';
 import { sendContactNotification, sendContactConfirmation } from '../../lib/mailer';
 
@@ -58,7 +48,8 @@ router.post('/', async (req, res, next) => {
       return;
     }
 
-    if (!isValidEmail(email)) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
       res.status(400).json({ error: 'Email inválido' });
       return;
     }

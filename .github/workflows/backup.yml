@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Ejecutar backup en servidor
-        uses: appleboy/ssh-action@029f5b4aeeeb58fdfe1410a5d17f967dacf36262 # v1.0.3
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: 91.107.235.70
           username: root

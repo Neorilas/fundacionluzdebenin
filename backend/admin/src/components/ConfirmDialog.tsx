@@ -13,7 +13,7 @@ export default function ConfirmDialog({ open, title, message, confirmLabel = 'El
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/40" role="button" tabIndex={-1} aria-label="Cerrar" onClick={onCancel} onKeyDown={e => e.key === 'Escape' && onCancel()} />
+      <div className="absolute inset-0 bg-black/40" onClick={onCancel} />
 
       {/* Dialog */}
       <div className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-red-100">

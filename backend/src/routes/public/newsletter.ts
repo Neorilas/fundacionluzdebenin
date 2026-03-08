@@ -12,10 +12,7 @@ router.post('/subscribe', async (req, res, next) => {
   try {
     const { email, lang } = req.body;
 
-    const atIdx = email ? email.indexOf('@') : -1;
-    const isValidEmail = email && email.length <= 254 && atIdx > 0 &&
-      email.slice(0, atIdx).length <= 64 && email.slice(atIdx + 1).includes('.');
-    if (!isValidEmail) {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       res.status(400).json({ error: 'Email inválido' });
       return;
     }
