@@ -87,10 +87,6 @@ export default async function BlogPostPage({
     notFound();
   }
 
-  // Reading time
-  const words = content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().split(' ').filter((w: string) => w.length > 0).length;
-  const readingMin = Math.max(1, Math.round(words / 200));
-
   // Related posts
   const relatedPosts = await fetch(
     `${process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/blog/${slug}/related`,
@@ -105,6 +101,10 @@ export default async function BlogPostPage({
 
   const title = l === 'es' ? post.titleEs : post.titleFr;
   const content = l === 'es' ? (post.contentEs || '') : (post.contentFr || '');
+
+  // Reading time
+  const words = content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().split(' ').filter((w: string) => w.length > 0).length;
+  const readingMin = Math.max(1, Math.round(words / 200));
   const date = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString(l === 'es' ? 'es-ES' : 'fr-FR', {
         year: 'numeric', month: 'long', day: 'numeric',
