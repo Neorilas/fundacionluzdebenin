@@ -16,6 +16,7 @@ import stripePublic from './routes/public/stripe';
 import campaignsPublic from './routes/public/campaigns';
 import newsletterPublic from './routes/public/newsletter';
 import faqsPublic from './routes/public/faqs';
+import santoLeadPublic from './routes/public/santoLead';
 
 // Admin routes
 import authAdmin from './routes/admin/auth';
@@ -72,6 +73,7 @@ app.use('/api/stripe', stripePublic);
 app.use('/api/campaigns', campaignsPublic);
 app.use('/api/newsletter', newsletterPublic);
 app.use('/api/faqs', faqsPublic);
+app.use('/api/santo-lead', santoLeadPublic);
 
 // Admin API routes
 app.use('/api/admin/auth', authAdmin);

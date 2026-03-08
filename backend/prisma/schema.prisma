@@ -150,6 +150,17 @@ model Campaign {
   updatedAt   DateTime @updatedAt
 }
 
+model SantoLead {
+  id                   String   @id @default(cuid())
+  email                String
+  nombre               String   @default("")
+  santoId              Int
+  santoNombre          String
+  aceptaComunicaciones Boolean  @default(false)
+  lang                 String   @default("es")
+  createdAt            DateTime @default(now())
+}
+
 model Faq {
   id         String   @id @default(cuid())
   questionEs String
