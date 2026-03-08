@@ -24,23 +24,34 @@ model Project {
 }
 
 model BlogPost {
-  id          String    @id @default(cuid())
-  slug        String    @unique
-  titleEs     String
-  titleFr     String
-  excerptEs   String
-  excerptFr   String
-  contentEs   String
-  contentFr   String
+  id           String    @id @default(cuid())
+  slug         String    @unique
+  titleEs      String
+  titleFr      String
+  metaTitleEs  String    @default("")
+  metaTitleFr  String    @default("")
+  excerptEs    String
+  excerptFr    String
+  contentEs    String
+  contentFr    String
   coverImage    String    @default("")
   coverImageAlt String    @default("")
   category      String    @default("")
-  tags        String    @default("[]") // JSON array of strings
-  published   Boolean   @default(false)
-  publishedAt DateTime?
-  scheduledAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  tags         String    @default("[]") // JSON array of strings
+  focusKeyword String    @default("")
+  published    Boolean   @default(false)
+  publishedAt  DateTime?
+  scheduledAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model BlogCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
 }
 
 model PageSection {

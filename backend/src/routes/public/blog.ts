@@ -116,6 +116,42 @@ router.get('/preview/:slug', async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
+// GET /api/blog/:slug/related — up to 3 posts sharing category or tags
+router.get('/:slug/related', async (req, res, next) => {
+  try {
+    const post = await prisma.blogPost.findFirst({
+      where: { slug: req.params.slug, published: true },
+      select: { id: true, category: true, tags: true },
+    });
+    if (!post) { res.json([]); return; }
+
+    let tags: string[] = [];
+    try { tags = JSON.parse(post.tags || '[]'); } catch { /* ignore */ }
+
+    const candidates = await prisma.blogPost.findMany({
+      where: { published: true, id: { not: post.id } },
+      orderBy: { publishedAt: 'desc' },
+      take: 20,
+      select: {
+        id: true, slug: true, titleEs: true, titleFr: true,
+        excerptEs: true, excerptFr: true, coverImage: true,
+        publishedAt: true, category: true, tags: true,
+      },
+    });
+
+    const scored = candidates.map(p => {
+      let score = 0;
+      if (post.category && p.category === post.category) score += 3;
+      let ptags: string[] = [];
+      try { ptags = JSON.parse(p.tags || '[]'); } catch { /* ignore */ }
+      score += tags.filter(t => ptags.includes(t)).length;
+      return { ...p, score };
+    }).filter(p => p.score > 0).sort((a, b) => b.score - a.score).slice(0, 3);
+
+    res.json(scored.map(({ score: _s, tags: _t, ...p }) => p));
+  } catch (error) { next(error); }
+});
+
 // GET /api/blog/:slug
 router.get('/:slug', async (req, res, next) => {
   try {

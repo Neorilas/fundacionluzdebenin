@@ -17,8 +17,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     const post = await api.getBlogPost(slug);
     const title = isFr ? post.titleFr : post.titleEs;
     const description = isFr ? post.excerptFr : post.excerptEs;
+    const metaTitle = isFr ? (post.metaTitleFr || title) : (post.metaTitleEs || title);
     return {
-      title,
+      title: metaTitle,
       description,
       alternates: {
         canonical: `${SITE_URL}/${lang}/blog/${slug}/`,
@@ -85,6 +86,16 @@ export default async function BlogPostPage({
   } catch {
     notFound();
   }
+
+  // Reading time
+  const words = content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().split(' ').filter((w: string) => w.length > 0).length;
+  const readingMin = Math.max(1, Math.round(words / 200));
+
+  // Related posts
+  const relatedPosts = await fetch(
+    `${process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/blog/${slug}/related`,
+    { next: { revalidate: 3600 } }
+  ).then(r => r.ok ? r.json() : []).catch(() => []);
 
   // Fetch all posts for prev/next navigation
   const allPosts = await api.getBlogPosts(1, 1000).then(r => r.posts).catch(() => []);
@@ -157,9 +168,11 @@ export default async function BlogPostPage({
           </div>
         )}
 
-        {date && (
-          <p className="text-sm text-muted mb-3">{t(l, 'blog.publishedOn')} {date}</p>
-        )}
+        <div className="flex items-center gap-3 text-sm text-muted mb-3 flex-wrap">
+          {date && <span>{t(l, 'blog.publishedOn')} {date}</span>}
+          <span>·</span>
+          <span>{readingMin} {l === 'es' ? 'min de lectura' : 'min de lecture'}</span>
+        </div>
 
         <h1 className="text-4xl font-extrabold text-gray-900 mb-8">{title}</h1>
 
@@ -167,6 +180,34 @@ export default async function BlogPostPage({
           className="prose max-w-none"
           dangerouslySetInnerHTML={{ __html: content }}
         />
+
+        {/* Related posts */}
+        {relatedPosts.length > 0 && (
+          <aside className="mt-16 pt-8 border-t border-gray-200">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">
+              {l === 'es' ? 'Artículos relacionados' : 'Articles liés'}
+            </h2>
+            <div className="grid sm:grid-cols-3 gap-4">
+              {relatedPosts.map((rp: { slug: string; coverImage?: string; titleEs: string; titleFr: string; excerptEs?: string; excerptFr?: string; publishedAt?: string }) => (
+                <Link key={rp.slug} href={`/${l}/blog/${rp.slug}/`} className="group flex flex-col gap-2 rounded-xl border border-gray-200 overflow-hidden hover:border-primary-800 transition-colors">
+                  {rp.coverImage && (
+                    <div className="relative h-32 bg-gray-100">
+                      <Image src={rp.coverImage} alt={l === 'es' ? rp.titleEs : rp.titleFr} fill unoptimized sizes="300px" className="object-cover" />
+                    </div>
+                  )}
+                  <div className="p-3">
+                    <p className="text-sm font-semibold text-gray-900 group-hover:text-primary-800 line-clamp-2 transition-colors">
+                      {l === 'es' ? rp.titleEs : rp.titleFr}
+                    </p>
+                    {(l === 'es' ? rp.excerptEs : rp.excerptFr) && (
+                      <p className="text-xs text-muted mt-1 line-clamp-2">{l === 'es' ? rp.excerptEs : rp.excerptFr}</p>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </aside>
+        )}
 
         {/* Prev / Next navigation */}
         {(prevPost || nextPost) && (

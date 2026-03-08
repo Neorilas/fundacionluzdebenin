@@ -9,14 +9,20 @@ router.use(authMiddleware);
 // GET /api/admin/blog
 router.get('/', async (_req, res, next) => {
   try {
-    const posts = await prisma.blogPost.findMany({
-      orderBy: [
-        { publishedAt: { sort: 'desc', nulls: 'last' } },
-        { scheduledAt: { sort: 'desc', nulls: 'last' } },
-        { createdAt: 'desc' },
-      ],
+    const raw = await prisma.blogPost.findMany();
+    // Sort: published first (desc publishedAt) → scheduled ASC (soonest next) → drafts (desc createdAt)
+    raw.sort((a, b) => {
+      if (a.published && b.published)
+        return new Date(b.publishedAt!).getTime() - new Date(a.publishedAt!).getTime();
+      if (a.published) return -1;
+      if (b.published) return 1;
+      if (a.scheduledAt && b.scheduledAt)
+        return new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime();
+      if (a.scheduledAt) return -1;
+      if (b.scheduledAt) return 1;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
-    res.json(posts);
+    res.json(raw);
   } catch (error) { next(error); }
 });
 
@@ -32,18 +38,21 @@ router.get('/:id', async (req, res, next) => {
 // POST /api/admin/blog
 router.post('/', async (req, res, next) => {
   try {
-    const { slug, titleEs, titleFr, excerptEs, excerptFr, contentEs, contentFr,
-            coverImage, coverImageAlt, category, tags, published, scheduledAt } = req.body;
+    const { slug, titleEs, titleFr, metaTitleEs, metaTitleFr, excerptEs, excerptFr,
+            contentEs, contentFr, coverImage, coverImageAlt, category, tags,
+            focusKeyword, published, scheduledAt } = req.body;
 
     const isScheduled = !published && scheduledAt;
     const post = await prisma.blogPost.create({
       data: {
-        slug, titleEs, titleFr, excerptEs: excerptEs || '', excerptFr: excerptFr || '',
+        slug, titleEs, titleFr,
+        metaTitleEs: metaTitleEs || '', metaTitleFr: metaTitleFr || '',
+        excerptEs: excerptEs || '', excerptFr: excerptFr || '',
         contentEs: contentEs || '', contentFr: contentFr || '',
-        coverImage: coverImage || '',
-        coverImageAlt: coverImageAlt || '',
+        coverImage: coverImage || '', coverImageAlt: coverImageAlt || '',
         category: category || '',
         tags: Array.isArray(tags) ? JSON.stringify(tags) : (tags || '[]'),
+        focusKeyword: focusKeyword || '',
         published: published || false,
         publishedAt: published ? new Date() : null,
         scheduledAt: isScheduled ? new Date(scheduledAt) : null,
@@ -57,8 +66,9 @@ router.post('/', async (req, res, next) => {
 // PUT /api/admin/blog/:id
 router.put('/:id', async (req, res, next) => {
   try {
-    const { slug, titleEs, titleFr, excerptEs, excerptFr, contentEs, contentFr,
-            coverImage, coverImageAlt, category, tags, published, scheduledAt } = req.body;
+    const { slug, titleEs, titleFr, metaTitleEs, metaTitleFr, excerptEs, excerptFr,
+            contentEs, contentFr, coverImage, coverImageAlt, category, tags,
+            focusKeyword, published, scheduledAt } = req.body;
 
     const existing = await prisma.blogPost.findUnique({ where: { id: req.params.id } });
     const isScheduled = !published && scheduledAt;
@@ -76,9 +86,10 @@ router.put('/:id', async (req, res, next) => {
         ...(coverImage !== undefined && { coverImage }),
         ...(coverImageAlt !== undefined && { coverImageAlt }),
         ...(category !== undefined && { category }),
-        ...(tags !== undefined && {
-          tags: Array.isArray(tags) ? JSON.stringify(tags) : tags,
-        }),
+        ...(tags !== undefined && { tags: Array.isArray(tags) ? JSON.stringify(tags) : tags }),
+        ...(metaTitleEs !== undefined && { metaTitleEs }),
+        ...(metaTitleFr !== undefined && { metaTitleFr }),
+        ...(focusKeyword !== undefined && { focusKeyword }),
         ...(published !== undefined && {
           published,
           publishedAt: published && !existing?.publishedAt ? new Date() : existing?.publishedAt,

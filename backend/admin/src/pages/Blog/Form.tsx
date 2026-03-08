@@ -5,6 +5,8 @@ import BilingualField from '../../components/BilingualField';
 import MediaPicker from '../../components/MediaPicker';
 import RichTextEditor from '../../components/RichTextEditor';
 
+interface Category { id: string; name: string; }
+
 function toSlug(text: string): string {
   return text
     .toLowerCase()
@@ -58,20 +60,51 @@ function wordCountLabel(n: number): string {
 interface FormData {
   slug: string;
   titleEs: string; titleFr: string;
+  metaTitleEs: string; metaTitleFr: string;
   excerptEs: string; excerptFr: string;
   contentEs: string; contentFr: string;
   coverImage: string;
   coverImageAlt: string;
   category: string;
   tags: string[];
+  focusKeyword: string;
   scheduledAt: string;
 }
 
 const empty: FormData = {
-  slug: '', titleEs: '', titleFr: '', excerptEs: '', excerptFr: '',
-  contentEs: '', contentFr: '', coverImage: '', coverImageAlt: '', category: '',
-  tags: [], scheduledAt: '',
+  slug: '', titleEs: '', titleFr: '', metaTitleEs: '', metaTitleFr: '',
+  excerptEs: '', excerptFr: '', contentEs: '', contentFr: '',
+  coverImage: '', coverImageAlt: '', category: '', tags: [],
+  focusKeyword: '', scheduledAt: '',
 };
+
+function readingTime(html: string): number {
+  const words = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().split(' ').filter(w => w.length > 0).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
+function charCountColor(n: number, min: number, max: number): string {
+  if (n === 0) return 'text-gray-400';
+  if (n < min) return 'text-amber-500';
+  if (n > max) return 'text-red-500';
+  return 'text-green-600';
+}
+
+interface SeoCheck { label: string; ok: boolean; warn?: boolean; }
+function seoChecks(form: FormData, words: number): SeoCheck[] {
+  const titleLen = form.titleEs.length;
+  const excerptLen = form.excerptEs.length;
+  const kw = form.focusKeyword.trim().toLowerCase();
+  return [
+    { label: `Título ${titleLen} car. (ideal 40-60)`, ok: titleLen >= 40 && titleLen <= 60, warn: titleLen > 0 && (titleLen < 40 || titleLen > 60) },
+    { label: `Meta desc. ${excerptLen} car. (ideal 120-155)`, ok: excerptLen >= 120 && excerptLen <= 155, warn: excerptLen > 0 && (excerptLen < 120 || excerptLen > 155) },
+    { label: 'Imagen de portada con alt', ok: !!form.coverImage && !!form.coverImageAlt },
+    { label: `${words} palabras (mín. 600)`, ok: words >= 600 },
+    { label: 'Palabra clave definida', ok: !!kw },
+    { label: 'Keyword en el título', ok: !!kw && form.titleEs.toLowerCase().includes(kw) },
+    { label: 'Keyword en el extracto', ok: !!kw && form.excerptEs.toLowerCase().includes(kw) },
+  ];
+}
 
 function tagsFromJson(raw: string): string[] {
   try { return JSON.parse(raw || '[]'); } catch { return []; }
@@ -92,8 +125,13 @@ export default function BlogForm() {
   const [slugTouched, setSlugTouched] = useState(!!id);
   const [isDirty, setIsDirty] = useState(false);
   const initialLoadedRef = useRef(!id);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const isEdit = !!id;
+
+  useEffect(() => {
+    api.get('/admin/blog-categories').then(r => setCategories(r.data)).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (isEdit) {
@@ -105,12 +143,14 @@ export default function BlogForm() {
           : '';
         setForm({
           slug: p.slug, titleEs: p.titleEs, titleFr: p.titleFr,
+          metaTitleEs: p.metaTitleEs || '', metaTitleFr: p.metaTitleFr || '',
           excerptEs: p.excerptEs, excerptFr: p.excerptFr,
           contentEs: p.contentEs, contentFr: p.contentFr,
           coverImage: p.coverImage || '',
           coverImageAlt: p.coverImageAlt || '',
           category: p.category || '',
           tags: tagsFromJson(p.tags),
+          focusKeyword: p.focusKeyword || '',
           scheduledAt: scheduled,
         });
         if (scheduled) setShowSchedule(true);
@@ -295,19 +335,24 @@ export default function BlogForm() {
               />
             </div>
             <BilingualField label="Título" nameEs="titleEs" nameFr="titleFr" valueEs={form.titleEs} valueFr={form.titleFr} onChange={set} required />
-            <BilingualField label="Extracto" nameEs="excerptEs" nameFr="excerptFr" valueEs={form.excerptEs} valueFr={form.excerptFr} onChange={set} multiline rows={2} />
-            {form.contentEs && (
-              <button
-                type="button"
-                onClick={() => {
-                  const excerpt = stripMarkdown(form.contentEs);
-                  set('excerptEs', excerpt.length <= 300 ? excerpt : excerpt.slice(0, 297) + '…');
-                }}
-                className="text-xs text-blue-600 hover:text-blue-800 -mt-2"
-              >
-                ↩ Auto-extracto del contenido
-              </button>
-            )}
+            <BilingualField label="Extracto (meta description)" nameEs="excerptEs" nameFr="excerptFr" valueEs={form.excerptEs} valueFr={form.excerptFr} onChange={set} multiline rows={2} />
+            <div className="flex items-center justify-between -mt-2">
+              {form.contentEs ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const excerpt = stripMarkdown(form.contentEs);
+                    set('excerptEs', excerpt.length <= 155 ? excerpt : excerpt.slice(0, 152) + '…');
+                  }}
+                  className="text-xs text-blue-600 hover:text-blue-800"
+                >
+                  ↩ Auto-extracto del contenido
+                </button>
+              ) : <span />}
+              <span className={`text-xs font-mono ${charCountColor(form.excerptEs.length, 120, 155)}`}>
+                {form.excerptEs.length}/155
+              </span>
+            </div>
           </div>
 
           {/* Content editor */}
@@ -419,14 +464,88 @@ export default function BlogForm() {
           {/* Categoría */}
           <div className="bg-white rounded-xl border border-gray-200 p-4">
             <h3 className="text-sm font-semibold text-gray-800 mb-2">Categoría</h3>
-            <input
-              type="text"
+            <select
               value={form.category}
               onChange={e => set('category', e.target.value)}
-              placeholder="Educación, Salud, Noticias…"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800 bg-white"
+            >
+              <option value="">Sin categoría</option>
+              {categories.map(c => (
+                <option key={c.id} value={c.name}>{c.name}</option>
+              ))}
+            </select>
+            <a href="/admin/blog/categories" className="text-xs text-gray-400 hover:text-primary-800 mt-1 inline-block">+ Gestionar categorías</a>
+          </div>
+
+          {/* Palabra clave objetivo */}
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <h3 className="text-sm font-semibold text-gray-800 mb-2">Palabra clave objetivo</h3>
+            <input
+              type="text"
+              value={form.focusKeyword}
+              onChange={e => set('focusKeyword', e.target.value)}
+              placeholder="Ej: orfanatos en Benin"
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
             />
+            <p className="text-xs text-gray-400 mt-1">Término principal por el que quieres posicionar este post.</p>
           </div>
+
+          {/* Meta título SEO */}
+          <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
+            <h3 className="text-sm font-semibold text-gray-800">Meta título SEO</h3>
+            <p className="text-xs text-gray-400 -mt-1">Si lo dejas vacío se usa el título del post.</p>
+            {(['es', 'fr'] as const).map(lang => {
+              const field = lang === 'es' ? 'metaTitleEs' : 'metaTitleFr';
+              const val = form[field];
+              const len = val.length;
+              return (
+                <div key={lang}>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-medium text-gray-600">{lang === 'es' ? '🇪🇸 ES' : '🇫🇷 FR'}</label>
+                    <span className={`text-xs font-mono ${charCountColor(len, 40, 60)}`}>{len}/60</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={val}
+                    onChange={e => set(field, e.target.value)}
+                    placeholder={lang === 'es' ? form.titleEs : form.titleFr}
+                    className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
+                  />
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Panel SEO */}
+          {(() => {
+            const words = countWords(form.contentEs);
+            const mins = readingTime(form.contentEs);
+            const checks = seoChecks(form, words);
+            const score = checks.filter(c => c.ok).length;
+            const total = checks.length;
+            const scoreColor = score === total ? 'text-green-600' : score >= total - 2 ? 'text-amber-500' : 'text-red-500';
+            return (
+              <div className="bg-white rounded-xl border border-gray-200 p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-semibold text-gray-800">Análisis SEO</h3>
+                  <span className={`text-sm font-bold ${scoreColor}`}>{score}/{total}</span>
+                </div>
+                <ul className="space-y-1.5">
+                  {checks.map((c, i) => (
+                    <li key={i} className="flex items-start gap-2 text-xs">
+                      <span className={c.ok ? 'text-green-500' : c.warn ? 'text-amber-500' : 'text-red-400'}>
+                        {c.ok ? '✓' : c.warn ? '⚠' : '✗'}
+                      </span>
+                      <span className={c.ok ? 'text-gray-600' : 'text-gray-500'}>{c.label}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-gray-400 mt-3 pt-3 border-t border-gray-100">
+                  Tiempo de lectura estimado: <strong className="text-gray-600">{mins} min</strong>
+                </p>
+              </div>
+            );
+          })()}
 
           {/* Etiquetas */}
           <div className="bg-white rounded-xl border border-gray-200 p-4">

@@ -39,12 +39,20 @@ export default function BlogList() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Blog</h2>
-        <Link
-          to="/admin/blog/new"
-          className="bg-primary-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-900 transition-colors"
-        >
-          + Nuevo post
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/admin/blog/categories"
+            className="text-sm text-gray-500 hover:text-primary-800 border border-gray-300 px-3 py-2 rounded-lg transition-colors"
+          >
+            Categorías
+          </Link>
+          <Link
+            to="/admin/blog/new"
+            className="bg-primary-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-900 transition-colors"
+          >
+            + Nuevo post
+          </Link>
+        </div>
       </div>
 
       {loading ? (

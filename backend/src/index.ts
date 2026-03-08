@@ -31,6 +31,7 @@ import translateAdmin from './routes/admin/translate';
 import usersAdmin from './routes/admin/users';
 import dashboardAdmin from './routes/admin/dashboard';
 import faqsAdmin from './routes/admin/faqs';
+import categoriesAdmin from './routes/admin/categories';
 
 import { errorHandler } from './middleware/errorHandler';
 import { startScheduler } from './lib/scheduler';
@@ -86,6 +87,7 @@ app.use('/api/admin/translate', translateAdmin);
 app.use('/api/admin/users', usersAdmin);
 app.use('/api/admin/dashboard', dashboardAdmin);
 app.use('/api/admin/faqs', faqsAdmin);
+app.use('/api/admin/blog-categories', categoriesAdmin);
 
 // Health check
 app.get('/api/health', (_req, res) => {

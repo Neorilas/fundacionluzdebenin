@@ -63,6 +63,7 @@ import ProjectsList from './pages/Projects/List';
 import ProjectsForm from './pages/Projects/Form';
 import BlogList from './pages/Blog/List';
 import BlogForm from './pages/Blog/Form';
+import BlogCategories from './pages/Blog/Categories';
 import PagesEditor from './pages/Pages/Editor';
 import ContactsInbox from './pages/Contacts/Inbox';
 import DonationsSettings from './pages/Donations/Settings';
@@ -109,6 +110,7 @@ export default function App() {
                   <Route path="projects/:id" element={<ProjectsForm />} />
                   <Route path="blog" element={<BlogList />} />
                   <Route path="blog/new" element={<BlogForm />} />
+                  <Route path="blog/categories" element={<BlogCategories />} />
                   <Route path="blog/:id" element={<BlogForm />} />
                   <Route path="pages" element={<PagesEditor />} />
                   <Route path="contacts" element={<ContactsInbox />} />
