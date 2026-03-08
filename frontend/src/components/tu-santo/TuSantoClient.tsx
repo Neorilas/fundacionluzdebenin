@@ -58,7 +58,7 @@ const TX = {
       'Este es el santo que le acompaña este año en la misión de Benín. ¿Quieres descubrir el tuyo?',
     sharedCta: 'Descubrir el mío',
     shareText: (nombre: string, cita: string, id: number) =>
-      `✝️ Mi Santo Misionero en África este año es ${nombre}.\n\n"${cita}"\n\nDescubre el tuyo → ${SITE_URL}/es/tu-santo/?santo=${id}`,
+      `✝️ Mi Santo Misionero en África este año es ${nombre}.\n\n"${cita}"\n\nDescubre el tuyo → ${SITE_URL}/tu-santo/?santo=${id}`,
   },
   fr: {
     badge: 'Fondation Lumière du Bénin · 2026',
@@ -96,7 +96,7 @@ const TX = {
       'C\'est le saint qui l\'accompagne cette année dans la mission au Bénin. Veux-tu découvrir le tien ?',
     sharedCta: 'Découvrir le mien',
     shareText: (nombre: string, cita: string, id: number) =>
-      `✝️ Mon Saint Missionnaire en Afrique cette année est ${nombre}.\n\n"${cita}"\n\nDécouvre le tien → ${SITE_URL}/fr/tu-santo/?santo=${id}`,
+      `✝️ Mon Saint Missionnaire en Afrique cette année est ${nombre}.\n\n"${cita}"\n\nDécouvre le tien → ${SITE_URL}/tu-santo/?santo=${id}`,
   },
 };
 
@@ -226,7 +226,7 @@ export default function TuSantoClient({ lang }: Props) {
     ? tx.shareText(saint.nombre, saint.cita, saint.id)
     : '';
   const shareUrl = saint
-    ? `${SITE_URL}/${lang}/tu-santo/?santo=${saint.id}`
+    ? `${SITE_URL}/tu-santo/?santo=${saint.id}`
     : '';
 
   const handleWhatsapp = () => {
