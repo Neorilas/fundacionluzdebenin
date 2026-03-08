@@ -1,0 +1,10 @@
+# Force LF line endings for files that must not have CRLF (CI/Linux)
+*.prisma        eol=lf
+*.sh            eol=lf
+Dockerfile      eol=lf
+Caddyfile       eol=lf
+*.yml           eol=lf
+*.yaml          eol=lf
+
+# Auto-detect for everything else
+*               text=auto
