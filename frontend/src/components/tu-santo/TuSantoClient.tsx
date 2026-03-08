@@ -31,8 +31,9 @@ const TX = {
     namePlaceholder: 'María, Juan…',
     emailLabel: 'Tu email',
     emailPlaceholder: 'tu@email.com',
-    checkboxLabel:
-      'Acepto recibir noticias y actualizaciones de la Fundación Luz de Benín',
+    checkboxTitle: 'Quiero recibir noticias de la misión',
+    checkboxBody: 'Te contamos cómo van los orfanatos, los proyectos y cómo puedes ayudar. Sin spam, solo lo que importa.',
+    checkboxLabel: 'Sí, quiero recibir noticias de la Fundación Luz de Benín',
     submitBtn: 'Descubrir mi Santo',
     submitting: 'Un momento…',
     emailRequired: 'El email es obligatorio',
@@ -69,8 +70,9 @@ const TX = {
     namePlaceholder: 'Marie, Jean…',
     emailLabel: 'Ton email',
     emailPlaceholder: 'ton@email.com',
-    checkboxLabel:
-      "J'accepte de recevoir des nouvelles de la Fondation Lumière du Bénin",
+    checkboxTitle: 'Je veux recevoir des nouvelles de la mission',
+    checkboxBody: 'On te raconte comment avancent les orphelinats, les projets et comment tu peux aider. Sans spam, seulement ce qui compte.',
+    checkboxLabel: "Oui, je veux recevoir les nouvelles de la Fondation",
     submitBtn: 'Découvrir mon Saint',
     submitting: 'Un moment…',
     emailRequired: "L'email est obligatoire",
@@ -315,16 +317,35 @@ export default function TuSantoClient({ lang }: Props) {
                 )}
               </div>
 
-              {/* Checkbox */}
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <div className="relative mt-0.5 shrink-0">
-                  <input
-                    type="checkbox"
-                    checked={acepta}
-                    onChange={(e) => setAcepta(e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-5 h-5 border-2 border-stone-600 rounded peer-checked:bg-amber-500 peer-checked:border-amber-500 transition-colors flex items-center justify-center">
+              {/* Newsletter card */}
+              <label
+                className={`block cursor-pointer rounded-xl border-2 p-4 transition-all duration-200 ${
+                  acepta
+                    ? 'border-amber-500 bg-amber-500/10'
+                    : 'border-stone-700 bg-stone-800/50 hover:border-stone-500'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={acepta}
+                  onChange={(e) => setAcepta(e.target.checked)}
+                  className="sr-only"
+                />
+                <div className="flex items-start gap-3">
+                  {/* Icon */}
+                  <span className="text-2xl shrink-0 mt-0.5">📩</span>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-semibold mb-1 transition-colors ${acepta ? 'text-amber-400' : 'text-stone-200'}`}>
+                      {tx.checkboxTitle}
+                    </p>
+                    <p className="text-xs text-stone-400 leading-relaxed">
+                      {tx.checkboxBody}
+                    </p>
+                  </div>
+                  {/* Checkmark */}
+                  <div className={`shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all mt-0.5 ${
+                    acepta ? 'bg-amber-500 border-amber-500' : 'border-stone-600'
+                  }`}>
                     {acepta && (
                       <svg className="w-3 h-3 text-stone-950" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -332,9 +353,11 @@ export default function TuSantoClient({ lang }: Props) {
                     )}
                   </div>
                 </div>
-                <span className="text-xs text-stone-400 leading-relaxed group-hover:text-stone-300 transition-colors">
-                  {tx.checkboxLabel}
-                </span>
+                {acepta && (
+                  <p className="text-xs text-amber-500/80 mt-2 ml-9">
+                    {tx.checkboxLabel}
+                  </p>
+                )}
               </label>
 
               {/* Submit */}
