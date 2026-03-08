@@ -32,6 +32,7 @@ import translateAdmin from './routes/admin/translate';
 import usersAdmin from './routes/admin/users';
 import dashboardAdmin from './routes/admin/dashboard';
 import faqsAdmin from './routes/admin/faqs';
+import santoLeadsAdmin from './routes/admin/santoLeads';
 import categoriesAdmin from './routes/admin/categories';
 
 import { errorHandler } from './middleware/errorHandler';
@@ -90,6 +91,7 @@ app.use('/api/admin/users', usersAdmin);
 app.use('/api/admin/dashboard', dashboardAdmin);
 app.use('/api/admin/faqs', faqsAdmin);
 app.use('/api/admin/blog-categories', categoriesAdmin);
+app.use('/api/admin/santo-leads', santoLeadsAdmin);
 
 // Health check
 app.get('/api/health', (_req, res) => {
