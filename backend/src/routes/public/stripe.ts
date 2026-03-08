@@ -116,9 +116,11 @@ router.post('/checkout', async (req: Request, res: Response, next) => {
       },
     };
 
-    // Only set customer_email if it's a valid email address
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (donorEmail && emailRegex.test(donorEmail)) {
+    // Only set customer_email if it's a valid email address (length-bounded, no regex ReDoS)
+    const atIdx = donorEmail ? donorEmail.indexOf('@') : -1;
+    const emailOk = donorEmail && donorEmail.length <= 254 && atIdx > 0 &&
+      donorEmail.slice(0, atIdx).length <= 64 && donorEmail.slice(atIdx + 1).includes('.');
+    if (emailOk) {
       sessionParams.customer_email = donorEmail;
     }
 

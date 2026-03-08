@@ -53,14 +53,15 @@ COPY --from=admin-builder /app/admin/dist ./admin/dist
 # Migration scripts (idempotent, run at startup)
 COPY scripts ./scripts/
 
-# Create dirs for persistent data
-RUN mkdir -p /data /app/uploads
+# Create dirs for persistent data and set ownership to non-root node user
+RUN mkdir -p /data /app/uploads && chown -R node:node /data /app/uploads
 
 ENV NODE_ENV=production
 ENV PORT=3001
 ENV DATABASE_URL=file:/data/prod.db
 ENV UPLOAD_DIR=/app/uploads
 
+USER node
 EXPOSE 3001
 
 # On start: apply DB schema (idempotent) then run the server

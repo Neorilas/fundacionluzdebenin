@@ -134,7 +134,7 @@ export default async function AvisoLegalPage({ params }: { params: Promise<{ lan
               <table className="w-full text-xs border-collapse">
                 <thead>
                   <tr className="bg-gray-50">
-                    <th className="text-left p-2 border border-gray-200 font-semibold text-gray-700">{es ? 'Cookie' : 'Cookie'}</th>
+                    <th className="text-left p-2 border border-gray-200 font-semibold text-gray-700">Cookie</th>
                     <th className="text-left p-2 border border-gray-200 font-semibold text-gray-700">{es ? 'Tipo' : 'Type'}</th>
                     <th className="text-left p-2 border border-gray-200 font-semibold text-gray-700">{es ? 'Finalidad' : 'Finalité'}</th>
                     <th className="text-left p-2 border border-gray-200 font-semibold text-gray-700">{es ? 'Duración' : 'Durée'}</th>

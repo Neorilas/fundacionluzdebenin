@@ -81,8 +81,10 @@ function AdminLayout({ children }: { children: ReactNode }) {
       {/* Overlay móvil */}
       {sidebarOpen && (
         <div
+          role="button" tabIndex={-1} aria-label="Cerrar menú"
           className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
+          onKeyDown={e => e.key === 'Escape' && setSidebarOpen(false)}
         />
       )}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />

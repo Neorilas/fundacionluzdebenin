@@ -55,7 +55,7 @@ router.post('/', upload.single('image'), async (req: Request & { file?: Express.
       return;
     }
 
-    const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    const unique = `${Date.now()}-${require('crypto').randomBytes(9).toString('hex')}`;
     const filename = `${unique}.webp`;
     const filepath = path.join(UPLOAD_DIR, filename);
 

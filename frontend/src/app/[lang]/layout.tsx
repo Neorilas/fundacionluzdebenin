@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 
   return {
     title: {
-      template: isFr ? `%s | ${siteName}` : `%s | ${siteName}`,
+      template: `%s | ${siteName}`,
       default: siteName,
     },
     description,

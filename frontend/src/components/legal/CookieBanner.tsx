@@ -36,7 +36,7 @@ export default function CookieBanner({ lang }: { lang: Lang }) {
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-gray-900 text-white shadow-2xl border-t border-gray-700">
       <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div className="flex-1 text-sm text-gray-300 leading-relaxed">
-          <span className="text-white font-semibold">🍪 {es ? 'Cookies' : 'Cookies'} </span>
+          <span className="text-white font-semibold">🍪 Cookies </span>
           {es
             ? 'Usamos cookies analíticas (Google Analytics) para mejorar la web. No compartimos datos con terceros.'
             : 'Nous utilisons des cookies analytiques (Google Analytics) pour améliorer le site. Aucun partage avec des tiers.'}
