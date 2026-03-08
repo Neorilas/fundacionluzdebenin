@@ -1,5 +1,6 @@
 import { Router, Request } from 'express';
 import prisma from '../../lib/prisma';
+import { sendSantoWelcome } from '../../lib/mailer';
 
 const router = Router();
 
@@ -45,19 +46,38 @@ router.post('/', async (req, res, next) => {
       return;
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedNombre = (nombre || '').trim();
+    const normalizedLang = lang || 'es';
+
     await prisma.santoLead.create({
       data: {
-        email: email.trim().toLowerCase(),
-        nombre: (nombre || '').trim(),
+        email: normalizedEmail,
+        nombre: normalizedNombre,
         santoId: Number(santo_id) || 0,
         santoNombre: santo_asignado,
         aceptaComunicaciones: !!acepta_comunicaciones,
-        lang: lang || 'es',
+        lang: normalizedLang,
       },
     });
 
-    // If user accepted communications, subscribe to Mailchimp
+    // Upsert into Subscriber table and fire Trigger A (fire-and-forget)
     if (acepta_comunicaciones) {
+      const tags = JSON.stringify(['tu-santo', normalizedLang === 'fr' ? 'frances' : 'espanol']);
+      prisma.subscriber.upsert({
+        where: { email: normalizedEmail },
+        update: { nombre: normalizedNombre || undefined, lang: normalizedLang, active: true },
+        create: { email: normalizedEmail, nombre: normalizedNombre, lang: normalizedLang, source: 'tu-santo', tags },
+      }).catch(() => {/* non-critical */});
+
+      sendSantoWelcome({
+        email: normalizedEmail,
+        nombre: normalizedNombre,
+        santoNombre: santo_asignado,
+        lang: normalizedLang,
+      });
+
+      // Mirror to Mailchimp if configured
       const apiKey = process.env.MAILCHIMP_API_KEY;
       const audienceId = process.env.MAILCHIMP_AUDIENCE_ID;
       const server = process.env.MAILCHIMP_SERVER || 'us16';
@@ -70,10 +90,10 @@ router.post('/', async (req, res, next) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            email_address: email.trim().toLowerCase(),
+            email_address: normalizedEmail,
             status: 'subscribed',
-            merge_fields: { FNAME: nombre || '' },
-            tags: ['web', lang === 'fr' ? 'francés' : 'español', 'tu-santo'],
+            merge_fields: { FNAME: normalizedNombre },
+            tags: ['web', normalizedLang === 'fr' ? 'francés' : 'español', 'tu-santo'],
           }),
           signal: AbortSignal.timeout(8000),
         }).catch(() => {/* fire-and-forget */});

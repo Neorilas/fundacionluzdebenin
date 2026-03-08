@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { sendNewsletterConfirmation } from '../../lib/mailer';
+import prisma from '../../lib/prisma';
 
 const router = Router();
 
@@ -43,7 +44,15 @@ router.post('/subscribe', async (req, res, next) => {
 
     // "Member Exists" is not an error — just respond with success
     if (response.ok || data.title === 'Member Exists') {
-      if (response.ok) sendNewsletterConfirmation({ email, lang });
+      if (response.ok) {
+        sendNewsletterConfirmation({ email, lang });
+        const tags = JSON.stringify(['newsletter', lang === 'fr' ? 'frances' : 'espanol']);
+        prisma.subscriber.upsert({
+          where: { email: email.trim().toLowerCase() },
+          update: { lang: lang || 'es', active: true },
+          create: { email: email.trim().toLowerCase(), lang: lang || 'es', source: 'newsletter', tags },
+        }).catch(() => {/* non-critical */});
+      }
       res.json({ success: true, alreadySubscribed: data.title === 'Member Exists' });
       return;
     }

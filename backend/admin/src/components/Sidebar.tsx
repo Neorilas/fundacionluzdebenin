@@ -8,6 +8,7 @@ const links = [
   { to: '/admin/contacts', label: 'Mensajes', icon: '📬' },
   { to: '/admin/campaigns', label: 'Campañas', icon: '🐾' },
   { to: '/admin/faqs', label: 'FAQs', icon: '❓' },
+  { to: '/admin/subscribers', label: 'Suscriptores', icon: '📧' },
   { to: '/admin/donations', label: 'Donaciones', icon: '💚' },
   { to: '/admin/users', label: 'Administradores', icon: '👤' },
   { to: '/admin/settings', label: 'Configuración', icon: '⚙️' },

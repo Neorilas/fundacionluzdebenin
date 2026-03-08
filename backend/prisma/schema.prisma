@@ -161,6 +161,18 @@ model SantoLead {
   createdAt            DateTime @default(now())
 }
 
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  nombre    String   @default("")
+  lang      String   @default("es")
+  source    String   @default("newsletter") // newsletter | tu-santo
+  tags      String   @default("[]")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Faq {
   id         String   @id @default(cuid())
   questionEs String

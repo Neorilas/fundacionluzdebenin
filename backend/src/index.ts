@@ -34,6 +34,7 @@ import dashboardAdmin from './routes/admin/dashboard';
 import faqsAdmin from './routes/admin/faqs';
 import santoLeadsAdmin from './routes/admin/santoLeads';
 import categoriesAdmin from './routes/admin/categories';
+import subscribersAdmin from './routes/admin/subscribers';
 
 import { errorHandler } from './middleware/errorHandler';
 import { startScheduler } from './lib/scheduler';
@@ -92,6 +93,7 @@ app.use('/api/admin/dashboard', dashboardAdmin);
 app.use('/api/admin/faqs', faqsAdmin);
 app.use('/api/admin/blog-categories', categoriesAdmin);
 app.use('/api/admin/santo-leads', santoLeadsAdmin);
+app.use('/api/admin/subscribers', subscribersAdmin);
 
 // Health check
 app.get('/api/health', (_req, res) => {
