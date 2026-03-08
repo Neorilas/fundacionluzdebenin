@@ -93,7 +93,7 @@ model AdminUser {
 model Campaign {
   id          String   @id @default(cuid())
   slug        String   @unique
-  emoji       String   @default("🐾")
+  emoji       String   @default("")
   amountCents Int
   colorScheme String   @default("amber")
   active      Boolean  @default(true)
