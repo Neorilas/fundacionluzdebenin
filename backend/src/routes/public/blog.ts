@@ -1,15 +1,5 @@
 import { Router } from 'express';
-import { BlogPost, Prisma } from '@prisma/client';
 import prisma from '../../lib/prisma';
-
-type BlogCandidate = Prisma.BlogPostGetPayload<{
-  select: {
-    id: true; slug: true; titleEs: true; titleFr: true;
-    excerptEs: true; excerptFr: true; coverImage: true;
-    publishedAt: true; category: true; tags: true;
-  };
-}>;
-type BlogScored = BlogCandidate & { score: number };
 
 const router = Router();
 
@@ -68,7 +58,7 @@ router.get('/rss', async (req, res, next) => {
     const escape = (s: string) =>
       s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-    const items = posts.map((p: BlogPost) => {
+    const items = posts.map((p: typeof posts[0]) => {
       const title   = escape(lang === 'fr' ? (p.titleFr || p.titleEs) : p.titleEs);
       const excerpt = escape(lang === 'fr' ? (p.excerptFr || p.excerptEs || '') : (p.excerptEs || ''));
       const link    = `${SITE}/${lang}/blog/${p.slug}/`;
@@ -149,16 +139,19 @@ router.get('/:slug/related', async (req, res, next) => {
       },
     });
 
-    const scored = candidates.map((p: BlogCandidate): BlogScored => {
+    type Candidate = typeof candidates[0];
+    type Scored = Candidate & { score: number };
+
+    const scored = candidates.map((p: Candidate): Scored => {
       let score = 0;
       if (post.category && p.category === post.category) score += 3;
       let ptags: string[] = [];
       try { ptags = JSON.parse(p.tags || '[]'); } catch { /* ignore */ }
       score += tags.filter((t: string) => ptags.includes(t)).length;
       return { ...p, score };
-    }).filter((p: BlogScored) => p.score > 0).sort((a: BlogScored, b: BlogScored) => b.score - a.score).slice(0, 3);
+    }).filter((p: Scored) => p.score > 0).sort((a: Scored, b: Scored) => b.score - a.score).slice(0, 3);
 
-    res.json(scored.map(({ score: _s, tags: _t, ...p }: BlogScored) => p));
+    res.json(scored.map(({ score: _s, tags: _t, ...p }: Scored) => p));
   } catch (error) { next(error); }
 });
 
