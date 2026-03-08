@@ -74,7 +74,12 @@ export default async function BlogPostPage({
   const API_BASE = process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   let post;
+  type RelatedPost = { slug: string; coverImage?: string; titleEs: string; titleFr: string; excerptEs?: string; excerptFr?: string; publishedAt?: string };
+  let relatedPostsData: RelatedPost[] = [];
+  let allPosts: { slug: string; titleEs: string; titleFr: string }[] = [];
+
   if (isPreview) {
+    // Preview: fetch draft sequentially (no-store), then related + allPosts in parallel
     try {
       const res = await fetch(`${API_BASE}/api/blog/preview/${slug}?secret=${PREVIEW_SECRET}`, { cache: 'no-store' });
       if (!res.ok) notFound();
@@ -82,26 +87,27 @@ export default async function BlogPostPage({
     } catch {
       notFound();
     }
+    [relatedPostsData, allPosts] = await Promise.all([
+      fetch(`${API_BASE}/api/blog/${slug}/related`, { cache: 'no-store' })
+        .then(r => r.ok ? r.json() as Promise<RelatedPost[]> : []).catch(() => []),
+      fetch(`${API_BASE}/api/blog?page=1&limit=50`, { next: { revalidate: 3600 } })
+        .then(r => r.ok ? r.json().then((d: { posts: { slug: string; titleEs: string; titleFr: string }[] }) => d.posts) : []).catch(() => []),
+    ]);
+  } else {
+    // Published post: run all 3 fetches in parallel
+    const [postResult, related, allPostsResult] = await Promise.all([
+      fetch(`${API_BASE}/api/blog/${slug}`, { next: { revalidate: 3600 } })
+        .then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`${API_BASE}/api/blog/${slug}/related`, { next: { revalidate: 3600 } })
+        .then(r => r.ok ? r.json() as Promise<RelatedPost[]> : []).catch(() => []),
+      fetch(`${API_BASE}/api/blog?page=1&limit=50`, { next: { revalidate: 3600 } })
+        .then(r => r.ok ? r.json().then((d: { posts: { slug: string; titleEs: string; titleFr: string }[] }) => d.posts) : []).catch(() => []),
+    ]);
+    if (!postResult) notFound();
+    post = postResult;
+    relatedPostsData = related;
+    allPosts = allPostsResult;
   }
-
-  // Run post + related + allPosts in parallel (non-preview path)
-  const [postResult, relatedPosts, allPostsResult] = await Promise.all([
-    isPreview
-      ? Promise.resolve(post)
-      : fetch(`${API_BASE}/api/blog/${slug}`, { next: { revalidate: 3600 } })
-          .then(r => { if (!r.ok) return null; return r.json(); })
-          .catch(() => null),
-    fetch(`${API_BASE}/api/blog/${slug}/related`, { next: { revalidate: 3600 } })
-      .then(r => r.ok ? r.json() : []).catch(() => []),
-    fetch(`${API_BASE}/api/blog?page=1&limit=1000`, { next: { revalidate: 3600 } })
-      .then(r => r.ok ? r.json().then((d: { posts: unknown[] }) => d.posts) : []).catch(() => []),
-  ]);
-
-  if (!postResult) notFound();
-  if (!isPreview) post = postResult;
-
-  const relatedPostsData = relatedPosts;
-  const allPosts = allPostsResult as { slug: string; titleEs: string; titleFr: string }[];
   const idx = allPosts.findIndex(p => p.slug === slug);
   const prevPost = idx > 0 ? allPosts[idx - 1] : null;
   const nextPost = idx >= 0 && idx < allPosts.length - 1 ? allPosts[idx + 1] : null;
