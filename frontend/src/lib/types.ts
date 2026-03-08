@@ -19,12 +19,16 @@ export interface BlogPost {
   slug: string;
   titleEs: string;
   titleFr: string;
+  metaTitleEs?: string;
+  metaTitleFr?: string;
   excerptEs: string;
   excerptFr: string;
   contentEs?: string;
   contentFr?: string;
   coverImage: string;
   coverImageAlt?: string;
+  category?: string;
+  focusKeyword?: string;
   published: boolean;
   publishedAt: string | null;
   createdAt: string;
