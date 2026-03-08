@@ -9,7 +9,7 @@ const API_URL = process.env.API_INTERNAL_URL
 
 async function fetchAPI<T>(path: string): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
-    next: { revalidate: 60 },
+    next: { revalidate: 3600 },
   });
   if (!res.ok) throw new Error(`API error: ${res.status} ${path}`);
   return res.json();

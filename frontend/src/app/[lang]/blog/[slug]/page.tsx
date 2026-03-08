@@ -71,30 +71,37 @@ export default async function BlogPostPage({
   const PREVIEW_SECRET = process.env.PREVIEW_SECRET || 'preview-luz-benin';
   const isPreview = preview === PREVIEW_SECRET;
 
+  const API_BASE = process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
   let post;
-  try {
-    if (isPreview) {
-      const res = await fetch(
-        `${process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/blog/preview/${slug}?secret=${PREVIEW_SECRET}`,
-        { cache: 'no-store' }
-      );
+  if (isPreview) {
+    try {
+      const res = await fetch(`${API_BASE}/api/blog/preview/${slug}?secret=${PREVIEW_SECRET}`, { cache: 'no-store' });
       if (!res.ok) notFound();
       post = await res.json();
-    } else {
-      post = await api.getBlogPost(slug);
+    } catch {
+      notFound();
     }
-  } catch {
-    notFound();
   }
 
-  // Related posts
-  const relatedPosts = await fetch(
-    `${process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/blog/${slug}/related`,
-    { next: { revalidate: 3600 } }
-  ).then(r => r.ok ? r.json() : []).catch(() => []);
+  // Run post + related + allPosts in parallel (non-preview path)
+  const [postResult, relatedPosts, allPostsResult] = await Promise.all([
+    isPreview
+      ? Promise.resolve(post)
+      : fetch(`${API_BASE}/api/blog/${slug}`, { next: { revalidate: 3600 } })
+          .then(r => { if (!r.ok) return null; return r.json(); })
+          .catch(() => null),
+    fetch(`${API_BASE}/api/blog/${slug}/related`, { next: { revalidate: 3600 } })
+      .then(r => r.ok ? r.json() : []).catch(() => []),
+    fetch(`${API_BASE}/api/blog?page=1&limit=1000`, { next: { revalidate: 3600 } })
+      .then(r => r.ok ? r.json().then((d: { posts: unknown[] }) => d.posts) : []).catch(() => []),
+  ]);
 
-  // Fetch all posts for prev/next navigation
-  const allPosts = await api.getBlogPosts(1, 1000).then(r => r.posts).catch(() => []);
+  if (!postResult) notFound();
+  if (!isPreview) post = postResult;
+
+  const relatedPostsData = relatedPosts;
+  const allPosts = allPostsResult as { slug: string; titleEs: string; titleFr: string }[];
   const idx = allPosts.findIndex(p => p.slug === slug);
   const prevPost = idx > 0 ? allPosts[idx - 1] : null;
   const nextPost = idx >= 0 && idx < allPosts.length - 1 ? allPosts[idx + 1] : null;
@@ -182,13 +189,13 @@ export default async function BlogPostPage({
         />
 
         {/* Related posts */}
-        {relatedPosts.length > 0 && (
+        {relatedPostsData.length > 0 && (
           <aside className="mt-16 pt-8 border-t border-gray-200">
             <h2 className="text-lg font-bold text-gray-900 mb-4">
               {l === 'es' ? 'Artículos relacionados' : 'Articles liés'}
             </h2>
             <div className="grid sm:grid-cols-3 gap-4">
-              {relatedPosts.map((rp: { slug: string; coverImage?: string; titleEs: string; titleFr: string; excerptEs?: string; excerptFr?: string; publishedAt?: string }) => (
+              {relatedPostsData.map((rp: { slug: string; coverImage?: string; titleEs: string; titleFr: string; excerptEs?: string; excerptFr?: string; publishedAt?: string }) => (
                 <Link key={rp.slug} href={`/${l}/blog/${rp.slug}/`} className="group flex flex-col gap-2 rounded-xl border border-gray-200 overflow-hidden hover:border-primary-800 transition-colors">
                   {rp.coverImage && (
                     <div className="relative h-32 bg-gray-100">
