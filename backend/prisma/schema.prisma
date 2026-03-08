@@ -114,7 +114,7 @@ model Campaign {
   fineEs      String   @default("")
   fineFr      String   @default("")
 
-  // Cover items — JSON: [{icon, textEs, textFr}, ...]
+  // Cover items - JSON: [{icon, textEs, textFr}, ...]
   coverItems  String   @default("[]")
 
   // Project section
