@@ -8,6 +8,7 @@ const SIMPLE_FIELDS = [
   { key: 'address', label: 'Dirección', placeholder: 'Madrid, España' },
   { key: 'socialFacebook', label: 'Facebook URL', placeholder: 'https://facebook.com/...' },
   { key: 'socialInstagram', label: 'Instagram URL', placeholder: 'https://instagram.com/...' },
+  { key: 'socialX', label: 'X (Twitter) URL', placeholder: 'https://x.com/...' },
   { key: 'foundationNif', label: 'NIF de la fundación', placeholder: 'G12345678' },
   { key: 'foundationRegistry', label: 'Nº de registro', placeholder: 'Registro de Fundaciones nº 1234' },
 ];
@@ -70,7 +71,7 @@ export default function GeneralSettings() {
     const updates: Record<string, string> = {};
     updates.siteName = values.siteName || '';
     updates.siteNameFr = values.siteNameFr || '';
-    for (const f of SIMPLE_FIELDS) { updates[f.key] = values[f.key] || ''; }
+    for (const f of SIMPLE_FIELDS) { updates[f.key] = values[f.key] ?? ''; }
     updates.showEmail   = values.showEmail   ?? '1';
     updates.showPhone   = values.showPhone   ?? '1';
     updates.showAddress = values.showAddress ?? '1';

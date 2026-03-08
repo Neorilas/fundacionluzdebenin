@@ -51,6 +51,7 @@ export interface Settings {
   bankBic?: string;
   socialFacebook?: string;
   socialInstagram?: string;
+  socialX?: string;
   foundationNif?: string;
   foundationRegistry?: string;
   showEmail?: string;

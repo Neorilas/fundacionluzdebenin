@@ -89,10 +89,16 @@ export async function sendNewsletterConfirmation(data: {
             <div style="background:#f9fafb;padding:24px 32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 12px 12px;">
               <p style="color:#374151;font-size:15px;line-height:1.6;">
                 ${es
-                  ? 'Gracias por suscribirte al boletín de la <strong>Fundación Luz de Benín</strong>. Te mantendremos informado/a sobre nuestros proyectos, novedades y formas de colaborar.'
-                  : 'Merci de vous être abonné(e) à la newsletter de la <strong>Fondation Luz de Benín</strong>. Nous vous tiendrons informé(e) de nos projets, actualités et façons de collaborer.'
+                  ? 'Gracias por unirte a la familia de la <strong>Fundación Luz de Benín</strong>. Trabajamos cada día por los niños de cuatro orfanatos en Cotonou (Benín, África Occidental). Solo escribimos cuando hay algo que merece la pena contar: noticias desde Benín, avances en los proyectos y formas concretas de ayudar.'
+                  : 'Merci de rejoindre la famille de la <strong>Fondation Luz de Benín</strong>. Nous travaillons chaque jour pour les enfants de quatre orphelinats à Cotonou (Bénin, Afrique de l\'Ouest). Nous n\'écrivons que lorsqu\'il y a quelque chose qui vaut la peine d\'être partagé : nouvelles du Bénin, avancées des projets et façons concrètes d\'aider.'
                 }
               </p>
+              <div style="text-align:center;margin:28px 0;">
+                <a href="${es ? 'https://fundacionluzdebenin.org/es/que-hacemos/' : 'https://fundacionluzdebenin.org/fr/que-hacemos/'}"
+                  style="display:inline-block;background:#065F46;color:#fff;font-size:15px;font-weight:600;padding:14px 32px;border-radius:8px;text-decoration:none;">
+                  ${es ? 'Conoce nuestra misión &rarr;' : 'Découvrir notre mission &rarr;'}
+                </a>
+              </div>
               <p style="color:#6b7280;font-size:13px;line-height:1.6;margin-top:24px;border-top:1px solid #e5e7eb;padding-top:16px;">
                 ${es
                   ? 'Si no has solicitado esta suscripción, ignora este email. · Fundación Luz de Benín · fundacionluzdebenin.org'
@@ -205,6 +211,12 @@ export async function sendSantoWelcome(data: {
           Gracias por acercarte a nuestra misión. Te mantendremos al tanto de todo lo que va pasando en Benín.
         </p>
         <p style="color:#374151;font-size:15px;line-height:1.6;margin-top:24px;">Un abrazo,<br/><strong>El equipo de Fundación Luz de Benín</strong></p>
+        <div style="text-align:center;margin:28px 0;">
+          <a href="https://fundacionluzdebenin.org/es/que-hacemos/"
+            style="display:inline-block;background:#065F46;color:#fff;font-size:15px;font-weight:600;padding:14px 32px;border-radius:8px;text-decoration:none;">
+            Conoce nuestra misión &rarr;
+          </a>
+        </div>
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;" />
         <p style="color:#9ca3af;font-size:12px;margin:0;">
           Fundación Luz de Benín · fundacionluzdebenin.org<br/>
@@ -233,6 +245,12 @@ export async function sendSantoWelcome(data: {
           Merci de vous rapprocher de notre mission. Nous vous tiendrons informé(e) de tout ce qui se passe au Bénin.
         </p>
         <p style="color:#374151;font-size:15px;line-height:1.6;margin-top:24px;">Avec toute notre affection,<br/><strong>L'équipe de la Fondation Luz de Benín</strong></p>
+        <div style="text-align:center;margin:28px 0;">
+          <a href="https://fundacionluzdebenin.org/fr/que-hacemos/"
+            style="display:inline-block;background:#065F46;color:#fff;font-size:15px;font-weight:600;padding:14px 32px;border-radius:8px;text-decoration:none;">
+            Découvrir notre mission &rarr;
+          </a>
+        </div>
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;" />
         <p style="color:#9ca3af;font-size:12px;margin:0;">
           Fondation Luz de Benín · fundacionluzdebenin.org<br/>
