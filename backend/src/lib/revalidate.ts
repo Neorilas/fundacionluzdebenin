@@ -25,13 +25,13 @@ export const PATHS = {
   ],
 };
 
-export async function revalidate(paths: string[]): Promise<void> {
+export async function revalidate(paths: string[], tags?: string[]): Promise<void> {
   if (!SECRET) return;
   try {
     await fetch(`${FRONTEND_URL}/api/revalidate?secret=${SECRET}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ paths }),
+      body: JSON.stringify({ paths, tags }),
       signal: AbortSignal.timeout(5000),
     });
   } catch {

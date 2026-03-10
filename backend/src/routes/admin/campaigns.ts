@@ -80,7 +80,7 @@ router.post('/', async (req, res, next) => {
         metaDescEs: metaDescEs || '', metaDescFr: metaDescFr || '',
       },
     });
-    revalidate(PATHS.campaign(campaign.slug));
+    revalidate(PATHS.campaign(campaign.slug), ['campaigns', `campaign-${campaign.slug}`]);
     res.status(201).json(parseCampaign(campaign));
   } catch (error) { next(error); }
 });
@@ -113,7 +113,7 @@ router.put('/:id', async (req, res, next) => {
       where: { id: req.params.id },
       data,
     });
-    revalidate(PATHS.campaign(campaign.slug));
+    revalidate(PATHS.campaign(campaign.slug), ['campaigns', `campaign-${campaign.slug}`]);
     res.json(parseCampaign(campaign));
   } catch (error) { next(error); }
 });
@@ -122,7 +122,7 @@ router.put('/:id', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
   try {
     const campaign = await prisma.campaign.delete({ where: { id: req.params.id } });
-    revalidate(PATHS.campaign(campaign.slug));
+    revalidate(PATHS.campaign(campaign.slug), ['campaigns', `campaign-${campaign.slug}`]);
     res.json({ success: true });
   } catch (error) { next(error); }
 });

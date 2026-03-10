@@ -1,4 +1,4 @@
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -7,10 +7,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { paths } = await req.json() as { paths?: string[] };
+  const { paths, tags } = await req.json() as { paths?: string[]; tags?: string[] };
   for (const p of paths ?? []) {
     revalidatePath(p);
   }
+  for (const t of tags ?? []) {
+    revalidateTag(t);
+  }
 
-  return NextResponse.json({ revalidated: true, paths });
+  return NextResponse.json({ revalidated: true, paths, tags });
 }

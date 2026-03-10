@@ -42,8 +42,12 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, lang }),
     }).then(r => r.json()) as Promise<{ success?: boolean; error?: string; alreadySubscribed?: boolean }>,
-  getCampaigns: () => fetchAPI<Campaign[]>('/api/campaigns'),
-  getCampaign: (slug: string) => fetchAPI<Campaign>(`/api/campaigns/${slug}`),
+  getCampaigns: () =>
+    fetch(`${API_URL}/api/campaigns`, { next: { revalidate: 3600, tags: ['campaigns'] } })
+      .then(r => { if (!r.ok) throw new Error(`API error: ${r.status}`); return r.json() as Promise<Campaign[]>; }),
+  getCampaign: (slug: string) =>
+    fetch(`${API_URL}/api/campaigns/${slug}`, { next: { revalidate: 3600, tags: ['campaigns', `campaign-${slug}`] } })
+      .then(r => { if (!r.ok) throw new Error(`API error: ${r.status}`); return r.json() as Promise<Campaign>; }),
   getFaqs: () => fetchAPI<Faq[]>('/api/faqs'),
   getStripeProducts: () =>
     fetch(`${API_URL}/api/stripe/products`).then(r => r.json()) as Promise<StripeProduct[]>,
