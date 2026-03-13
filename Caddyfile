@@ -37,6 +37,18 @@ www.{$DOMAIN} {
     redir https://{$DOMAIN}{uri} permanent
 }
 
+# ── API Ambulancias ───────────────────────────────────────────────────────────
+api.vapss.net {
+    reverse_proxy ambulancia-backend:3001
+
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy strict-origin-when-cross-origin
+        Permissions-Policy "camera=(self), microphone=()"
+    }
+}
+
 # ── DESCOMENTAR DESPUÉS DE MIGRAR AL DOMINIO DEFINITIVO ──────────────────────
 # Mantiene funcionando los enlaces de nuevo.fundacionluzdebenin.org
 # (solo tiene efecto cuando DOMAIN=fundacionluzdebenin.org y el DNS de

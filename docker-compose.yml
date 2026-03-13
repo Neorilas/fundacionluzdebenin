@@ -68,9 +68,17 @@ services:
     depends_on:
       - frontend
       - backend
+    networks:
+      - default
+      - proxy-net   # Red compartida con ambulancias (para resolver ambulancia-backend)
 
 volumes:
   sqlite_data:
   uploads_data:
   caddy_data:
   caddy_config:
+
+# Red externa compartida con el proyecto ambulancias
+networks:
+  proxy-net:
+    external: true
