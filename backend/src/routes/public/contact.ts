@@ -4,10 +4,34 @@ import { sendContactNotification, sendContactConfirmation } from '../../lib/mail
 
 const router = Router();
 
-// Simple in-memory rate limiter: max 5 submissions per IP per 10 minutes
-const rateLimitMap = new Map<string, number[]>();
-const RATE_LIMIT_WINDOW = 10 * 60 * 1000;
-const RATE_LIMIT_MAX = 5;
+// --- Rate limiters ---
+// Per-IP: max 3 submissions per 10 minutes
+const ipRateLimitMap = new Map<string, number[]>();
+const IP_RATE_LIMIT_WINDOW = 10 * 60 * 1000;
+const IP_RATE_LIMIT_MAX = 3;
+
+// Per-email: max 2 submissions per hour
+const emailRateLimitMap = new Map<string, number[]>();
+const EMAIL_RATE_LIMIT_WINDOW = 60 * 60 * 1000;
+const EMAIL_RATE_LIMIT_MAX = 2;
+
+// Minimum seconds a human needs to fill the form (bots submit instantly)
+const MIN_FILL_TIME_MS = 3000;
+
+// Clean up stale entries every 30 minutes to avoid memory leaks
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, times] of ipRateLimitMap) {
+    const fresh = times.filter(t => now - t < IP_RATE_LIMIT_WINDOW);
+    if (fresh.length === 0) ipRateLimitMap.delete(key);
+    else ipRateLimitMap.set(key, fresh);
+  }
+  for (const [key, times] of emailRateLimitMap) {
+    const fresh = times.filter(t => now - t < EMAIL_RATE_LIMIT_WINDOW);
+    if (fresh.length === 0) emailRateLimitMap.delete(key);
+    else emailRateLimitMap.set(key, fresh);
+  }
+}, 30 * 60 * 1000);
 
 function getClientIp(req: Request): string {
   return (
@@ -17,11 +41,23 @@ function getClientIp(req: Request): string {
   );
 }
 
-function isRateLimited(ip: string): boolean {
+function checkRateLimit(map: Map<string, number[]>, key: string, window: number, max: number): boolean {
   const now = Date.now();
-  const timestamps = (rateLimitMap.get(ip) || []).filter(t => now - t < RATE_LIMIT_WINDOW);
-  if (timestamps.length >= RATE_LIMIT_MAX) return true;
-  rateLimitMap.set(ip, [...timestamps, now]);
+  const timestamps = (map.get(key) || []).filter(t => now - t < window);
+  if (timestamps.length >= max) return true;
+  map.set(key, [...timestamps, now]);
+  return false;
+}
+
+// Returns true if the text looks like spam
+function isSpam(subject: string, message: string): boolean {
+  const combined = `${subject} ${message}`;
+  // More than 2 URLs is a red flag
+  const urls = combined.match(/(https?:\/\/|www\.)\S+/gi) || [];
+  if (urls.length > 2) return true;
+  // Common spam keywords
+  const spamPattern = /\b(casino|viagra|cialis|porn|xxx|lottery|winner|prize|click here|unsubscribe|crypto|bitcoin|investment opportunity|make money|free money|guaranteed|limited time offer)\b/i;
+  if (spamPattern.test(combined)) return true;
   return false;
 }
 
@@ -29,22 +65,41 @@ function isRateLimited(ip: string): boolean {
 router.post('/', async (req, res, next) => {
   try {
     const ip = getClientIp(req);
-    if (isRateLimited(ip)) {
-      res.status(429).json({ error: 'Demasiados intentos. Por favor, espera unos minutos.' });
+
+    // Honeypot: bots fill the hidden "website" field; real users leave it empty
+    const { name, email, subject, message, website, _t, lang } = req.body;
+    if (website) {
+      res.status(201).json({ success: true });
       return;
     }
 
-    const { name, email, subject, message, website } = req.body;
+    // Timing check: reject submissions faster than a human can fill the form
+    if (_t) {
+      try {
+        const loadTime = parseInt(Buffer.from(_t, 'base64').toString(), 10);
+        if (Date.now() - loadTime < MIN_FILL_TIME_MS) {
+          res.status(429).json({ error: 'Formulario enviado demasiado rápido.' });
+          return;
+        }
+      } catch {
+        // Malformed token — treat as suspicious but don't block (field is optional)
+      }
+    }
 
-    // Honeypot: bots fill the hidden "website" field; real users leave it empty
-    if (website) {
-      // Fake success to not reveal detection to bots
-      res.status(201).json({ success: true });
+    // IP rate limit
+    if (checkRateLimit(ipRateLimitMap, ip, IP_RATE_LIMIT_WINDOW, IP_RATE_LIMIT_MAX)) {
+      res.status(429).json({ error: 'Demasiados intentos. Por favor, espera unos minutos.' });
       return;
     }
 
     if (!name || !email || !subject || !message) {
       res.status(400).json({ error: 'Todos los campos son obligatorios' });
+      return;
+    }
+
+    // Field length limits
+    if (name.length > 100 || subject.length > 200 || message.length > 5000) {
+      res.status(400).json({ error: 'Uno o más campos superan la longitud máxima permitida.' });
       return;
     }
 
@@ -54,13 +109,26 @@ router.post('/', async (req, res, next) => {
       return;
     }
 
+    // Per-email rate limit (after basic validation so we have a clean email)
+    const emailKey = email.toLowerCase().trim();
+    if (checkRateLimit(emailRateLimitMap, emailKey, EMAIL_RATE_LIMIT_WINDOW, EMAIL_RATE_LIMIT_MAX)) {
+      res.status(429).json({ error: 'Ya hemos recibido un mensaje reciente con este email. Por favor, espera antes de enviar otro.' });
+      return;
+    }
+
+    // Content spam check — silent fake success to not reveal detection
+    if (isSpam(subject, message)) {
+      res.status(201).json({ success: true });
+      return;
+    }
+
     const contact = await prisma.contactMessage.create({
       data: { name, email, subject, message },
     });
 
     // Fire-and-forget emails — non-blocking
     sendContactNotification({ name, email, subject, message });
-    sendContactConfirmation({ name, email, subject, lang: req.body.lang });
+    sendContactConfirmation({ name, email, subject, lang });
 
     res.status(201).json({ success: true, id: contact.id });
   } catch (error) {

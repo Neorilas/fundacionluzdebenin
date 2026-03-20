@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Lang } from '@/lib/types';
 import { t } from '@/lib/i18n';
@@ -12,8 +12,13 @@ interface Props {
 
 export default function ContactForm({ lang }: Props) {
   const router = useRouter();
-  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '', website: '' });
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '', website: '', _t: '' });
   const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle');
+
+  // Record page load time — backend uses this to reject instant bot submissions
+  useEffect(() => {
+    set('_t', btoa(Date.now().toString()));
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -30,7 +35,7 @@ export default function ContactForm({ lang }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Honeypot: hidden field for bots — humans never fill this */}
+      {/* Anti-spam: honeypot + form load timestamp (hidden from users) */}
       <input
         type="text"
         name="website"
@@ -41,6 +46,7 @@ export default function ContactForm({ lang }: Props) {
         aria-hidden="true"
         style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0, pointerEvents: 'none' }}
       />
+      <input type="hidden" name="_t" value={form._t} />
       {status === 'error' && (
         <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
           ✗ {t(lang, 'contact.form.error')}
