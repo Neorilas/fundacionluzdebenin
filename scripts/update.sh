@@ -10,9 +10,6 @@ cd "$REPO_DIR"
 
 echo "🔄 Actualizando Fundación Luz de Benín..."
 
-# Pull
-git pull --ff-only
-
 # Rebuild solo los servicios que hayan cambiado
 docker compose build --parallel
 
