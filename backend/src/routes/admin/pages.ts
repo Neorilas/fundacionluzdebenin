@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import prisma from '../../lib/prisma';
 import { authMiddleware } from '../../middleware/authMiddleware';
+import { revalidate, PATHS } from '../../lib/revalidate';
 
 const router = Router();
 router.use(authMiddleware);
@@ -33,6 +34,10 @@ router.put('/:id', async (req, res, next) => {
       where: { id: req.params.id },
       data: { valueEs, valueFr },
     });
+
+    // Revalidate the page on the frontend so changes appear immediately
+    revalidate(PATHS.page(section.page));
+
     res.json(section);
   } catch (error) { next(error); }
 });

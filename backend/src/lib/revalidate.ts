@@ -23,6 +23,12 @@ export const PATHS = {
     ...LANGS.map(l => `/${l}/campanas/`),
     ...LANGS.map(l => `/${l}/`),
   ],
+  page: (pageKey: string) => {
+    const paths = LANGS.map(l => `/${l}/${pageKey}/`);
+    // Also revalidate home when any page changes (home pulls some page data)
+    if (pageKey !== 'home') paths.push(...LANGS.map(l => `/${l}/`));
+    return paths;
+  },
 };
 
 export async function revalidate(paths: string[], tags?: string[]): Promise<void> {
