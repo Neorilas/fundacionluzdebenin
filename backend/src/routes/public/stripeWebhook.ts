@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import Stripe from 'stripe';
 import prisma from '../../lib/prisma';
+import { sendPaymentFailedNotification } from '../../lib/mailer';
 
 const router = Router();
 
@@ -85,10 +86,23 @@ router.post(
           const subFailed = invoice.parent?.subscription_details?.subscription;
           const subIdFailed = typeof subFailed === 'string' ? subFailed : subFailed?.id;
           if (subIdFailed) {
+            const affected = await prisma.donation.findFirst({
+              where: { stripeSubscriptionId: subIdFailed, status: { not: 'failed' } },
+              select: { donorEmail: true, donorName: true, amount: true, currency: true },
+            });
             await prisma.donation.updateMany({
               where: { stripeSubscriptionId: subIdFailed },
               data: { status: 'failed' },
             });
+            // Notify admin about the failed payment
+            if (affected?.donorEmail) {
+              sendPaymentFailedNotification({
+                donorEmail: affected.donorEmail,
+                donorName: affected.donorName || undefined,
+                amount: affected.amount,
+                currency: affected.currency,
+              });
+            }
           }
           console.log(`❌ Payment failed for subscription: ${subIdFailed}`);
           break;

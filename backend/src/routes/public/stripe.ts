@@ -60,6 +60,23 @@ router.get('/products', async (_req: Request, res: Response, next) => {
   }
 });
 
+// GET /api/stripe/session/:sessionId — retrieve donation details for the thanks page
+router.get('/session/:sessionId', async (req: Request, res: Response, next) => {
+  try {
+    const donation = await prisma.donation.findFirst({
+      where: { stripeSessionId: req.params.sessionId },
+      select: { amount: true, currency: true, type: true, status: true, donorName: true },
+    });
+    if (!donation) {
+      res.status(404).json({ error: 'Sesión no encontrada' });
+      return;
+    }
+    res.json(donation);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // POST /api/stripe/checkout
 router.post('/checkout', async (req: Request, res: Response, next) => {
   try {
@@ -129,7 +146,19 @@ router.post('/checkout', async (req: Request, res: Response, next) => {
       }
     }
 
-    // Create Donation record
+    // Validate DNI/NIF format if provided (Spanish NIF, NIE, or CIF)
+    if (donorDni) {
+      const dniClean = donorDni.trim().toUpperCase();
+      const validDni = /^[0-9]{8}[A-Z]$/.test(dniClean)           // NIF: 12345678A
+        || /^[XYZ][0-9]{7}[A-Z]$/.test(dniClean)                  // NIE: X1234567A
+        || /^[ABCDEFGHJKLMNPQRSUVW][0-9]{7}[0-9A-J]$/.test(dniClean); // CIF: A1234567B
+      if (!validDni) {
+        res.status(400).json({ error: 'Formato de DNI/NIF/NIE no válido' });
+        return;
+      }
+    }
+
+    // All validation passed — now create the Donation record
     const donation = await prisma.donation.create({
       data: {
         type,
@@ -138,7 +167,7 @@ router.post('/checkout', async (req: Request, res: Response, next) => {
         currency: 'eur',
         donorName: donorName || null,
         donorEmail: donorEmail || null,
-        donorDni: donorDni || null,
+        donorDni: donorDni ? donorDni.trim().toUpperCase() : null,
         animalName: animalName || null,
         stripeProductId: product?.id || null,
       },

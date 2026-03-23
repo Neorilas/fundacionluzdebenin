@@ -280,6 +280,65 @@ export async function sendSantoWelcome(data: {
   }
 }
 
+export async function sendPaymentFailedNotification(data: {
+  donorEmail: string;
+  donorName?: string;
+  amount: number;
+  currency: string;
+}): Promise<void> {
+  if (!RESEND_API_KEY) return;
+
+  const euros = (data.amount / 100).toFixed(2);
+  const name = data.donorName || data.donorEmail;
+
+  try {
+    // Notify admin
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: `Fundación Luz de Benín <${FROM_EMAIL}>`,
+        to: [CONTACT_EMAIL],
+        subject: `[Pago fallido] ${name} — ${euros}€`,
+        html: `
+          <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
+            <div style="background:#dc2626;padding:24px 32px;border-radius:12px 12px 0 0;">
+              <h1 style="color:#fff;margin:0;font-size:20px;">Pago recurrente fallido</h1>
+            </div>
+            <div style="background:#f9fafb;padding:24px 32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 12px 12px;">
+              <table style="width:100%;border-collapse:collapse;">
+                <tr>
+                  <td style="padding:8px 0;color:#6b7280;font-size:14px;width:100px;">Donante</td>
+                  <td style="padding:8px 0;font-weight:600;font-size:14px;">${escapeHtml(name)}</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px 0;color:#6b7280;font-size:14px;">Email</td>
+                  <td style="padding:8px 0;font-size:14px;">${escapeHtml(data.donorEmail)}</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px 0;color:#6b7280;font-size:14px;">Importe</td>
+                  <td style="padding:8px 0;font-size:14px;">${euros}€</td>
+                </tr>
+              </table>
+              <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0;" />
+              <p style="color:#374151;font-size:14px;">
+                Stripe ha marcado el pago como fallido. La suscripción se reintentará automáticamente.
+                Revisa el panel de Stripe para más detalles.
+              </p>
+            </div>
+          </div>
+        `,
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch {
+    // Non-critical
+  }
+}
+
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')

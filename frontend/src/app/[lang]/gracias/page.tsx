@@ -4,6 +4,31 @@ import { Lang } from '@/lib/types';
 import NewsletterInline from '@/components/ui/NewsletterInline';
 
 export const metadata: Metadata = { robots: 'noindex' };
+export const dynamic = 'force-dynamic';
+
+const API_URL = process.env.API_INTERNAL_URL
+  || process.env.NEXT_PUBLIC_API_URL
+  || 'http://localhost:3001';
+
+interface DonationInfo {
+  amount: number;
+  currency: string;
+  type: string;
+  status: string;
+  donorName: string | null;
+}
+
+async function getDonationBySession(sessionId: string): Promise<DonationInfo | null> {
+  try {
+    const res = await fetch(`${API_URL}/api/stripe/session/${sessionId}`, {
+      cache: 'no-store',
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
 
 type ThanksType = 'contact' | 'donation' | 'subscription' | 'apadrinamiento' | 'newsletter';
 
@@ -138,10 +163,10 @@ export default async function GraciasPage({
   searchParams,
 }: {
   params: Promise<{ lang: string }>;
-  searchParams: Promise<{ type?: string }>;
+  searchParams: Promise<{ type?: string; session_id?: string }>;
 }) {
   const { lang } = await params;
-  const { type: rawType } = await searchParams;
+  const { type: rawType, session_id } = await searchParams;
   const l = lang as Lang;
 
   const type: ThanksType = VALID_TYPES.includes(rawType as ThanksType)
@@ -149,6 +174,9 @@ export default async function GraciasPage({
     : 'contact';
 
   const c = CONTENT[type];
+
+  // Fetch donation details if session_id is present (payment pages)
+  const donation = session_id ? await getDonationBySession(session_id) : null;
 
   return (
     <div className={`min-h-[80vh] bg-gradient-to-b ${c.bg} flex items-center justify-center px-4 py-24`}>
@@ -168,6 +196,23 @@ export default async function GraciasPage({
         <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-5 leading-tight">
           {c.title[l]}
         </h1>
+
+        {/* Donation summary */}
+        {donation && (
+          <div className="bg-white/80 border border-gray-200 rounded-xl px-6 py-4 mb-6 inline-block">
+            <p className="text-2xl font-extrabold text-gray-900">
+              {(donation.amount / 100).toFixed(2)}€
+              {donation.type === 'subscription' && (
+                <span className="text-base font-normal text-gray-500">
+                  /{l === 'es' ? 'mes' : 'mois'}
+                </span>
+              )}
+            </p>
+            {donation.donorName && (
+              <p className="text-sm text-gray-500 mt-1">{donation.donorName}</p>
+            )}
+          </div>
+        )}
 
         {/* Subtitle */}
         <p className="text-lg text-gray-600 mb-4 leading-relaxed">
