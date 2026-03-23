@@ -16,6 +16,37 @@ function getStripe(): Stripe {
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
+// Rate limit: max 5 checkout attempts per IP per 10 minutes
+const checkoutRateMap = new Map<string, number[]>();
+const CHECKOUT_RATE_WINDOW = 10 * 60 * 1000;
+const CHECKOUT_RATE_MAX = 5;
+const MAX_DONATION_AMOUNT = 10_000_00; // 10.000 EUR in cents
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, times] of checkoutRateMap) {
+    const fresh = times.filter(t => now - t < CHECKOUT_RATE_WINDOW);
+    if (fresh.length === 0) checkoutRateMap.delete(key);
+    else checkoutRateMap.set(key, fresh);
+  }
+}, 30 * 60 * 1000);
+
+function getClientIp(req: Request): string {
+  return (
+    (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+    req.socket.remoteAddress ||
+    'unknown'
+  );
+}
+
+function isCheckoutRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const timestamps = (checkoutRateMap.get(ip) || []).filter(t => now - t < CHECKOUT_RATE_WINDOW);
+  if (timestamps.length >= CHECKOUT_RATE_MAX) return true;
+  checkoutRateMap.set(ip, [...timestamps, now]);
+  return false;
+}
+
 // GET /api/stripe/products
 router.get('/products', async (_req: Request, res: Response, next) => {
   try {
@@ -32,6 +63,11 @@ router.get('/products', async (_req: Request, res: Response, next) => {
 // POST /api/stripe/checkout
 router.post('/checkout', async (req: Request, res: Response, next) => {
   try {
+    if (isCheckoutRateLimited(getClientIp(req))) {
+      res.status(429).json({ error: 'Demasiados intentos. Por favor, espera unos minutos.' });
+      return;
+    }
+
     const { type, amount, stripeProductId, donorName, donorEmail, donorDni, animalName, lang } = req.body as {
       type: 'one_time' | 'subscription';
       amount?: number;
@@ -61,6 +97,10 @@ router.post('/checkout', async (req: Request, res: Response, next) => {
         res.status(400).json({ error: 'Importe mínimo: 1€ (100 céntimos)' });
         return;
       }
+      if (amount > MAX_DONATION_AMOUNT) {
+        res.status(400).json({ error: 'Importe máximo: 10.000€' });
+        return;
+      }
       finalAmount = amount;
     } else {
       // Subscription: either a named product or a custom amount
@@ -79,6 +119,10 @@ router.post('/checkout', async (req: Request, res: Response, next) => {
         // Custom subscription amount (no named product)
         if (!amount || amount < 100) {
           res.status(400).json({ error: 'Importe mínimo para suscripción: 1€ (100 céntimos)' });
+          return;
+        }
+        if (amount > MAX_DONATION_AMOUNT) {
+          res.status(400).json({ error: 'Importe máximo para suscripción: 10.000€' });
           return;
         }
         finalAmount = amount;

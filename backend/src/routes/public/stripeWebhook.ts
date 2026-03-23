@@ -26,13 +26,16 @@ router.post(
       return;
     }
 
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      console.error('❌ STRIPE_WEBHOOK_SECRET is not configured');
+      res.status(500).json({ error: 'Webhook not configured' });
+      return;
+    }
+
     let event: Stripe.Event;
     try {
-      event = getStripe().webhooks.constructEvent(
-        req.body,
-        sig,
-        process.env.STRIPE_WEBHOOK_SECRET || ''
-      );
+      event = getStripe().webhooks.constructEvent(req.body, sig, webhookSecret);
     } catch (err) {
       console.error('❌ Webhook signature verification failed:', (err as Error).message);
       res.status(400).json({ error: 'Webhook signature verification failed' });
