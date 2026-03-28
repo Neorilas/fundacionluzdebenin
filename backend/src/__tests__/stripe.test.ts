@@ -125,8 +125,12 @@ function isSpam(subject: string, message: string): boolean {
   const combined = `${subject} ${message}`;
   const urls = combined.match(/(https?:\/\/|www\.)\S+/gi) || [];
   if (urls.length > 2) return true;
-  const spamPattern = /\b(casino|viagra|cialis|porn|xxx|lottery|winner|prize|click here|unsubscribe|crypto|bitcoin|investment opportunity|make money|free money|guaranteed|limited time offer)\b/i;
-  if (spamPattern.test(combined)) return true;
+  const spamPatternEn = /\b(casino|viagra|cialis|porn|xxx|lottery|winner|prize|click here|unsubscribe|crypto|bitcoin|investment opportunity|make money|free money|guaranteed|limited time offer)\b/i;
+  if (spamPatternEn.test(combined)) return true;
+  const spamPatternEs = /\b(posicionamiento web|agencia (de )?marketing|servicios? (de )?(seo|sem|marketing digital)|primera p[aá]gina de google|mejorar (tu|su|el) (posicionamiento|ranking|visibilidad)|estrategia digital|campa[nñ]a (de )?(google ads|adwords|publicidad online)|presupuesto sin compromiso|linkbuilding|backlinks|auditor[ií]a (seo|web|gratuita)|consultora? (de )?(marketing|seo|digital))\b/i;
+  if (spamPatternEs.test(combined)) return true;
+  const coldOutreach = /\b(sin compromiso|le escribo para ofrecer|me pongo en contacto para ofrecer|hemos visto (su|tu) (web|p[aá]gina)|aumentar (sus?|tus?) (ventas|clientes|visitas|tr[aá]fico))\b/i;
+  if (coldOutreach.test(combined)) return true;
   return false;
 }
 
@@ -157,5 +161,42 @@ describe('spam detection', () => {
 
   it('is case insensitive', () => {
     expect(isSpam('WINNER', 'You are the WINNER of our LOTTERY')).toBe(true);
+  });
+
+  // --- Spanish SEO/marketing spam ---
+  it('flags SEO spam in Spanish', () => {
+    expect(isSpam('Colaboración', 'Ofrecemos servicios de posicionamiento web para su fundación')).toBe(true);
+  });
+
+  it('flags marketing agency spam', () => {
+    expect(isSpam('Propuesta', 'Somos una agencia de marketing digital y queremos ayudarles')).toBe(true);
+  });
+
+  it('flags first page of Google spam', () => {
+    expect(isSpam('SEO', 'Podemos ponerles en la primera página de Google')).toBe(true);
+  });
+
+  it('flags cold outreach with "sin compromiso"', () => {
+    expect(isSpam('Oferta', 'Le ofrezco una auditoría gratuita sin compromiso')).toBe(true);
+  });
+
+  it('flags "hemos visto su web" cold outreach', () => {
+    expect(isSpam('Propuesta', 'Hemos visto su web y queremos ofrecer nuestros servicios')).toBe(true);
+  });
+
+  it('flags "aumentar sus ventas" pitch', () => {
+    expect(isSpam('Marketing', 'Podemos aumentar sus visitas con nuestra estrategia')).toBe(true);
+  });
+
+  it('flags linkbuilding spam', () => {
+    expect(isSpam('SEO', 'Ofrecemos servicios de linkbuilding y backlinks de calidad')).toBe(true);
+  });
+
+  it('allows legitimate business collaboration', () => {
+    expect(isSpam('Colaboración empresarial — Autónomo', 'Me gustaría colaborar con la fundación aportando mi experiencia')).toBe(false);
+  });
+
+  it('allows legitimate empresa inquiry', () => {
+    expect(isSpam('Colaboración empresarial — Empresa (Acme SL)', 'Somos una empresa de Sevilla interesada en apoyar la labor de la fundación')).toBe(false);
   });
 });

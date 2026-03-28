@@ -588,6 +588,13 @@ function ContactForm({ lang, defaultTipo }: { lang: Lang; defaultTipo: Tab }) {
   const [message, setMessage] = useState('');
   const [rgpd, setRgpd] = useState(false);
   const [status, setStatus] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle');
+  const [website, setWebsite] = useState('');
+  const [_t, setT] = useState('');
+
+  // Record page load time — backend rejects instant bot submissions
+  useEffect(() => {
+    setT(btoa(Date.now().toString()));
+  }, []);
 
   useEffect(() => {
     setTipo(defaultTipo);
@@ -619,6 +626,8 @@ function ContactForm({ lang, defaultTipo }: { lang: Lang; defaultTipo: Tab }) {
           subject,
           message: message || tx(lang, '(Sin mensaje adicional)', '(Sans message supplémentaire)'),
           lang,
+          website,
+          _t,
         }),
       });
       if (!res.ok) throw new Error();
@@ -647,6 +656,18 @@ function ContactForm({ lang, defaultTipo }: { lang: Lang; defaultTipo: Tab }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Anti-spam: honeypot + form load timestamp (hidden from users) */}
+      <input
+        type="text"
+        name="website"
+        value={website}
+        onChange={(e) => setWebsite(e.target.value)}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, width: 0, pointerEvents: 'none' }}
+      />
+      <input type="hidden" name="_t" value={_t} />
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
