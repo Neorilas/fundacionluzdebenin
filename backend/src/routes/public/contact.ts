@@ -55,9 +55,15 @@ function isSpam(subject: string, message: string): boolean {
   // More than 2 URLs is a red flag
   const urls = combined.match(/(https?:\/\/|www\.)\S+/gi) || [];
   if (urls.length > 2) return true;
-  // Common spam keywords
-  const spamPattern = /\b(casino|viagra|cialis|porn|xxx|lottery|winner|prize|click here|unsubscribe|crypto|bitcoin|investment opportunity|make money|free money|guaranteed|limited time offer)\b/i;
-  if (spamPattern.test(combined)) return true;
+  // Common spam keywords (EN)
+  const spamPatternEn = /\b(casino|viagra|cialis|porn|xxx|lottery|winner|prize|click here|unsubscribe|crypto|bitcoin|investment opportunity|make money|free money|guaranteed|limited time offer)\b/i;
+  if (spamPatternEn.test(combined)) return true;
+  // SEO / marketing spam in Spanish — very common on NGO contact forms
+  const spamPatternEs = /\b(posicionamiento web|agencia (de )?marketing|servicios? (de )?(seo|sem|marketing digital)|primera p[aá]gina de google|mejorar (tu|su|el) (posicionamiento|ranking|visibilidad)|estrategia digital|campa[nñ]a (de )?(google ads|adwords|publicidad online)|presupuesto sin compromiso|linkbuilding|backlinks|auditor[ií]a (seo|web|gratuita)|consultora? (de )?(marketing|seo|digital))\b/i;
+  if (spamPatternEs.test(combined)) return true;
+  // Generic cold outreach patterns
+  const coldOutreach = /\b(sin compromiso|le escribo para ofrecer|me pongo en contacto para ofrecer|hemos visto (su|tu) (web|p[aá]gina)|aumentar (sus?|tus?) (ventas|clientes|visitas|tr[aá]fico))\b/i;
+  if (coldOutreach.test(combined)) return true;
   return false;
 }
 
@@ -73,17 +79,25 @@ router.post('/', async (req, res, next) => {
       return;
     }
 
-    // Timing check: reject submissions faster than a human can fill the form
-    if (_t) {
-      try {
-        const loadTime = parseInt(Buffer.from(_t, 'base64').toString(), 10);
-        if (Date.now() - loadTime < MIN_FILL_TIME_MS) {
-          res.status(429).json({ error: 'Formulario enviado demasiado rápido.' });
-          return;
-        }
-      } catch {
-        // Malformed token — treat as suspicious but don't block (field is optional)
+    // Timing check: all legitimate forms send _t — missing means bot
+    if (!_t) {
+      res.status(201).json({ success: true }); // silent fake success
+      return;
+    }
+    try {
+      const loadTime = parseInt(Buffer.from(_t, 'base64').toString(), 10);
+      if (isNaN(loadTime) || Date.now() - loadTime < MIN_FILL_TIME_MS) {
+        res.status(429).json({ error: 'Formulario enviado demasiado rápido.' });
+        return;
       }
+      // Reject if _t is older than 1 hour (stale form or replayed token)
+      if (Date.now() - loadTime > 60 * 60 * 1000) {
+        res.status(201).json({ success: true }); // silent fake success
+        return;
+      }
+    } catch {
+      res.status(201).json({ success: true }); // malformed token = bot
+      return;
     }
 
     // IP rate limit
