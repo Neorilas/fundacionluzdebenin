@@ -64,6 +64,17 @@ export interface Settings {
 
 export type Lang = 'es' | 'fr';
 
+/** Public site URL — used for canonical, og:url, sitemap, etc. */
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL
+  || process.env.NEXT_PUBLIC_API_URL
+  || 'https://fundacionluzdebenin.org';
+
+/** Extract a bilingual value from PageSections for the given lang */
+export function getSectionValue(sec: PageSections, section: string, key: string, lang: Lang): string {
+  const s = sec[section]?.[key];
+  return s ? (lang === 'es' ? s.es : s.fr) : '';
+}
+
 /** Normaliza imágenes de proyecto: admite tanto string como {url,alt} */
 export function parseProjectImage(img: { url: string; alt: string } | string): { url: string; alt: string } {
   if (typeof img === 'string') return { url: img, alt: '' };

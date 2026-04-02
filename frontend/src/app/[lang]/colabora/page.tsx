@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Lang, Settings, StripeProduct } from '@/lib/types';
+import { Lang, Settings, StripeProduct, PageSections, SITE_URL, getSectionValue } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -9,8 +9,6 @@ import DonationWidget from '@/components/colabora/DonationWidget';
 import FaqAccordion from '@/components/faq/FaqAccordion';
 
 export const revalidate = 3600;
-
-const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
@@ -52,10 +50,7 @@ export default async function ColaboraPage({ params }: { params: Promise<{ lang:
     api.getFaqs().catch(() => []),
   ]);
 
-  const get = (section: string, key: string) => {
-    const s = (sec as Record<string, Record<string, { es: string; fr: string }>>)[section]?.[key];
-    return s ? (l === 'es' ? s.es : s.fr) : '';
-  };
+  const get = (section: string, key: string) => getSectionValue(sec as PageSections, section, key, l);
 
   const impacts = ['10eur', '30eur', '100eur', '500eur'];
 
@@ -136,6 +131,7 @@ export default async function ColaboraPage({ params }: { params: Promise<{ lang:
               height={177}
               frameBorder={0}
               scrolling="no"
+              loading="lazy"
               style={{ overflow: 'hidden', textAlign: 'center', maxWidth: '100%' }}
             />
           </div>

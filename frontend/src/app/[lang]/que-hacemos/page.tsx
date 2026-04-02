@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
-import { Lang } from '@/lib/types';
+import { Lang, PageSections, SITE_URL, getSectionValue } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import SectionTitle from '@/components/ui/SectionTitle';
 
 export const revalidate = 86400;
-
-const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
@@ -40,11 +38,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 export default async function QueHacemosPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   const l = lang as Lang;
-  const sec = await api.getPageSections('que-hacemos').catch(() => ({}));
-  const get = (section: string, key: string) => {
-    const s = (sec as Record<string, Record<string, { es: string; fr: string }>>)[section]?.[key];
-    return s ? (l === 'es' ? s.es : s.fr) : '';
-  };
+  const sec: PageSections = await api.getPageSections('que-hacemos').catch(() => ({} as PageSections));
+  const get = (section: string, key: string) => getSectionValue(sec, section, key, l);
 
   const pillars = [
     { key: 'education', icon: get('education', 'icon') || '📚', color: 'bg-blue-50 border-blue-200' },

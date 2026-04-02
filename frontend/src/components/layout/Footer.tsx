@@ -30,8 +30,8 @@ export default async function Footer({ lang }: Props) {
               <Image
                 src={logoUrl}
                 alt="Fundación Luz de Benín"
-                width={800}
-                height={533}
+                width={32}
+                height={32}
                 className="w-8 h-8 rounded-full object-cover"
                 unoptimized
               />

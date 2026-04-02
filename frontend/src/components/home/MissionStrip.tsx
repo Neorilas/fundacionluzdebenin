@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import { Lang } from '@/lib/types';
 
+import { PageSections } from '@/lib/types';
+
 interface Props {
   lang: Lang;
-  sec?: any;
+  sec?: PageSections;
 }
 
 const pillars = {

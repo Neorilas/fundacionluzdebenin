@@ -1,6 +1,5 @@
 import { MetadataRoute } from 'next';
-
-const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
+import { SITE_URL } from '@/lib/types';
 
 export default function robots(): MetadataRoute.Robots {
   return {

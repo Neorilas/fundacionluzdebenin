@@ -1,9 +1,9 @@
 import { MetadataRoute } from 'next';
+import { SITE_URL } from '@/lib/types';
 import { api } from '@/lib/api';
 
 export const revalidate = 3600;
 
-const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 const LANGS = ['es', 'fr'];
 
 const STATIC_ROUTES = [

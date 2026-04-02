@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
-import { Lang } from '@/lib/types';
+import { Lang, SITE_URL } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import FaqAccordion from '@/components/faq/FaqAccordion';
 
 export const revalidate = 3600;
-
-const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;

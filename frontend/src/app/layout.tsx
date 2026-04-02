@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import { headers } from 'next/headers';
 import { api } from '@/lib/api';
-import { Settings } from '@/lib/types';
+import { Settings, Lang, SITE_URL } from '@/lib/types';
 import Analytics from '@/components/legal/Analytics';
 import CookieBanner from '@/components/legal/CookieBanner';
-import { Lang } from '@/lib/types';
 import './globals.css';
 
-const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
+const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings: Settings = await api.getSettings().catch(() => ({} as Settings));
@@ -29,7 +29,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const lang = (headersList.get('x-lang') || 'es') as Lang;
   return (
     <html lang={lang}>
-      <body>
+      <body className={inter.className}>
         {children}
         <CookieBanner lang={lang} />
         <Analytics />

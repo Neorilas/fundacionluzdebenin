@@ -1,14 +1,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Lang, Campaign, StatItem, WhyItem } from '@/lib/types';
+import { Lang, Campaign, StatItem, WhyItem, SITE_URL } from '@/lib/types';
 import { api } from '@/lib/api';
 import SponsorButton from '@/components/campaigns/SponsorButton';
 import ShareButtons from '@/components/campaigns/ShareButtons';
 
 export const revalidate = 3600;
 
-const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
+const GRID_COLS: Record<number, string> = {
+  1: 'grid-cols-1', 2: 'grid-cols-2', 3: 'grid-cols-3', 4: 'grid-cols-4',
+};
 
 export async function generateStaticParams() {
   try {
@@ -192,7 +194,7 @@ export default async function CampaignPage({
       {campaign.extraType === 'stats' && campaign.extraItems.length > 0 && (
         <section className="py-12 bg-primary-800 text-white">
           <div className="max-w-3xl mx-auto px-4">
-            <div className={`grid grid-cols-${campaign.extraItems.length} gap-6 text-center`}>
+            <div className={`grid ${GRID_COLS[campaign.extraItems.length] || 'grid-cols-3'} gap-6 text-center`}>
               {(campaign.extraItems as StatItem[]).map((item, i) => (
                 <div key={i}>
                   <div className="text-3xl sm:text-4xl font-extrabold text-amber-300 mb-1">{item.value}</div>

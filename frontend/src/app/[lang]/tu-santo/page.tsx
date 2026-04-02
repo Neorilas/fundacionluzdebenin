@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { Lang } from '@/lib/types';
+import { Lang, SITE_URL } from '@/lib/types';
 import TuSantoClient from '@/components/tu-santo/TuSantoClient';
 
 export const dynamic = 'force-dynamic';
-
-const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 
 export async function generateMetadata({
   params,

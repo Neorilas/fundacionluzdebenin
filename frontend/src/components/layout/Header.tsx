@@ -40,8 +40,8 @@ export default function Header({ lang, logoUrl = '/logo.jpg' }: Props) {
             <Image
               src={logoUrl}
               alt="Fundación Luz de Benín"
-              width={800}
-              height={533}
+              width={36}
+              height={36}
               className="w-9 h-9 rounded-full object-cover"
               unoptimized
             />
