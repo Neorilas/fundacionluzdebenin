@@ -3,14 +3,12 @@ import { notFound } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { isValidLang } from '@/lib/i18n';
-import { Lang, Settings } from '@/lib/types';
+import { Lang, Settings, SITE_URL } from '@/lib/types';
 import { api } from '@/lib/api';
 
 export async function generateStaticParams() {
   return [{ lang: 'es' }, { lang: 'fr' }];
 }
-
-const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;

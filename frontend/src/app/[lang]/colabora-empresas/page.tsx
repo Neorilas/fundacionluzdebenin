@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
-import { Lang, Settings } from '@/lib/types';
+import { Lang, Settings, SITE_URL } from '@/lib/types';
 import { api } from '@/lib/api';
 import ColaboraEmpresasClient from '@/components/colabora-empresas/ColaboraEmpresasClient';
 
 export const revalidate = 3600;
-
-const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 
 export async function generateMetadata({
   params,

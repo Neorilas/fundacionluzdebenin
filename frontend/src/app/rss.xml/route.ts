@@ -1,8 +1,7 @@
+import { SITE_URL } from '@/lib/types';
 import { api } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
-
-const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 
 export async function GET() {
   let posts: Awaited<ReturnType<typeof api.getBlogPosts>>['posts'] = [];

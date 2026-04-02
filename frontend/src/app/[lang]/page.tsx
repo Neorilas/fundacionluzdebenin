@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Lang } from '@/lib/types';
+import { Lang, PageSections, SITE_URL } from '@/lib/types';
 import { api } from '@/lib/api';
 import Hero from '@/components/home/Hero';
 import MissionStrip from '@/components/home/MissionStrip';
@@ -11,8 +11,6 @@ import CampaignsStrip from '@/components/home/CampaignsStrip';
 import NewsletterStrip from '@/components/home/NewsletterStrip';
 
 export const revalidate = 300;
-
-const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
@@ -57,7 +55,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
     api.getSettings(),
   ]);
 
-  const sec = sections.status === 'fulfilled' ? sections.value : {};
+  const sec: PageSections = sections.status === 'fulfilled' ? sections.value : {};
   const proj = projects.status === 'fulfilled' ? projects.value : [];
   const blog = posts.status === 'fulfilled' ? posts.value.posts : [];
   const campaigns = campaignsResult.status === 'fulfilled' ? campaignsResult.value : [];

@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Lang, Campaign } from '@/lib/types';
+import { Lang, Campaign, SITE_URL } from '@/lib/types';
 import { api } from '@/lib/api';
 
 export const revalidate = 3600;
-
-const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 
 export async function generateStaticParams() {
   return [{ lang: 'es' }, { lang: 'fr' }];

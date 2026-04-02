@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
-import { Lang, Settings } from '@/lib/types';
+import { Lang, Settings, PageSections, SITE_URL, getSectionValue } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import SectionTitle from '@/components/ui/SectionTitle';
 
 export const revalidate = 86400;
-
-const SITE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://fundacionluzdebenin.org';
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
@@ -41,13 +39,10 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
   const { lang } = await params;
   const l = lang as Lang;
   const [sec, settings] = await Promise.all([
-    api.getPageSections('quienes-somos').catch(() => ({})),
+    api.getPageSections('quienes-somos').catch(() => ({} as PageSections)),
     api.getSettings().catch(() => ({} as Settings)),
   ]);
-  const get = (section: string, key: string) => {
-    const s = (sec as Record<string, Record<string, { es: string; fr: string }>>)[section]?.[key];
-    return s ? (l === 'es' ? s.es : s.fr) : '';
-  };
+  const get = (section: string, key: string) => getSectionValue(sec, section, key, l);
 
   let timeline: { year: string; event: string }[] = [];
   try { timeline = JSON.parse(get('timeline', 'data') || '[]'); } catch { timeline = []; }

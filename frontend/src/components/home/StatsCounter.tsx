@@ -1,9 +1,11 @@
 import { Lang } from '@/lib/types';
 import { t } from '@/lib/i18n';
 
+import { PageSections } from '@/lib/types';
+
 interface Props {
   lang: Lang;
-  sec?: any;
+  sec?: PageSections;
 }
 
 const stats = {
