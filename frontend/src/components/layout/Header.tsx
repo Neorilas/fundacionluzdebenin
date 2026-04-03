@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Lang } from '@/lib/types';
 import { t } from '@/lib/i18n';
+import { trackEvent } from '@/lib/analytics';
 import LangSwitcher from './LangSwitcher';
 
 interface Props {
@@ -55,6 +56,7 @@ export default function Header({ lang, logoUrl = '/logo.jpg' }: Props) {
               <Link
                 key={href}
                 href={href}
+                onClick={cta ? () => trackEvent('clic_donar', { ubicacion: 'header' }) : undefined}
                 className={`px-3 py-2 rounded-full text-sm font-medium transition-colors ${
                   cta
                     ? 'bg-orange-700 hover:bg-orange-800 text-white font-semibold ml-2'
@@ -94,7 +96,7 @@ export default function Header({ lang, logoUrl = '/logo.jpg' }: Props) {
               <Link
                 key={href}
                 href={href}
-                onClick={() => setOpen(false)}
+                onClick={() => { setOpen(false); if (cta) trackEvent('clic_donar', { ubicacion: 'header_mobile' }); }}
                 className={`block px-3 py-2 rounded-md text-sm font-medium ${
                   cta
                     ? 'mt-2 bg-orange-700 text-white font-semibold text-center'

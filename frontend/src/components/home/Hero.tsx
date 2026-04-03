@@ -1,9 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Lang } from '@/lib/types';
+import { Lang, PageSections } from '@/lib/types';
 import { t } from '@/lib/i18n';
-
-import { PageSections } from '@/lib/types';
+import TrackedLink from '@/components/ui/TrackedLink';
 
 interface Props {
   lang: Lang;
@@ -125,12 +124,14 @@ export default function Hero({ lang, sec, logoUrl = '/logo.jpg' }: Props) {
           >
             {lang === 'es' ? 'Ver proyectos' : 'Voir les projets'}
           </Link>
-          <Link
+          <TrackedLink
             href={`/${lang}/colabora/`}
+            eventName="clic_donar"
+            eventParams={{ ubicacion: 'hero' }}
             className="inline-flex items-center gap-2 bg-accent hover:bg-accent-700 text-white font-bold px-8 py-3.5 rounded-full transition-colors shadow-lg shadow-accent/30 text-lg"
           >
             {t(lang, 'common.donate')} ❤️
-          </Link>
+          </TrackedLink>
         </div>
       </div>
 

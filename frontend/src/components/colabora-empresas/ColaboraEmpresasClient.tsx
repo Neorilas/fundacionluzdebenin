@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { trackEvent } from '@/lib/analytics';
 
 type Lang = 'es' | 'fr';
 type Tab = 'autonomo' | 'empresa';
@@ -313,6 +314,7 @@ function TabAutonomo({ lang }: { lang: Lang }) {
       <div className="text-center">
         <Link
           href={`/${lang}/colabora/`}
+          onClick={() => trackEvent('clic_donar', { ubicacion: 'empresas' })}
           className="inline-block bg-primary-800 text-white font-bold px-8 py-4 rounded-xl hover:bg-primary-700 transition-colors text-base shadow-sm"
         >
           {tx(lang, "Empezar a colaborar ahora →", "Commencer à collaborer maintenant →")}
@@ -773,7 +775,7 @@ function ContactForm({ lang, defaultTipo }: { lang: Lang; defaultTipo: Tab }) {
 
       <p className="text-xs text-gray-400 text-center">
         {tx(lang, "¿Prefieres el contacto directo? ", "Vous préférez le contact direct ? ")}
-        <a href="mailto:colabora@fundacionluzdebenin.org" className="text-primary-800 hover:underline">
+        <a href="mailto:colabora@fundacionluzdebenin.org" className="text-primary-800 hover:underline" onClick={() => trackEvent('clic_email_contacto', { email: 'colabora@fundacionluzdebenin.org' })}>
           colabora@fundacionluzdebenin.org
         </a>
       </p>

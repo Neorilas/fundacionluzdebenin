@@ -1,8 +1,6 @@
-import Link from 'next/link';
-import { Lang } from '@/lib/types';
+import { Lang, PageSections } from '@/lib/types';
 import { t } from '@/lib/i18n';
-
-import { PageSections } from '@/lib/types';
+import TrackedLink from '@/components/ui/TrackedLink';
 
 interface Props {
   lang: Lang;
@@ -64,12 +62,14 @@ export default function DonationCTA({ lang, sec }: Props) {
 
         {/* Main CTA */}
         <div className="text-center">
-          <Link
+          <TrackedLink
             href={`/${lang}/colabora/`}
+            eventName="clic_donar"
+            eventParams={{ ubicacion: 'donation_cta' }}
             className="inline-flex items-center gap-2 bg-accent hover:bg-accent-700 text-white font-bold px-10 py-4 rounded-full text-xl transition-colors shadow-xl shadow-accent/30"
           >
             {t(lang, 'home.donationCTA.button')} →
-          </Link>
+          </TrackedLink>
           <p className="text-primary-300 text-sm mt-4">
             {bottomText}
           </p>
