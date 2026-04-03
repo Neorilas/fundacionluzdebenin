@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Lang, Settings, Campaign } from '@/lib/types';
 import { t } from '@/lib/i18n';
 import { api } from '@/lib/api';
+import TrackedMailto from '@/components/ui/TrackedMailto';
 
 interface Props {
   lang: Lang;
@@ -119,9 +120,9 @@ export default async function Footer({ lang }: Props) {
               {settings.showEmail !== '0' && (
                 <li>
                   📧{' '}
-                  <a href={`mailto:${settings.emailContact || 'info@fundacionluzdebenin.org'}`} className="hover:text-white transition-colors">
+                  <TrackedMailto href={`mailto:${settings.emailContact || 'info@fundacionluzdebenin.org'}`} className="hover:text-white transition-colors">
                     {settings.emailContact || 'info@fundacionluzdebenin.org'}
-                  </a>
+                  </TrackedMailto>
                 </li>
               )}
               {settings.showPhone !== '0' && (

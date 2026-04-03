@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { saints, getSaintByEmail, getSaintById, type Santo } from '@/lib/saints';
+import { trackEvent } from '@/lib/analytics';
 
 const SITE_URL = 'https://fundacionluzdebenin.org';
 const LS_KEY = 'santo-misionero-v1';
@@ -519,6 +520,7 @@ export default function TuSantoClient({ lang }: Props) {
             {/* Donate */}
             <Link
               href={`/${lang}/colabora/`}
+              onClick={() => trackEvent('clic_donar', { ubicacion: 'tu_santo' })}
               className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-orange-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-orange-900/20"
             >
               ❤ {tx.donateBtn}

@@ -3,6 +3,7 @@ import { Lang, Settings, SITE_URL } from '@/lib/types';
 import { api } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import ContactForm from '@/components/ui/ContactForm';
+import TrackedMailto from '@/components/ui/TrackedMailto';
 
 export const revalidate = 86400;
 
@@ -66,9 +67,9 @@ export default async function ContactoPage({ params }: { params: Promise<{ lang:
                     <span className="text-primary-800 text-lg">📧</span>
                     <div>
                       <p className="font-medium">{t(l, 'contact.info.email')}</p>
-                      <a href={`mailto:${settings.emailContact || 'info@fundacionluzdebenin.org'}`} className="text-muted hover:text-primary-800 transition-colors">
+                      <TrackedMailto href={`mailto:${settings.emailContact || 'info@fundacionluzdebenin.org'}`} className="text-muted hover:text-primary-800 transition-colors">
                         {settings.emailContact || 'info@fundacionluzdebenin.org'}
-                      </a>
+                      </TrackedMailto>
                     </div>
                   </div>
                 )}

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Lang } from '@/lib/types';
 import { t } from '@/lib/i18n';
 import { api } from '@/lib/api';
+import { trackEvent } from '@/lib/analytics';
 
 export default function NewsletterInline({ lang }: { lang: Lang }) {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function NewsletterInline({ lang }: { lang: Lang }) {
     try {
       const result = await api.subscribeNewsletter(email, lang);
       if (result.success) {
+        trackEvent('suscripcion_newsletter', { ubicacion: 'inline' });
         router.push(`/${lang}/gracias?type=newsletter`);
       } else {
         setStatus('error');

@@ -7,6 +7,7 @@ import SectionTitle from '@/components/ui/SectionTitle';
 import TaxDeduction from '@/components/colabora/TaxDeduction';
 import DonationWidget from '@/components/colabora/DonationWidget';
 import FaqAccordion from '@/components/faq/FaqAccordion';
+import PageViewTracker from '@/components/ui/PageViewTracker';
 
 export const revalidate = 3600;
 
@@ -62,6 +63,7 @@ export default async function ColaboraPage({ params }: { params: Promise<{ lang:
 
   return (
     <div>
+      <PageViewTracker eventName="vista_donacion" />
       <section className="bg-primary-800 text-white py-20">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-4xl font-extrabold mb-4">{get('hero', 'title') || t(l, 'collaborate.title')}</h1>
