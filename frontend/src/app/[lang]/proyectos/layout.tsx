@@ -19,7 +19,12 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         'x-default': `${SITE_URL}/es/proyectos/`,
       },
     },
-    openGraph: { title, description, url: `${SITE_URL}/${lang}/proyectos/` },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/${lang}/proyectos/`,
+      images: [{ url: `${SITE_URL}/logo.jpg`, width: 800, height: 600, alt: title }],
+    },
   };
 }
 
