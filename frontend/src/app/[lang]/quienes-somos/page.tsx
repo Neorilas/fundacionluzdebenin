@@ -53,8 +53,18 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
     desc: get(`value${i}`, 'desc'),
   })).filter(v => v.title);
 
+  const breadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: l === 'es' ? 'Inicio' : 'Accueil', item: `${SITE_URL}/${l}/` },
+      { '@type': 'ListItem', position: 2, name: l === 'es' ? 'Quiénes somos' : 'Qui sommes-nous', item: `${SITE_URL}/${l}/quienes-somos/` },
+    ],
+  };
+
   return (
     <div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <section className="bg-primary-800 text-white py-20">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-4xl font-extrabold mb-4">{get('hero', 'title') || t(l, 'whoWeAre.title')}</h1>

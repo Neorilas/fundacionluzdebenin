@@ -35,7 +35,7 @@ export async function generateMetadata({
       title,
       description,
       url: `${SITE_URL}/${lang}/campanas/`,
-      images: [{ url: `${SITE_URL}/logo.jpg`, alt: title }],
+      images: [{ url: `${SITE_URL}/logo.jpg`, width: 800, height: 600, alt: title }],
     },
   };
 }

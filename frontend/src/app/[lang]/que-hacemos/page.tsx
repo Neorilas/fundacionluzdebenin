@@ -50,8 +50,18 @@ export default async function QueHacemosPage({ params }: { params: Promise<{ lan
   const methodology = (['step1', 'step2', 'step3', 'step4'] as const)
     .map(k => get('methodology', k)).filter(Boolean);
 
+  const breadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: l === 'es' ? 'Inicio' : 'Accueil', item: `${SITE_URL}/${l}/` },
+      { '@type': 'ListItem', position: 2, name: l === 'es' ? 'Qué hacemos' : 'Ce que nous faisons', item: `${SITE_URL}/${l}/que-hacemos/` },
+    ],
+  };
+
   return (
     <div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       {/* Hero */}
       <section className="bg-primary-800 text-white py-20">
         <div className="max-w-4xl mx-auto px-4 text-center">

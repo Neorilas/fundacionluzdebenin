@@ -25,7 +25,12 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         'x-default': `${SITE_URL}/es/contacto/`,
       },
     },
-    openGraph: { title, description, url: `${SITE_URL}/${lang}/contacto/` },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/${lang}/contacto/`,
+      images: [{ url: `${SITE_URL}/logo.jpg`, width: 800, height: 600, alt: title }],
+    },
   };
 }
 
