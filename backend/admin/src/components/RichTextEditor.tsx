@@ -253,8 +253,8 @@ export default function RichTextEditor({
   };
 
   const applySourceView = () => {
-    editor.commands.setContent(sourceHtml, false);
-    onChange(decodeHtmlBlocks(editor.getHTML()));
+    // setContent triggers onUpdate which calls onChange automatically
+    editor.commands.setContent(sourceHtml);
     setShowSource(false);
   };
 
