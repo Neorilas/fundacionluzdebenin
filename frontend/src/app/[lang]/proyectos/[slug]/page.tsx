@@ -102,7 +102,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ lang: 
             const img = parseProjectImage(raw);
             return (
               <div key={i} className="relative h-64 rounded-2xl overflow-hidden">
-                <Image src={img.url} alt={img.alt || `${title} — imagen ${i + 1}`} fill unoptimized sizes="(max-width: 640px) 100vw, 50vw" className="object-cover" />
+                <Image src={img.url} alt={img.alt || `${title} — imagen ${i + 1}`} fill sizes="(max-width: 640px) 100vw, 50vw" className="object-cover" />
               </div>
             );
           })}

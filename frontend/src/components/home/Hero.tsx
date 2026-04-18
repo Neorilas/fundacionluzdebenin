@@ -74,11 +74,10 @@ export default function Hero({ lang, sec, logoUrl = '/logo.jpg' }: Props) {
             <Image
               src={logoUrl}
               alt="Fundación Luz de Benín"
-              width={800}
-              height={533}
+              width={192}
+              height={128}
               className="h-24 w-auto block"
               priority
-              unoptimized
             />
           </div>
         </div>

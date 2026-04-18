@@ -128,13 +128,13 @@ export default async function ColaboraPage({ params }: { params: Promise<{ lang:
           </p>
           <div className="flex justify-center">
             <iframe
-              src={`https://www.teaming.net/group/spread/widgets/bvqIcViwX9ZhfHQMzYHOT52X0JmEzBeyUSme3FaZKnDXT/4?lang=${l === 'es' ? 'es_ES' : 'fr_FR'}&TM=true`}
-              width={423}
-              height={177}
+              src={`https://www.teaming.net/group/spread/widgets/bvqIcViwX9ZhfHQMzYHOT52X0JmEzBeyUSme3FaZKnDXT/7?lang=${l === 'es' ? 'es_ES' : 'fr_FR'}`}
+              width={305}
+              height={567}
               frameBorder={0}
               scrolling="no"
               loading="lazy"
-              style={{ overflow: 'hidden', textAlign: 'center', maxWidth: '100%' }}
+              style={{ overflow: 'hidden', maxWidth: '100%' }}
             />
           </div>
         </div>

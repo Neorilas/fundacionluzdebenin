@@ -34,7 +34,6 @@ export default async function Footer({ lang }: Props) {
                 width={32}
                 height={32}
                 className="w-8 h-8 rounded-full object-cover"
-                unoptimized
               />
               Fundación Luz de Benín
             </div>

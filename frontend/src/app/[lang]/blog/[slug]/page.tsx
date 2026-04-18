@@ -175,7 +175,7 @@ export default async function BlogPostPage({
 
         {post.coverImage && (
           <div className="relative h-72 rounded-2xl overflow-hidden mb-8">
-            <Image src={post.coverImage} alt={post.coverImageAlt || title} fill unoptimized priority sizes="(max-width: 768px) 100vw, 768px" className="object-cover" />
+            <Image src={post.coverImage} alt={post.coverImageAlt || title} fill priority sizes="(max-width: 768px) 100vw, 768px" className="object-cover" />
           </div>
         )}
 
@@ -203,7 +203,7 @@ export default async function BlogPostPage({
                 <Link key={rp.slug} href={`/${l}/blog/${rp.slug}/`} className="group flex flex-col gap-2 rounded-xl border border-gray-200 overflow-hidden hover:border-primary-800 transition-colors">
                   {rp.coverImage && (
                     <div className="relative h-32 bg-gray-100">
-                      <Image src={rp.coverImage} alt={l === 'es' ? rp.titleEs : rp.titleFr} fill unoptimized sizes="300px" className="object-cover" />
+                      <Image src={rp.coverImage} alt={l === 'es' ? rp.titleEs : rp.titleFr} fill sizes="300px" className="object-cover" />
                     </div>
                   )}
                   <div className="p-3">
