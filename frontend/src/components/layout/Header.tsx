@@ -44,7 +44,6 @@ export default function Header({ lang, logoUrl = '/logo.jpg' }: Props) {
               width={36}
               height={36}
               className="w-9 h-9 rounded-full object-cover"
-              unoptimized
             />
             <span className="hidden sm:inline">Fundación Luz de Benín</span>
             <span className="sm:hidden">FLdB</span>

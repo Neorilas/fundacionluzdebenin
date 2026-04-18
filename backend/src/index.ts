@@ -37,6 +37,7 @@ import categoriesAdmin from './routes/admin/categories';
 import subscribersAdmin from './routes/admin/subscribers';
 
 import { errorHandler } from './middleware/errorHandler';
+import { imageOptimizer } from './middleware/imageOptimizer';
 import { startScheduler } from './lib/scheduler';
 
 const app = express();
@@ -54,9 +55,9 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Serve uploaded images
+// Serve uploaded images (with on-the-fly optimization when ?w= is present)
 const uploadDir = path.resolve(process.env.UPLOAD_DIR || './uploads');
-app.use('/uploads', express.static(uploadDir));
+app.use('/uploads', imageOptimizer, express.static(uploadDir));
 
 // Serve admin panel (React SPA built in admin/dist)
 const adminDistPath = path.join(__dirname, '../admin/dist');

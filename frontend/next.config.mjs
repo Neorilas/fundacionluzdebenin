@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  images: {
+    loader: 'custom',
+    loaderFile: './src/lib/imageLoader.ts',
+  },
   async redirects() {
     return [
       { source: '/:lang/apadrina-gallina', destination: '/:lang/campanas/apadrina-gallina', permanent: true },

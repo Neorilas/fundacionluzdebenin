@@ -26,7 +26,6 @@ export default function ProjectCard({ project, lang }: Props) {
                 src={img.url}
                 alt={img.alt || title}
                 fill
-                unoptimized
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 className="object-cover group-hover:scale-105 transition-transform duration-300"
               />
