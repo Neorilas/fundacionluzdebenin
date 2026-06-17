@@ -51,34 +51,12 @@ services:
     depends_on:
       - backend
 
-  # ── Caddy: proxy inverso + SSL automático ─────────────────────────────────
-  caddy:
-    image: caddy:2-alpine
-    restart: unless-stopped
-    environment:
-      DOMAIN: ${DOMAIN}
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"  # HTTP/3
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - frontend
-      - backend
-    networks:
-      - default
-      - proxy-net   # Red compartida con ambulancias (para resolver ambulancia-backend)
+# NOTA: El proxy inverso + SSL lo gestiona un Caddy COMPARTIDO entre proyectos
+# (contenedor `caddy`), cuyo Caddyfile enruta fundacionluzdebenin.org hacia
+# fundacion-backend-1:3001 (api/admin/uploads) y fundacion-frontend-1:3000.
+# Por eso este compose ya NO define su propio servicio caddy: chocaba con el
+# puerto 80/443 del Caddy compartido y hacia fallar el deploy.
 
 volumes:
   sqlite_data:
   uploads_data:
-  caddy_data:
-  caddy_config:
-
-# Red externa compartida con el proyecto ambulancias
-networks:
-  proxy-net:
-    external: true
