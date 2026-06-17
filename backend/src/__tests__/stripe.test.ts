@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import { buildDonationThankYouEmail } from '../lib/mailer';
+import { shouldExpireDonation } from '../routes/public/stripeWebhook';
 
 // ─── DNI/NIF validation (same logic as in stripe.ts) ─────────────────────────
 
@@ -198,5 +200,96 @@ describe('spam detection', () => {
 
   it('allows legitimate empresa inquiry', () => {
     expect(isSpam('Colaboración empresarial — Empresa (Acme SL)', 'Somos una empresa de Sevilla interesada en apoyar la labor de la fundación')).toBe(false);
+  });
+});
+
+// ─── checkout.session.expired guard ──────────────────────────────────────────
+
+describe('shouldExpireDonation', () => {
+  it('expires an abandoned pending checkout', () => {
+    expect(shouldExpireDonation('pending')).toBe(true);
+  });
+
+  it('never overwrites a completed donation', () => {
+    expect(shouldExpireDonation('completed')).toBe(false);
+  });
+
+  it('never overwrites a failed or canceled donation', () => {
+    expect(shouldExpireDonation('failed')).toBe(false);
+    expect(shouldExpireDonation('canceled')).toBe(false);
+  });
+
+  it('is idempotent — an already-expired donation is not re-expired', () => {
+    expect(shouldExpireDonation('expired')).toBe(false);
+  });
+
+  it('ignores an unknown or missing status', () => {
+    expect(shouldExpireDonation(undefined)).toBe(false);
+    expect(shouldExpireDonation('')).toBe(false);
+  });
+});
+
+// ─── Donation thank-you email builder ────────────────────────────────────────
+
+describe('buildDonationThankYouEmail', () => {
+  it('uses Spanish by default and for lang=es', () => {
+    const { subject, html } = buildDonationThankYouEmail({
+      donorEmail: 'a@b.com', amount: 2500, currency: 'eur', type: 'one_time',
+    });
+    expect(subject).toContain('Gracias por tu donación');
+    expect(html).toContain('¡Gracias de corazón!');
+  });
+
+  it('uses French for lang=fr', () => {
+    const { subject, html } = buildDonationThankYouEmail({
+      donorEmail: 'a@b.com', amount: 2500, currency: 'eur', type: 'one_time', lang: 'fr',
+    });
+    expect(subject).toContain('Merci pour votre don');
+    expect(html).toContain('Merci du fond du cœur');
+  });
+
+  it('differentiates subscription subject (monthly)', () => {
+    const es = buildDonationThankYouEmail({ donorEmail: 'a@b.com', amount: 1000, currency: 'eur', type: 'subscription' });
+    expect(es.subject).toContain('mensual');
+    const fr = buildDonationThankYouEmail({ donorEmail: 'a@b.com', amount: 1000, currency: 'eur', type: 'subscription', lang: 'fr' });
+    expect(fr.subject).toContain('mensuel');
+  });
+
+  it('formats euro amount from cents', () => {
+    const { html } = buildDonationThankYouEmail({ donorEmail: 'a@b.com', amount: 2500, currency: 'eur', type: 'one_time' });
+    expect(html).toContain('25.00€');
+  });
+
+  it('formats non-eur currency with code', () => {
+    const { html } = buildDonationThankYouEmail({ donorEmail: 'a@b.com', amount: 5000, currency: 'usd', type: 'one_time' });
+    expect(html).toContain('50.00 USD');
+  });
+
+  it('greets by first name only', () => {
+    const { html } = buildDonationThankYouEmail({ donorEmail: 'a@b.com', donorName: 'María García López', amount: 1000, currency: 'eur', type: 'one_time' });
+    expect(html).toContain('Hola María,');
+    expect(html).not.toContain('García');
+  });
+
+  it('falls back to generic greeting without a name', () => {
+    const { html } = buildDonationThankYouEmail({ donorEmail: 'a@b.com', amount: 1000, currency: 'eur', type: 'one_time' });
+    expect(html).toContain('Hola,');
+  });
+
+  it('mentions the sponsored animal when present', () => {
+    const { html } = buildDonationThankYouEmail({ donorEmail: 'a@b.com', amount: 500, currency: 'eur', type: 'subscription', animalName: 'Lola' });
+    expect(html).toContain('Lola');
+    expect(html).toContain('apadrinado');
+  });
+
+  it('omits the animal block when not present', () => {
+    const { html } = buildDonationThankYouEmail({ donorEmail: 'a@b.com', amount: 500, currency: 'eur', type: 'one_time' });
+    expect(html).not.toContain('apadrinado');
+  });
+
+  it('escapes HTML in donor name', () => {
+    const { html } = buildDonationThankYouEmail({ donorEmail: 'a@b.com', donorName: '<script>', amount: 1000, currency: 'eur', type: 'one_time' });
+    expect(html).not.toContain('<script>');
+    expect(html).toContain('&lt;script&gt;');
   });
 });

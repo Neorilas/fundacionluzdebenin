@@ -186,6 +186,7 @@ router.post('/checkout', async (req: Request, res: Response, next) => {
       metadata: {
         donationId: donation.id,
         donorDni: donorDni || '',
+        lang,
       },
     };
 

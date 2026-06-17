@@ -1,9 +1,17 @@
 import { Router, Request, Response } from 'express';
 import Stripe from 'stripe';
 import prisma from '../../lib/prisma';
-import { sendPaymentFailedNotification } from '../../lib/mailer';
+import { sendPaymentFailedNotification, sendDonationThankYou } from '../../lib/mailer';
 
 const router = Router();
+
+// Only an abandoned checkout still in "pending" should be expired. Never
+// overwrite a donation that already reached a terminal/active state
+// (completed/failed/canceled) — this guards against the rare race where the
+// success webhook lands before the expiry one.
+export function shouldExpireDonation(status: string | undefined): boolean {
+  return status === 'pending';
+}
 
 let _stripe: Stripe | null = null;
 function getStripe(): Stripe {
@@ -70,6 +78,40 @@ router.post(
             },
           });
           console.log(`✅ Donation ${donationId} completed`);
+
+          // Thank-you email to the donor. For subscriptions this only fires on the
+          // initial checkout (recurring renewals come via invoice.payment_succeeded,
+          // which intentionally does NOT email to avoid fatigue).
+          if (existing.donorEmail) {
+            sendDonationThankYou({
+              donorEmail: existing.donorEmail,
+              donorName: existing.donorName || undefined,
+              amount: existing.amount,
+              currency: existing.currency,
+              type: existing.type === 'subscription' ? 'subscription' : 'one_time',
+              animalName: existing.animalName || undefined,
+              lang: session.metadata?.lang || 'es',
+            });
+          }
+          break;
+        }
+
+        case 'checkout.session.expired': {
+          // Stripe expires a Checkout Session ~24h after creation if the donor
+          // never completes payment. Mark the abandoned "pending" donation as
+          // "expired" so it stops cluttering the admin list as a ghost record.
+          const session = event.data.object as Stripe.Checkout.Session;
+          const donationId = session.metadata?.donationId;
+          if (!donationId) break;
+
+          const existing = await prisma.donation.findUnique({ where: { id: donationId } });
+          if (!existing || !shouldExpireDonation(existing.status)) break;
+
+          await prisma.donation.update({
+            where: { id: donationId },
+            data: { status: 'expired' },
+          });
+          console.log(`⌛ Donation ${donationId} expired (checkout abandoned)`);
           break;
         }
 

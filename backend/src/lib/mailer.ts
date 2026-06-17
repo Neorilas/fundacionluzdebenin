@@ -280,6 +280,122 @@ export async function sendSantoWelcome(data: {
   }
 }
 
+export type DonationThankYouData = {
+  donorEmail: string;
+  donorName?: string;
+  amount: number; // cents
+  currency: string;
+  type: 'one_time' | 'subscription';
+  animalName?: string;
+  lang?: string;
+};
+
+// Pure builder — no network — so it can be unit tested.
+export function buildDonationThankYouEmail(data: DonationThankYouData): {
+  subject: string;
+  html: string;
+} {
+  const es = data.lang !== 'fr';
+  const isSub = data.type === 'subscription';
+  const amount = `${(data.amount / 100).toFixed(2)}${data.currency.toLowerCase() === 'eur' ? '€' : ` ${data.currency.toUpperCase()}`}`;
+  const firstName = data.donorName ? data.donorName.split(' ')[0] : null;
+  const greeting = es
+    ? (firstName ? `Hola ${escapeHtml(firstName)},` : 'Hola,')
+    : (firstName ? `Bonjour ${escapeHtml(firstName)},` : 'Bonjour,');
+
+  const subject = es
+    ? (isSub ? 'Gracias por tu donación mensual — Fundación Luz de Benín' : 'Gracias por tu donación — Fundación Luz de Benín')
+    : (isSub ? 'Merci pour votre don mensuel — Fondation Luz de Benín' : 'Merci pour votre don — Fondation Luz de Benín');
+
+  const headline = es ? '¡Gracias de corazón!' : 'Merci du fond du cœur !';
+
+  // Intro line describing the gift
+  const intro = es
+    ? (isSub
+        ? `Acabamos de recibir tu primera donación mensual de <strong>${amount}</strong>. A partir de ahora nos acompañarás cada mes, y eso nos permite planificar y sostener nuestros proyectos en Benín con mucha más seguridad.`
+        : `Acabamos de recibir tu donación de <strong>${amount}</strong>. Cada euro se transforma en comida, atención y futuro para los niños de cuatro orfanatos en Cotonou.`)
+    : (isSub
+        ? `Nous venons de recevoir votre premier don mensuel de <strong>${amount}</strong>. Désormais vous nous accompagnerez chaque mois, ce qui nous permet de planifier et de soutenir nos projets au Bénin avec bien plus de sérénité.`
+        : `Nous venons de recevoir votre don de <strong>${amount}</strong>. Chaque euro se transforme en nourriture, en soins et en avenir pour les enfants de quatre orphelinats à Cotonou.`);
+
+  const animalLine = data.animalName
+    ? (es
+        ? `<p style="color:#374151;font-size:15px;line-height:1.6;">Has apadrinado a <strong>${escapeHtml(data.animalName)}</strong>. Te mantendremos al tanto de cómo va.</p>`
+        : `<p style="color:#374151;font-size:15px;line-height:1.6;">Vous avez parrainé <strong>${escapeHtml(data.animalName)}</strong>. Nous vous tiendrons informé(e) de ses nouvelles.</p>`)
+    : '';
+
+  const fiscalNote = es
+    ? 'Si nos facilitaste tu DNI/NIF, podremos emitirte el certificado fiscal anual para tu declaración de la renta.'
+    : 'Si vous nous avez communiqué votre numéro fiscal, nous pourrons vous délivrer le certificat fiscal annuel.';
+
+  const closing = es
+    ? 'Un abrazo,<br/><strong>El equipo de Fundación Luz de Benín</strong>'
+    : 'Avec toute notre gratitude,<br/><strong>L\'équipe de la Fondation Luz de Benín</strong>';
+
+  const ctaLabel = es ? 'Ver nuestros proyectos &rarr;' : 'Découvrir nos projets &rarr;';
+  const ctaHref = es
+    ? 'https://fundacionluzdebenin.org/es/que-hacemos/'
+    : 'https://fundacionluzdebenin.org/fr/que-hacemos/';
+
+  const footer = es
+    ? 'Fundación Luz de Benín · info@fundacionluzdebenin.org · fundacionluzdebenin.org'
+    : 'Fondation Luz de Benín · info@fundacionluzdebenin.org · fundacionluzdebenin.org';
+
+  const html = `
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
+      <div style="background:#065F46;padding:24px 32px;border-radius:12px 12px 0 0;">
+        <h1 style="color:#fff;margin:0;font-size:22px;">${headline}</h1>
+      </div>
+      <div style="background:#f9fafb;padding:24px 32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 12px 12px;">
+        <p style="color:#374151;font-size:15px;line-height:1.6;">${greeting}</p>
+        <p style="color:#374151;font-size:15px;line-height:1.6;">${intro}</p>
+        ${animalLine}
+        <p style="color:#6b7280;font-size:13px;line-height:1.6;">${fiscalNote}</p>
+        <p style="color:#374151;font-size:15px;line-height:1.6;margin-top:24px;">${closing}</p>
+        <div style="text-align:center;margin:28px 0;">
+          <a href="${ctaHref}"
+            style="display:inline-block;background:#065F46;color:#fff;font-size:15px;font-weight:600;padding:14px 32px;border-radius:8px;text-decoration:none;">
+            ${ctaLabel}
+          </a>
+        </div>
+        <p style="color:#9ca3af;font-size:12px;margin:0;border-top:1px solid #e5e7eb;padding-top:16px;">${footer}</p>
+      </div>
+    </div>
+  `;
+
+  return { subject, html };
+}
+
+export async function sendDonationThankYou(data: DonationThankYouData): Promise<void> {
+  if (!RESEND_API_KEY) return;
+
+  // Only send if we have a valid email address
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!data.donorEmail || !emailRegex.test(data.donorEmail)) return;
+
+  const { subject, html } = buildDonationThankYouEmail(data);
+
+  try {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: `Fundación Luz de Benín <${FROM_EMAIL}>`,
+        to: [data.donorEmail],
+        bcc: [CONTACT_EMAIL],
+        subject,
+        html,
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch {
+    // Non-critical — never fail webhook processing because of email
+  }
+}
+
 export async function sendPaymentFailedNotification(data: {
   donorEmail: string;
   donorName?: string;
