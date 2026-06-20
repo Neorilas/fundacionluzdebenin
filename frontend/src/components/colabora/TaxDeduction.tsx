@@ -17,13 +17,13 @@ const content = {
         highlight: true,
       },
       {
-        pct: '35%',
+        pct: '40%',
         range: 'Resto de la donación',
         desc: 'Sobre la cantidad que supere los 250 €',
         highlight: false,
       },
     ],
-    bonus: '¿Donas todos los años? Si llevas 3 o más años donando a la misma entidad, el 35% sube al 40% en el tramo que supere los 250 €.',
+    bonus: '¿Donas todos los años? Si llevas 3 o más años donando a la misma entidad, el 40% sube al 45% en el tramo que supere los 250 €.',
     examplesTitle: 'Calcula tu ahorro real',
     examples: [
       {
@@ -42,10 +42,10 @@ const content = {
       },
       {
         donation: 500,
-        deduction: 288,
-        cost: 212,
+        deduction: 300,
+        cost: 200,
         label: 'Gran donación',
-        pctSaved: '57%',
+        pctSaved: '60%',
       },
     ],
     donationLabel: 'Donas',
@@ -65,13 +65,13 @@ const content = {
         highlight: true,
       },
       {
-        pct: '35%',
+        pct: '40%',
         range: 'Au-delà de 250 €',
         desc: 'Sur la partie du don qui dépasse 250 €',
         highlight: false,
       },
     ],
-    bonus: 'Vous donnez chaque année ? Si vous avez donné à la même organisation 3 années consécutives ou plus, le taux de 35% monte à 40% pour la tranche au-delà de 250 €.',
+    bonus: 'Vous donnez chaque année ? Si vous avez donné à la même organisation 3 années consécutives ou plus, le taux de 40% monte à 45% pour la tranche au-delà de 250 €.',
     examplesTitle: 'Calculez votre économie réelle',
     examples: [
       {
@@ -90,10 +90,10 @@ const content = {
       },
       {
         donation: 500,
-        deduction: 288,
-        cost: 212,
+        deduction: 300,
+        cost: 200,
         label: 'Grand don',
-        pctSaved: '57%',
+        pctSaved: '60%',
       },
     ],
     donationLabel: 'Vous donnez',
