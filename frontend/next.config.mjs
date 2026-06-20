@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  trailingSlash: true,
   images: {
     loader: 'custom',
     loaderFile: './src/lib/imageLoader.ts',
