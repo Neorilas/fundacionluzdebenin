@@ -42,9 +42,12 @@ export default function Login() {
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Usuario o email</label>
             <input
-              type="email"
+              type="text"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

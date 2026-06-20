@@ -35,7 +35,9 @@ import faqsAdmin from './routes/admin/faqs';
 import santoLeadsAdmin from './routes/admin/santoLeads';
 import categoriesAdmin from './routes/admin/categories';
 import subscribersAdmin from './routes/admin/subscribers';
+import donationsAdmin from './routes/admin/donations';
 
+import { authMiddleware, requireFullAdmin } from './middleware/authMiddleware';
 import { errorHandler } from './middleware/errorHandler';
 import { imageOptimizer } from './middleware/imageOptimizer';
 import { startScheduler } from './lib/scheduler';
@@ -79,22 +81,28 @@ app.use('/api/faqs', faqsPublic);
 app.use('/api/santo-lead', santoLeadPublic);
 
 // Admin API routes
+// Login abierto (sin rol). El resto de rutas, salvo donaciones, exigen rol
+// admin completo; el visor de donaciones (donations_viewer) solo accede a
+// /api/admin/auth y /api/admin/donations.
 app.use('/api/admin/auth', authAdmin);
-app.use('/api/admin/projects', projectsAdmin);
-app.use('/api/admin/blog', blogAdmin);
-app.use('/api/admin/pages', pagesAdmin);
-app.use('/api/admin/contacts', contactsAdmin);
-app.use('/api/admin/settings', settingsAdmin);
-app.use('/api/admin/upload', uploadAdmin);
-app.use('/api/admin/stripe', stripeAdmin);
-app.use('/api/admin/campaigns', campaignsAdmin);
-app.use('/api/admin/translate', translateAdmin);
-app.use('/api/admin/users', usersAdmin);
-app.use('/api/admin/dashboard', dashboardAdmin);
-app.use('/api/admin/faqs', faqsAdmin);
-app.use('/api/admin/blog-categories', categoriesAdmin);
-app.use('/api/admin/santo-leads', santoLeadsAdmin);
-app.use('/api/admin/subscribers', subscribersAdmin);
+app.use('/api/admin/donations', donationsAdmin);
+
+const fullAdminOnly = [authMiddleware, requireFullAdmin];
+app.use('/api/admin/projects', fullAdminOnly, projectsAdmin);
+app.use('/api/admin/blog', fullAdminOnly, blogAdmin);
+app.use('/api/admin/pages', fullAdminOnly, pagesAdmin);
+app.use('/api/admin/contacts', fullAdminOnly, contactsAdmin);
+app.use('/api/admin/settings', fullAdminOnly, settingsAdmin);
+app.use('/api/admin/upload', fullAdminOnly, uploadAdmin);
+app.use('/api/admin/stripe', fullAdminOnly, stripeAdmin);
+app.use('/api/admin/campaigns', fullAdminOnly, campaignsAdmin);
+app.use('/api/admin/translate', fullAdminOnly, translateAdmin);
+app.use('/api/admin/users', fullAdminOnly, usersAdmin);
+app.use('/api/admin/dashboard', fullAdminOnly, dashboardAdmin);
+app.use('/api/admin/faqs', fullAdminOnly, faqsAdmin);
+app.use('/api/admin/blog-categories', fullAdminOnly, categoriesAdmin);
+app.use('/api/admin/santo-leads', fullAdminOnly, santoLeadsAdmin);
+app.use('/api/admin/subscribers', fullAdminOnly, subscribersAdmin);
 
 // Health check
 app.get('/api/health', (_req, res) => {

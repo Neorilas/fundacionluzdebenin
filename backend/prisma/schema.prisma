@@ -87,6 +87,7 @@ model AdminUser {
   email        String   @unique
   passwordHash String
   name         String
+  role         String   @default("admin") // admin | donations_viewer
   createdAt    DateTime @default(now())
 }
 

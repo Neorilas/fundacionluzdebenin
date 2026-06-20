@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../App';
 
 const links = [
   { to: '/admin/', label: 'Dashboard', icon: '📊', end: true },
@@ -20,6 +21,11 @@ interface Props {
 }
 
 export default function Sidebar({ isOpen, onClose }: Props) {
+  const { user } = useAuth();
+  // El visor de donaciones solo ve su sección.
+  const visibleLinks = user?.role === 'donations_viewer'
+    ? links.filter(l => l.to === '/admin/donations')
+    : links;
   return (
     <aside className={`
       fixed inset-y-0 left-0 z-50 w-64 bg-primary-800 text-white flex flex-col
@@ -41,7 +47,7 @@ export default function Sidebar({ isOpen, onClose }: Props) {
         </button>
       </div>
       <nav className="flex-1 py-4 overflow-y-auto">
-        {links.map(({ to, label, icon, end }) => (
+        {visibleLinks.map(({ to, label, icon, end }) => (
           <NavLink
             key={to}
             to={to}

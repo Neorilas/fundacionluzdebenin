@@ -19,6 +19,20 @@ async function main() {
   });
   console.log('✅ Admin user created: admin@fundacionluzdebenin.org / admin123');
 
+  // Usuario con acceso restringido: solo ve el historial de donaciones.
+  const viewerHash = await bcrypt.hash('Fundacion2026', 10);
+  await prisma.adminUser.upsert({
+    where: { email: 'jcolmenarejo' },
+    update: { passwordHash: viewerHash, role: 'donations_viewer', name: 'J. Colmenarejo' },
+    create: {
+      email: 'jcolmenarejo',
+      passwordHash: viewerHash,
+      name: 'J. Colmenarejo',
+      role: 'donations_viewer',
+    },
+  });
+  console.log('✅ Donations viewer created: jcolmenarejo / Fundacion2026');
+
   // Settings
   const settings = [
     { key: 'siteName', value: 'Fundación Luz de Benín' },

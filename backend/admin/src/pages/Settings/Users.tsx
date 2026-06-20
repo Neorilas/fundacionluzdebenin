@@ -6,10 +6,16 @@ interface AdminUser {
   id: string;
   email: string;
   name: string;
+  role: string;
   createdAt: string;
 }
 
-const empty = { name: '', email: '', password: '' };
+const ROLE_LABELS: Record<string, string> = {
+  admin: 'Administrador',
+  donations_viewer: 'Solo donaciones',
+};
+
+const empty = { name: '', email: '', password: '', role: 'admin' };
 
 export default function UsersSettings() {
   const { user: me } = useAuth();
@@ -69,7 +75,8 @@ export default function UsersSettings() {
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="text-left px-4 py-3 font-medium text-gray-600">Nombre</th>
-              <th className="text-left px-4 py-3 font-medium text-gray-600">Email</th>
+              <th className="text-left px-4 py-3 font-medium text-gray-600">Usuario / Email</th>
+              <th className="text-left px-4 py-3 font-medium text-gray-600">Rol</th>
               <th className="text-left px-4 py-3 font-medium text-gray-600">Creado</th>
               <th className="px-4 py-3"></th>
             </tr>
@@ -82,6 +89,13 @@ export default function UsersSettings() {
                   {u.id === me?.id && <span className="ml-2 text-xs bg-primary-100 text-primary-800 px-1.5 py-0.5 rounded font-normal">tú</span>}
                 </td>
                 <td className="px-4 py-3 text-gray-600">{u.email}</td>
+                <td className="px-4 py-3">
+                  <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${
+                    u.role === 'donations_viewer' ? 'bg-amber-100 text-amber-700' : 'bg-primary-100 text-primary-800'
+                  }`}>
+                    {ROLE_LABELS[u.role] || u.role}
+                  </span>
+                </td>
                 <td className="px-4 py-3 text-gray-400">{new Date(u.createdAt).toLocaleDateString('es-ES')}</td>
                 <td className="px-4 py-3 text-right">
                   {u.id !== me?.id && (
@@ -116,15 +130,29 @@ export default function UsersSettings() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Usuario o email</label>
           <input
-            type="email"
+            type="text"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             value={form.email}
             onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
             required
-            placeholder="nuevo@fundacion.org"
+            placeholder="nuevo@fundacion.org o nombreusuario"
             className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
           />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Rol</label>
+          <select
+            value={form.role}
+            onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
+          >
+            <option value="admin">Administrador (acceso completo)</option>
+            <option value="donations_viewer">Solo donaciones (nombre, email y DNI)</option>
+          </select>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Contraseña <span className="text-gray-400 font-normal">(mín. 8 caracteres)</span></label>

@@ -27,12 +27,12 @@ router.post('/login', async (req, res, next) => {
     }
 
     const token = jwt.sign(
-      { id: admin.id, email: admin.email },
+      { id: admin.id, email: admin.email, role: admin.role },
       process.env.JWT_SECRET || 'secret',
       { expiresIn: '7d' }
     );
 
-    res.json({ token, admin: { id: admin.id, email: admin.email, name: admin.name } });
+    res.json({ token, admin: { id: admin.id, email: admin.email, name: admin.name, role: admin.role } });
   } catch (error) {
     next(error);
   }
@@ -58,7 +58,7 @@ router.get('/me', async (req, res, next) => {
       res.status(404).json({ error: 'Usuario no encontrado' });
       return;
     }
-    res.json({ id: admin.id, email: admin.email, name: admin.name });
+    res.json({ id: admin.id, email: admin.email, name: admin.name, role: admin.role });
   } catch {
     res.status(401).json({ error: 'Token inválido' });
   }

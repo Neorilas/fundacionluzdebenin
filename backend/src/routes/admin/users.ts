@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import prisma from '../../lib/prisma';
 import { authMiddleware, AuthRequest } from '../../middleware/authMiddleware';
+import { isValidRole, DEFAULT_ROLE } from '../../lib/roles';
 
 const router = Router();
 router.use(authMiddleware);
@@ -10,7 +11,7 @@ router.use(authMiddleware);
 router.get('/', async (_req: AuthRequest, res: Response, next) => {
   try {
     const users = await prisma.adminUser.findMany({
-      select: { id: true, email: true, name: true, createdAt: true },
+      select: { id: true, email: true, name: true, role: true, createdAt: true },
       orderBy: { createdAt: 'asc' },
     });
     res.json(users);
@@ -22,7 +23,12 @@ router.get('/', async (_req: AuthRequest, res: Response, next) => {
 // POST /api/admin/users
 router.post('/', async (req: AuthRequest, res: Response, next) => {
   try {
-    const { name, email, password } = req.body as { name: string; email: string; password: string };
+    const { name, email, password, role } = req.body as {
+      name: string;
+      email: string;
+      password: string;
+      role?: string;
+    };
 
     if (!name || !email || !password) {
       res.status(400).json({ error: 'Nombre, email y contraseña son obligatorios' });
@@ -30,6 +36,10 @@ router.post('/', async (req: AuthRequest, res: Response, next) => {
     }
     if (password.length < 8) {
       res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres' });
+      return;
+    }
+    if (role !== undefined && !isValidRole(role)) {
+      res.status(400).json({ error: 'Rol no válido' });
       return;
     }
 
@@ -41,8 +51,8 @@ router.post('/', async (req: AuthRequest, res: Response, next) => {
 
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await prisma.adminUser.create({
-      data: { name, email, passwordHash },
-      select: { id: true, email: true, name: true, createdAt: true },
+      data: { name, email, passwordHash, role: role ?? DEFAULT_ROLE },
+      select: { id: true, email: true, name: true, role: true, createdAt: true },
     });
 
     res.status(201).json(user);

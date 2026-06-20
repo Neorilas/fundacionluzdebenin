@@ -145,39 +145,4 @@ router.delete('/products/:id', async (req: AuthRequest, res: Response, next) => 
   }
 });
 
-// GET /api/admin/stripe/donations
-router.get('/donations', async (req: AuthRequest, res: Response, next) => {
-  try {
-    const page = parseInt(req.query.page as string) || 1;
-    const pageSize = 20;
-    const status = req.query.status as string | undefined;
-    const type = req.query.type as string | undefined;
-
-    const where: Record<string, unknown> = {};
-    if (status) where.status = status;
-    if (type) where.type = type;
-
-    const [total, donations] = await Promise.all([
-      prisma.donation.count({ where }),
-      prisma.donation.findMany({
-        where,
-        orderBy: { createdAt: 'desc' },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-        include: { stripeProduct: true },
-      }),
-    ]);
-
-    res.json({
-      data: donations,
-      total,
-      page,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    });
-  } catch (err) {
-    next(err);
-  }
-});
-
 export default router;

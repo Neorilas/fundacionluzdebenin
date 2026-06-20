@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react';
 import api from '../../api';
+import { useAuth } from '../../App';
 
 interface Donation {
   id: string;
-  type: string;
-  status: string;
+  type?: string;
+  status?: string;
   amount: number;
   currency: string;
   donorName: string | null;
   donorEmail: string | null;
   donorDni: string | null;
-  paidAt: string | null;
+  paidAt?: string | null;
   createdAt: string;
-  stripeProduct: { nameEs: string } | null;
+  stripeProduct?: { nameEs: string } | null;
 }
 
 interface PaginatedResponse {
@@ -37,6 +38,8 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export default function DonationsList() {
+  const { user } = useAuth();
+  const isViewer = user?.role === 'donations_viewer';
   const [data, setData] = useState<PaginatedResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -48,7 +51,7 @@ export default function DonationsList() {
     const params = new URLSearchParams({ page: String(page) });
     if (statusFilter) params.set('status', statusFilter);
     if (typeFilter) params.set('type', typeFilter);
-    api.get(`/admin/stripe/donations?${params}`)
+    api.get(`/admin/donations?${params}`)
       .then(r => setData(r.data))
       .finally(() => setLoading(false));
   };
@@ -61,29 +64,33 @@ export default function DonationsList() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">Historial de donaciones</h3>
-        <div className="flex gap-2">
-          <select
-            value={statusFilter}
-            onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
-            className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
-          >
-            <option value="">Todos los estados</option>
-            <option value="pending">Pendiente</option>
-            <option value="completed">Completado</option>
-            <option value="failed">Fallido</option>
-            <option value="canceled">Cancelado</option>
-          </select>
-          <select
-            value={typeFilter}
-            onChange={e => { setTypeFilter(e.target.value); setPage(1); }}
-            className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
-          >
-            <option value="">Todos los tipos</option>
-            <option value="one_time">Única</option>
-            <option value="subscription">Suscripción</option>
-          </select>
-        </div>
+        <h3 className="text-lg font-semibold text-gray-800">
+          {isViewer ? 'Donaciones realizadas' : 'Historial de donaciones'}
+        </h3>
+        {!isViewer && (
+          <div className="flex gap-2">
+            <select
+              value={statusFilter}
+              onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
+              className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
+            >
+              <option value="">Todos los estados</option>
+              <option value="pending">Pendiente</option>
+              <option value="completed">Completado</option>
+              <option value="failed">Fallido</option>
+              <option value="canceled">Cancelado</option>
+            </select>
+            <select
+              value={typeFilter}
+              onChange={e => { setTypeFilter(e.target.value); setPage(1); }}
+              className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-800"
+            >
+              <option value="">Todos los tipos</option>
+              <option value="one_time">Única</option>
+              <option value="subscription">Suscripción</option>
+            </select>
+          </div>
+        )}
       </div>
 
       {loading ? (
@@ -103,9 +110,9 @@ export default function DonationsList() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="text-left px-4 py-3 font-medium text-gray-600">Fecha</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Tipo</th>
+                  {!isViewer && <th className="text-left px-4 py-3 font-medium text-gray-600">Tipo</th>}
                   <th className="text-left px-4 py-3 font-medium text-gray-600">Importe</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Estado</th>
+                  {!isViewer && <th className="text-left px-4 py-3 font-medium text-gray-600">Estado</th>}
                   <th className="text-left px-4 py-3 font-medium text-gray-600">Donante</th>
                   <th className="text-left px-4 py-3 font-medium text-gray-600">Email</th>
                   <th className="text-left px-4 py-3 font-medium text-gray-600">DNI</th>
@@ -115,21 +122,25 @@ export default function DonationsList() {
                 {data.data.map(d => (
                   <tr key={d.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{formatDate(d.createdAt)}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${
-                        d.type === 'subscription' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
-                      }`}>
-                        {d.type === 'subscription'
-                          ? (d.stripeProduct?.nameEs || 'Suscripción')
-                          : 'Única'}
-                      </span>
-                    </td>
+                    {!isViewer && (
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${
+                          d.type === 'subscription' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'
+                        }`}>
+                          {d.type === 'subscription'
+                            ? (d.stripeProduct?.nameEs || 'Suscripción')
+                            : 'Única'}
+                        </span>
+                      </td>
+                    )}
                     <td className="px-4 py-3 font-semibold text-gray-900">{formatAmount(d.amount)}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${STATUS_BADGES[d.status] || 'bg-gray-100 text-gray-500'}`}>
-                        {STATUS_LABELS[d.status] || d.status}
-                      </span>
-                    </td>
+                    {!isViewer && (
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${STATUS_BADGES[d.status || ''] || 'bg-gray-100 text-gray-500'}`}>
+                          {STATUS_LABELS[d.status || ''] || d.status}
+                        </span>
+                      </td>
+                    )}
                     <td className="px-4 py-3 text-gray-700">{d.donorName || '—'}</td>
                     <td className="px-4 py-3 text-gray-600">{d.donorEmail || '—'}</td>
                     <td className="px-4 py-3 text-gray-600 font-mono text-xs">{d.donorDni || '—'}</td>

@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import api from './api';
 
 // Auth context
-interface AdminUser { id: string; email: string; name: string; }
+interface AdminUser { id: string; email: string; name: string; role: string; }
 interface AuthCtx {
   user: AdminUser | null;
   token: string | null;
@@ -74,6 +74,7 @@ import CampaignsList from './pages/Campaigns/List';
 import CampaignsForm from './pages/Campaigns/Form';
 import FaqsList from './pages/Faqs/List';
 import SubscribersList from './pages/Subscribers/List';
+import DonationsList from './pages/Donations/DonationsList';
 
 function AdminLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -95,6 +96,57 @@ function AdminLayout({ children }: { children: ReactNode }) {
   );
 }
 
+// Vista del visor de donaciones (acceso restringido).
+function DonationsViewerPage() {
+  return (
+    <div>
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">Donaciones</h2>
+      <DonationsList />
+    </div>
+  );
+}
+
+function AdminRoutes() {
+  const { user } = useAuth();
+
+  // Usuario con acceso restringido: solo el historial de donaciones.
+  if (user?.role === 'donations_viewer') {
+    return (
+      <Routes>
+        <Route path="/" element={<Navigate to="/admin/donations" replace />} />
+        <Route path="donations" element={<DonationsViewerPage />} />
+        <Route path="*" element={<Navigate to="/admin/donations" replace />} />
+      </Routes>
+    );
+  }
+
+  return (
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="projects" element={<ProjectsList />} />
+      <Route path="projects/new" element={<ProjectsForm />} />
+      <Route path="projects/:id" element={<ProjectsForm />} />
+      <Route path="blog" element={<BlogList />} />
+      <Route path="blog/new" element={<BlogForm />} />
+      <Route path="blog/categories" element={<BlogCategories />} />
+      <Route path="blog/:id" element={<BlogForm />} />
+      <Route path="pages" element={<PagesEditor />} />
+      <Route path="contacts" element={<ContactsInbox />} />
+      <Route path="donations" element={<DonationsSettings />} />
+      <Route path="donations/products/new" element={<ProductForm />} />
+      <Route path="donations/products/:id" element={<ProductForm />} />
+      <Route path="settings" element={<GeneralSettings />} />
+      <Route path="users" element={<UsersSettings />} />
+      <Route path="campaigns" element={<CampaignsList />} />
+      <Route path="campaigns/new" element={<CampaignsForm />} />
+      <Route path="campaigns/:id" element={<CampaignsForm />} />
+      <Route path="faqs" element={<FaqsList />} />
+      <Route path="subscribers" element={<SubscribersList />} />
+      <Route path="*" element={<Navigate to="/admin/" replace />} />
+    </Routes>
+  );
+}
+
 export default function App() {
   return (
     <AuthProvider>
@@ -104,29 +156,7 @@ export default function App() {
           <Route path="/admin/*" element={
             <RequireAuth>
               <AdminLayout>
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="projects" element={<ProjectsList />} />
-                  <Route path="projects/new" element={<ProjectsForm />} />
-                  <Route path="projects/:id" element={<ProjectsForm />} />
-                  <Route path="blog" element={<BlogList />} />
-                  <Route path="blog/new" element={<BlogForm />} />
-                  <Route path="blog/categories" element={<BlogCategories />} />
-                  <Route path="blog/:id" element={<BlogForm />} />
-                  <Route path="pages" element={<PagesEditor />} />
-                  <Route path="contacts" element={<ContactsInbox />} />
-                  <Route path="donations" element={<DonationsSettings />} />
-                  <Route path="donations/products/new" element={<ProductForm />} />
-                  <Route path="donations/products/:id" element={<ProductForm />} />
-                  <Route path="settings" element={<GeneralSettings />} />
-                  <Route path="users" element={<UsersSettings />} />
-                  <Route path="campaigns" element={<CampaignsList />} />
-                  <Route path="campaigns/new" element={<CampaignsForm />} />
-                  <Route path="campaigns/:id" element={<CampaignsForm />} />
-                  <Route path="faqs" element={<FaqsList />} />
-                  <Route path="subscribers" element={<SubscribersList />} />
-                  <Route path="*" element={<Navigate to="/admin/" replace />} />
-                </Routes>
+                <AdminRoutes />
               </AdminLayout>
             </RequireAuth>
           } />
