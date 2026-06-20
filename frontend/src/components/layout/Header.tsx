@@ -30,6 +30,9 @@ export default function Header({ lang, logoUrl = '/logo.jpg' }: Props) {
 
   useEffect(() => { setOpen(false); }, [pathname]);
 
+  // La landing de captación (/es|fr/suscribete) es una página enfocada sin navegación.
+  if (/^\/(es|fr)\/suscribete\/?$/.test(pathname)) return null;
+
   const isActive = (href: string) => pathname === href || pathname === href.slice(0, -1);
 
   return (

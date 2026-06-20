@@ -136,6 +136,16 @@
     "donorTitle": "Recevez des nouvelles de votre impact",
     "donorSubtitle": "Abonnez-vous à la newsletter et nous vous dirons comment votre don améliore des vies au Bénin."
   },
+  "newsletterLanding": {
+    "badge": "Newsletter de la Fondation",
+    "title": "Faites partie de la Lumière du Bénin",
+    "subtitle": "Chaque mois, nous vous racontons l'avancée des orphelinats, de la ferme avicole et du programme pour les jeunes mères. Des histoires vraies de la façon dont votre soutien change des vies au Bénin.",
+    "bullet1": "Actualités et avancées de nos projets sur le terrain",
+    "bullet3": "Comment collaborer et l'impact direct de votre aide",
+    "cta": "Je veux recevoir des nouvelles",
+    "successNote": "Vérifiez votre boîte mail : nous vous avons envoyé un email de confirmation.",
+    "privacy": "Pas de spam. Seulement l'essentiel. Désabonnement à tout moment."
+  },
   "donation": {
     "title": "Faire un don",
     "subtitle": "Choisissez comment collaborer",

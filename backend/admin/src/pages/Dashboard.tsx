@@ -19,6 +19,12 @@ const empty: DashboardData = {
   monthlyDonations: { total: 0, count: 0 },
 };
 
+// En dev el admin corre en :5173 (Vite) y el frontend en :3000; en producción
+// comparten dominio, así que basta con el origin actual.
+const FRONTEND_URL =
+  window.location.port === '5173' ? 'http://localhost:3000' : window.location.origin;
+const LANDING_URL = `${FRONTEND_URL}/es/suscribete/`;
+
 function fmtEuros(cents: number) {
   return (cents / 100).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
 }
@@ -34,6 +40,17 @@ function fmtDateTime(s: string) {
 export default function Dashboard() {
   const [data, setData] = useState<DashboardData>(empty);
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLanding = async () => {
+    try {
+      await navigator.clipboard.writeText(LANDING_URL);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.prompt('Copia este enlace:', LANDING_URL);
+    }
+  };
 
   useEffect(() => {
     api.get('/admin/dashboard')
@@ -83,6 +100,40 @@ export default function Dashboard() {
                 </div>
               </Link>
             ))}
+          </div>
+
+          {/* Landing de captación de suscriptores (compartir por WhatsApp, etc.) */}
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-emerald-900">📣 Landing de suscripción a la newsletter</p>
+              <p className="text-xs text-emerald-700 mt-0.5">
+                Comparte este enlace para captar suscriptores. No aparece en el menú ni en buscadores.
+              </p>
+              <a
+                href={LANDING_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-mono text-emerald-800 hover:underline break-all"
+              >
+                {LANDING_URL}
+              </a>
+            </div>
+            <div className="flex gap-2 flex-shrink-0">
+              <button
+                onClick={handleCopyLanding}
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
+              >
+                {copied ? '✓ Copiado' : '🔗 Copiar enlace'}
+              </button>
+              <a
+                href={LANDING_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-emerald-300 text-emerald-800 text-sm font-medium rounded-lg hover:bg-emerald-100 transition-colors"
+              >
+                ↗ Abrir
+              </a>
+            </div>
           </div>
 
           {/* Lower section: contacts + scheduled */}

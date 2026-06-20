@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { sendNewsletterConfirmation } from '../../lib/mailer';
 import prisma from '../../lib/prisma';
+import { resolveSubscriberSource } from '../../lib/subscriberSource';
 
 const router = Router();
 
@@ -12,6 +13,7 @@ const MAILCHIMP_SERVER = process.env.MAILCHIMP_SERVER || 'us16';
 router.post('/subscribe', async (req, res, next) => {
   try {
     const { email, lang } = req.body;
+    const source = resolveSubscriberSource(req.body.source);
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       res.status(400).json({ error: 'Email inválido' });
@@ -34,7 +36,7 @@ router.post('/subscribe', async (req, res, next) => {
         body: JSON.stringify({
           email_address: email,
           status: 'subscribed',
-          tags: ['web', lang === 'fr' ? 'francés' : 'español'],
+          tags: [source, lang === 'fr' ? 'francés' : 'español'],
         }),
         signal: AbortSignal.timeout(10000),
       }
@@ -46,11 +48,11 @@ router.post('/subscribe', async (req, res, next) => {
     if (response.ok || data.title === 'Member Exists') {
       if (response.ok) {
         sendNewsletterConfirmation({ email, lang });
-        const tags = JSON.stringify(['newsletter', lang === 'fr' ? 'frances' : 'espanol']);
+        const tags = JSON.stringify([source, lang === 'fr' ? 'frances' : 'espanol']);
         prisma.subscriber.upsert({
           where: { email: email.trim().toLowerCase() },
           update: { lang: lang || 'es', active: true },
-          create: { email: email.trim().toLowerCase(), lang: lang || 'es', source: 'newsletter', tags },
+          create: { email: email.trim().toLowerCase(), lang: lang || 'es', source, tags },
         }).catch(() => {/* non-critical */});
       }
       res.json({ success: true, alreadySubscribed: data.title === 'Member Exists' });

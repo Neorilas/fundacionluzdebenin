@@ -36,11 +36,11 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     }).then(r => r.json()),
-  subscribeNewsletter: (email: string, lang: string) =>
+  subscribeNewsletter: (email: string, lang: string, source?: string) =>
     fetch(`${API_URL}/api/newsletter/subscribe`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, lang }),
+      body: JSON.stringify({ email, lang, source }),
     }).then(r => r.json()) as Promise<{ success?: boolean; error?: string; alreadySubscribed?: boolean }>,
   getCampaigns: () =>
     fetch(`${API_URL}/api/campaigns`, { next: { revalidate: 3600, tags: ['campaigns'] } })

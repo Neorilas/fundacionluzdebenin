@@ -136,6 +136,16 @@
     "donorTitle": "Recibe noticias de tu impacto",
     "donorSubtitle": "Suscríbete al newsletter y te contaremos cómo tu donación mejora vidas en Benín."
   },
+  "newsletterLanding": {
+    "badge": "Newsletter de la Fundación",
+    "title": "Sé parte de la Luz de Benín",
+    "subtitle": "Cada mes te contamos cómo avanzan los orfanatos, la granja avícola y el programa de madres jóvenes. Historias reales de cómo tu apoyo cambia vidas en Benín.",
+    "bullet1": "Noticias y avances de nuestros proyectos sobre el terreno",
+    "bullet3": "Cómo colaborar y el impacto directo de tu ayuda",
+    "cta": "Quiero recibir noticias",
+    "successNote": "Revisa tu correo: te hemos enviado un email de confirmación.",
+    "privacy": "Sin spam. Solo lo importante. Puedes darte de baja cuando quieras."
+  },
   "donation": {
     "title": "Haz una donación",
     "subtitle": "Elige cómo quieres colaborar",

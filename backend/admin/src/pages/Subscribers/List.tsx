@@ -14,14 +14,32 @@ interface Subscriber {
 
 const SOURCE_LABELS: Record<string, string> = {
   newsletter: 'Newsletter',
+  landing: 'Landing',
   'tu-santo': 'Tu Santo',
 };
+
+// En dev el admin corre en :5173 (Vite) y el frontend en :3000; en producción
+// comparten dominio, así que basta con el origin actual.
+const FRONTEND_URL =
+  window.location.port === '5173' ? 'http://localhost:3000' : window.location.origin;
+const LANDING_URL = `${FRONTEND_URL}/es/suscribete/`;
 
 export default function SubscribersList() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterSource, setFilterSource] = useState('');
   const [filterActive, setFilterActive] = useState('true');
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLanding = async () => {
+    try {
+      await navigator.clipboard.writeText(LANDING_URL);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.prompt('Copia este enlace:', LANDING_URL);
+    }
+  };
 
   const load = () => {
     setLoading(true);
@@ -63,6 +81,40 @@ export default function SubscribersList() {
         </button>
       </div>
 
+      {/* Landing de captación para compartir (WhatsApp, etc.) */}
+      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-emerald-900">📣 Landing de suscripción</p>
+          <p className="text-xs text-emerald-700 mt-0.5">
+            Comparte este enlace (por WhatsApp, redes…) para captar suscriptores. No aparece en la web.
+          </p>
+          <a
+            href={LANDING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-mono text-emerald-800 hover:underline break-all"
+          >
+            {LANDING_URL}
+          </a>
+        </div>
+        <div className="flex gap-2 flex-shrink-0">
+          <button
+            onClick={handleCopyLanding}
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
+          >
+            {copied ? '✓ Copiado' : '🔗 Copiar enlace'}
+          </button>
+          <a
+            href={LANDING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-emerald-300 text-emerald-800 text-sm font-medium rounded-lg hover:bg-emerald-100 transition-colors"
+          >
+            ↗ Abrir
+          </a>
+        </div>
+      </div>
+
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-6">
         <select
@@ -72,6 +124,7 @@ export default function SubscribersList() {
         >
           <option value="">Todas las fuentes</option>
           <option value="newsletter">Newsletter</option>
+          <option value="landing">Landing</option>
           <option value="tu-santo">Tu Santo</option>
         </select>
         <select
