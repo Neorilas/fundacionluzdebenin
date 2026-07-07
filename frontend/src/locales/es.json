@@ -92,7 +92,8 @@
   "whoWeAre": {
     "title": "Quiénes Somos",
     "legal": "Información Legal",
-    "nif": "NIF",
+    "nif": "NIF (España)",
+    "ifu": "IFU (Benín)",
     "registration": "Registro",
     "values": "Nuestros Valores",
     "team": "Nuestro Equipo"

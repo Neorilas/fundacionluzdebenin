@@ -53,6 +53,7 @@ export interface Settings {
   socialInstagram?: string;
   socialX?: string;
   foundationNif?: string;
+  foundationIfu?: string;
   foundationRegistry?: string;
   showEmail?: string;
   showPhone?: string;

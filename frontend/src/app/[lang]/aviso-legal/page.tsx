@@ -11,6 +11,7 @@ export default async function AvisoLegalPage({ params }: { params: Promise<{ lan
 
   const settings: Settings = await api.getSettings().catch(() => ({} as Settings));
   const nif = settings.foundationNif || 'G-XXXXXXXX';
+  const ifu = settings.foundationIfu || '6202684086867';
   const registry = settings.foundationRegistry || 'Registro de Fundaciones';
   const email = settings.emailContact || 'info@fundacionluzdebenin.org';
 
@@ -40,7 +41,8 @@ export default async function AvisoLegalPage({ params }: { params: Promise<{ lan
             <ul className="space-y-2 list-none pl-0">
               {[
                 { label: es ? 'Denominación social' : 'Dénomination sociale', value: 'Fundación Luz de Benín' },
-                { label: 'NIF', value: nif },
+                { label: es ? 'NIF (España)' : 'NIF (Espagne)', value: nif },
+                { label: es ? 'IFU (Benín)' : 'IFU (Bénin)', value: ifu },
                 { label: es ? 'Registro' : 'Enregistrement', value: registry },
                 { label: es ? 'Domicilio social' : 'Siège social', value: 'Madrid, España' },
                 { label: es ? 'Correo electrónico' : 'Courriel', value: email },

@@ -20,6 +20,7 @@ export default async function Footer({ lang }: Props) {
   const igUrl = settings.socialInstagram || 'https://instagram.com';
   const xUrl = settings.socialX || '';
   const logoUrl = settings.logoUrl || '/logo.jpg';
+  const foundationIfu = settings.foundationIfu || '6202684086867';
 
   return (
     <footer className="bg-primary-900 text-primary-100">
@@ -151,10 +152,12 @@ export default async function Footer({ lang }: Props) {
               </Link>
             </div>
           </div>
-          {(settings.foundationNif || settings.foundationRegistry) && (
+          {(settings.foundationNif || foundationIfu || settings.foundationRegistry) && (
             <p className="text-center text-primary-300">
               {settings.foundationNif && <span>CIF: {settings.foundationNif}</span>}
-              {settings.foundationNif && settings.foundationRegistry && <span className="mx-2">·</span>}
+              {settings.foundationNif && foundationIfu && <span className="mx-2">·</span>}
+              {foundationIfu && <span>{lang === 'fr' ? 'IFU (Bénin)' : 'IFU (Benín)'}: {foundationIfu}</span>}
+              {(settings.foundationNif || foundationIfu) && settings.foundationRegistry && <span className="mx-2">·</span>}
               {settings.foundationRegistry && <span>{settings.foundationRegistry}</span>}
             </p>
           )}

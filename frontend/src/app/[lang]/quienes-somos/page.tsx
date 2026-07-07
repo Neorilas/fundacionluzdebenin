@@ -112,6 +112,7 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
             <h3 className="font-bold text-gray-900 mb-3">{t(l, 'whoWeAre.legal')}</h3>
             <div className="grid sm:grid-cols-2 gap-3 text-sm text-gray-600">
               <div><span className="font-medium">{t(l, 'whoWeAre.nif')}:</span> {settings.foundationNif || 'G12345678'}</div>
+              <div><span className="font-medium">{t(l, 'whoWeAre.ifu')}:</span> {settings.foundationIfu || '6202684086867'}</div>
               <div><span className="font-medium">{t(l, 'whoWeAre.registration')}:</span> {settings.foundationRegistry || (l === 'es' ? 'Registro de Fundaciones nº 1234' : 'Registre des Fondations nº 1234')}</div>
             </div>
           </div>

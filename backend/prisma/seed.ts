@@ -46,6 +46,7 @@ async function main() {
     { key: 'socialFacebook', value: 'https://facebook.com/fundacionluzdebenin' },
     { key: 'socialInstagram', value: 'https://instagram.com/fundacionluzdebenin' },
     { key: 'foundationNif', value: 'G12345678' },
+    { key: 'foundationIfu', value: '6202684086867' },
     { key: 'foundationRegistry', value: 'Registro de Fundaciones nº 1234' },
     { key: 'showEmail',   value: '1' },
     { key: 'showPhone',   value: '1' },
