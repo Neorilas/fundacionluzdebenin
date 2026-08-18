@@ -26,13 +26,14 @@ router.get('/', async (_req, res, next) => {
 // POST /api/admin/projects
 router.post('/', async (req, res, next) => {
   try {
-    const { slug, titleEs, titleFr, descEs, descFr, status, featured, images, stats, order } = req.body;
+    const { slug, titleEs, titleFr, descEs, descFr, status, published, featured, images, stats, order } = req.body;
     const project = await prisma.project.create({
       data: {
         slug, titleEs, titleFr,
         descEs: htmlToMarkdown(descEs || ''),
         descFr: htmlToMarkdown(descFr || ''),
         status: status || 'active',
+        published: published || false,
         featured: featured || false,
         images: JSON.stringify(images || []),
         stats: JSON.stringify(stats || {}),
@@ -47,7 +48,7 @@ router.post('/', async (req, res, next) => {
 // PUT /api/admin/projects/:id
 router.put('/:id', async (req, res, next) => {
   try {
-    const { slug, titleEs, titleFr, descEs, descFr, status, featured, images, stats, order } = req.body;
+    const { slug, titleEs, titleFr, descEs, descFr, status, published, featured, images, stats, order } = req.body;
     const project = await prisma.project.update({
       where: { id: req.params.id },
       data: {
@@ -57,6 +58,7 @@ router.put('/:id', async (req, res, next) => {
         ...(descEs !== undefined && { descEs: htmlToMarkdown(descEs || '') }),
         ...(descFr !== undefined && { descFr: htmlToMarkdown(descFr || '') }),
         ...(status && { status }),
+        ...(published !== undefined && { published }),
         ...(featured !== undefined && { featured }),
         ...(images !== undefined && { images: JSON.stringify(images) }),
         ...(stats !== undefined && { stats: JSON.stringify(stats) }),

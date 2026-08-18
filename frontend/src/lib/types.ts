@@ -6,6 +6,7 @@ export interface Project {
   descEs: string;
   descFr: string;
   status: 'active' | 'completed' | 'planned';
+  published: boolean;
   featured: boolean;
   images: Array<{ url: string; alt: string } | string>;
   stats: Record<string, string | number>;

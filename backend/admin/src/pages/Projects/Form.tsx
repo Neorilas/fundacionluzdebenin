@@ -49,6 +49,7 @@ interface FormData {
   descEs: string;
   descFr: string;
   status: string;
+  published: boolean;
   featured: boolean;
   images: ProjectImage[];
   order: number;
@@ -56,7 +57,7 @@ interface FormData {
 
 const empty: FormData = {
   slug: '', titleEs: '', titleFr: '', descEs: '', descFr: '',
-  status: 'active', featured: false, images: [], order: 0,
+  status: 'active', published: false, featured: false, images: [], order: 0,
 };
 
 function normalizeImages(raw: (string | ProjectImage)[]): ProjectImage[] {
@@ -85,7 +86,8 @@ export default function ProjectsForm() {
         if (p) setForm({
           slug: p.slug, titleEs: p.titleEs, titleFr: p.titleFr,
           descEs: p.descEs, descFr: p.descFr, status: p.status,
-          featured: p.featured, images: normalizeImages(p.images), order: p.order,
+          published: p.published, featured: p.featured,
+          images: normalizeImages(p.images), order: p.order,
         });
       }).finally(() => {
         setLoading(false);
@@ -231,7 +233,17 @@ export default function ProjectsForm() {
               <option value="planned">Planificado</option>
             </select>
           </div>
-          <div className="flex items-center pt-6">
+          <div className="flex flex-col justify-center gap-2 pt-6">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.published}
+                onChange={(e) => set('published', e.target.checked)}
+                className="w-4 h-4 text-primary-800 rounded"
+              />
+              <span className="text-sm font-medium text-gray-700">Publicado</span>
+              {!form.published && <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">Borrador</span>}
+            </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -243,6 +255,11 @@ export default function ProjectsForm() {
             </label>
           </div>
         </div>
+        {!form.published && (
+          <p className="text-xs text-gray-500 bg-gray-50 border border-gray-200 rounded-md px-3 py-2">
+            Este proyecto es un borrador: no aparece en la web pública hasta que marques «Publicado».
+          </p>
+        )}
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Imágenes</label>

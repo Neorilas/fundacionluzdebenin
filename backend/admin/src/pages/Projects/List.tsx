@@ -8,6 +8,7 @@ interface Project {
   slug: string;
   titleEs: string;
   status: string;
+  published: boolean;
   featured: boolean;
   order: number;
 }
@@ -77,7 +78,12 @@ export default function ProjectsList() {
                   className="hover:bg-gray-50 cursor-pointer"
                   onClick={() => navigate(`/admin/projects/${p.id}`)}
                 >
-                  <td className="px-4 py-3 font-medium text-gray-900">{p.titleEs}</td>
+                  <td className="px-4 py-3 font-medium text-gray-900">
+                    {p.titleEs}
+                    {!p.published && (
+                      <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Borrador</span>
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-gray-500 font-mono text-xs">{p.slug}</td>
                   <td className="px-4 py-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[p.status]}`}>

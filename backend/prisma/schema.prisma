@@ -15,6 +15,7 @@ model Project {
   descEs      String
   descFr      String
   status      String   @default("active") // active | completed | planned
+  published   Boolean  @default(true) // default true so existing rows stay visible after db push; the admin creates drafts explicitly
   featured    Boolean  @default(false)
   images      String   @default("[]") // JSON array of image URLs
   stats       String   @default("{}") // JSON object with stats
