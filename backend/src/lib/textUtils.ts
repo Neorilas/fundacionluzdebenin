@@ -76,6 +76,27 @@ function decodeEntities(text: string): string {
 }
 
 /**
+ * Escapes the Markdown characters that would let a link label or image alt
+ * break out of the [] () syntax it is spliced into.
+ */
+function escapeMdLabel(text: string): string {
+  return text.replace(/([\\[\]])/g, '\\$1').replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * Keeps only URL schemes that are safe to publish. Anything else (javascript:,
+ * data:, vbscript:, file:) is dropped so the link degrades to plain text.
+ * Spaces and parentheses are encoded so they cannot close the Markdown
+ * destination early.
+ */
+function safeUrl(url: string): string {
+  const clean = decodeEntities(url).trim().replace(/[\u0000-\u001F\u007F]/g, '');
+  const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(clean)?.[1]?.toLowerCase();
+  if (scheme && !['http', 'https', 'mailto', 'tel'].includes(scheme)) return '';
+  return clean.replace(/ /g, '%20').replace(/\(/g, '%28').replace(/\)/g, '%29');
+}
+
+/**
  * Detects whether a string carries HTML markup that would leak into the page
  * as visible tags when the value is rendered as Markdown or plain text.
  */
@@ -105,14 +126,18 @@ export function htmlToMarkdown(input: string): string {
   out = out.replace(/<\s*(em|i)\b[^>]*>([\s\S]*?)<\/\s*\1\s*>/gi, (_m, _t, inner) => (inner.trim() ? `*${inner.trim()}*` : ''));
   out = out.replace(/<\s*code\b[^>]*>([\s\S]*?)<\/\s*code\s*>/gi, (_m, inner) => (inner.trim() ? `\`${inner.trim()}\`` : ''));
 
-  // Links and images.
+  // Links and images. Label and URL both come from pasted markup, so they are
+  // escaped before being spliced into Markdown syntax.
   out = out.replace(/<\s*img\b[^>]*?src\s*=\s*["']([^"']*)["'][^>]*>/gi, (m, src) => {
-    const alt = /alt\s*=\s*["']([^"']*)["']/i.exec(m)?.[1] || '';
-    return `![${alt}](${src})`;
+    const alt = escapeMdLabel(decodeEntities(/alt\s*=\s*["']([^"']*)["']/i.exec(m)?.[1] || ''));
+    const url = safeUrl(src);
+    return url ? `![${alt}](${url})` : alt;
   });
   out = out.replace(/<\s*a\b[^>]*?href\s*=\s*["']([^"']*)["'][^>]*>([\s\S]*?)<\/\s*a\s*>/gi, (_m, href, inner) => {
-    const label = inner.replace(/<[^>]+>/g, '').trim();
-    return label ? `[${label}](${href})` : '';
+    const label = escapeMdLabel(decodeEntities(inner.replace(/<[^>]+>/g, '')));
+    if (!label) return '';
+    const url = safeUrl(href);
+    return url ? `[${label}](${url})` : label;
   });
 
   // Headings.

@@ -219,3 +219,33 @@ describe('htmlToMarkdown', () => {
     expect(htmlToMarkdown(once)).toBe(once);
   });
 });
+
+// ─── htmlToMarkdown: enlaces e imagenes no confiables ────────────────────────
+
+describe('htmlToMarkdown — links and images are not trusted', () => {
+  it('escapes brackets so a label cannot break out of the link syntax', () => {
+    expect(htmlToMarkdown('<p><a href="/es/">Ver [ficha]</a></p>')).toBe('[Ver \\[ficha\\]](/es/)');
+    expect(htmlToMarkdown('<p><img src="/a.webp" alt="Foto [1]"></p>')).toBe('![Foto \\[1\\]](/a.webp)');
+  });
+
+  it('encodes spaces and parentheses in the destination', () => {
+    expect(htmlToMarkdown('<p><a href="/es/mi pagina(1).pdf">Doc</a></p>')).toBe('[Doc](/es/mi%20pagina%281%29.pdf)');
+  });
+
+  it('keeps hyphens and slashes in relative URLs intact', () => {
+    expect(htmlToMarkdown('<p><a href="/es/proyectos/granja-yogou/">Granja</a></p>')).toBe('[Granja](/es/proyectos/granja-yogou/)');
+  });
+
+  it('drops unsafe schemes and degrades the link to plain text', () => {
+    expect(htmlToMarkdown('<p><a href="javascript:alert(1)">Pincha</a></p>')).toBe('Pincha');
+    expect(htmlToMarkdown('<p><a href="JaVaScRiPt:alert(1)">Pincha</a></p>')).toBe('Pincha');
+    expect(htmlToMarkdown('<p><a href="vbscript:msgbox(1)">Pincha</a></p>')).toBe('Pincha');
+    expect(htmlToMarkdown('<p><img src="data:text/html;base64,PHNjcmlwdD4=" alt="Logo"></p>')).toBe('Logo');
+  });
+
+  it('allows the schemes the site actually uses', () => {
+    expect(htmlToMarkdown('<p><a href="https://fundacionluzdebenin.org/">Web</a></p>')).toBe('[Web](https://fundacionluzdebenin.org/)');
+    expect(htmlToMarkdown('<p><a href="mailto:info@fundacionluzdebenin.org">Correo</a></p>')).toBe('[Correo](mailto:info@fundacionluzdebenin.org)');
+    expect(htmlToMarkdown('<p><a href="tel:+34600000000">Telefono</a></p>')).toBe('[Telefono](tel:+34600000000)');
+  });
+});
