@@ -2,6 +2,7 @@ import { Router } from 'express';
 import prisma from '../../lib/prisma';
 import { authMiddleware } from '../../middleware/authMiddleware';
 import { revalidate, PATHS } from '../../lib/revalidate';
+import { htmlToMarkdown } from '../../lib/textUtils';
 
 const router = Router();
 router.use(authMiddleware);
@@ -28,7 +29,9 @@ router.post('/', async (req, res, next) => {
     const { slug, titleEs, titleFr, descEs, descFr, status, featured, images, stats, order } = req.body;
     const project = await prisma.project.create({
       data: {
-        slug, titleEs, titleFr, descEs, descFr,
+        slug, titleEs, titleFr,
+        descEs: htmlToMarkdown(descEs || ''),
+        descFr: htmlToMarkdown(descFr || ''),
         status: status || 'active',
         featured: featured || false,
         images: JSON.stringify(images || []),
@@ -51,8 +54,8 @@ router.put('/:id', async (req, res, next) => {
         ...(slug && { slug }),
         ...(titleEs && { titleEs }),
         ...(titleFr && { titleFr }),
-        ...(descEs !== undefined && { descEs }),
-        ...(descFr !== undefined && { descFr }),
+        ...(descEs !== undefined && { descEs: htmlToMarkdown(descEs || '') }),
+        ...(descFr !== undefined && { descFr: htmlToMarkdown(descFr || '') }),
         ...(status && { status }),
         ...(featured !== undefined && { featured }),
         ...(images !== undefined && { images: JSON.stringify(images) }),

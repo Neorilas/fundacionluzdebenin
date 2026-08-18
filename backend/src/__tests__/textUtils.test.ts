@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { toSlug, makeChunks, stripMarkdown, countWords } from '../lib/textUtils';
+import { toSlug, makeChunks, stripMarkdown, countWords, htmlToMarkdown, looksLikeHtml } from '../lib/textUtils';
 
 // ─── toSlug ──────────────────────────────────────────────────────────────────
 
@@ -136,5 +136,86 @@ describe('countWords', () => {
       'Nuestro objetivo es mejorar la educación y la salud de los niños más vulnerables. ' +
       'Cada aportación cuenta para lograr un futuro mejor.';
     expect(countWords(text)).toBeGreaterThan(30);
+  });
+});
+
+// ─── looksLikeHtml ───────────────────────────────────────────────────────────
+
+describe('looksLikeHtml', () => {
+  it('detects block and inline tags', () => {
+    expect(looksLikeHtml('<p>Hola</p>')).toBe(true);
+    expect(looksLikeHtml('Linea uno<br>Linea dos')).toBe(true);
+    expect(looksLikeHtml('<STRONG>Ojo</STRONG>')).toBe(true);
+  });
+
+  it('does not flag plain text or Markdown', () => {
+    expect(looksLikeHtml('Texto normal con < y > sueltos')).toBe(false);
+    expect(looksLikeHtml('## Titulo\n\n- uno\n- dos\n\n**negrita**')).toBe(false);
+    expect(looksLikeHtml('Ganamos 5 < 10 puntos')).toBe(false);
+  });
+});
+
+// ─── htmlToMarkdown ──────────────────────────────────────────────────────────
+
+describe('htmlToMarkdown', () => {
+  it('leaves Markdown and plain text untouched', () => {
+    const md = '## Titulo\n\nUn parrafo con **negrita**.\n\n- uno\n- dos';
+    expect(htmlToMarkdown(md)).toBe(md);
+    expect(htmlToMarkdown('')).toBe('');
+  });
+
+  it('converts paragraphs into blank-line separated blocks', () => {
+    expect(htmlToMarkdown('<p>Primero</p><p>Segundo</p>')).toBe('Primero\n\nSegundo');
+  });
+
+  it('drops the empty paragraphs the editor leaves behind', () => {
+    expect(htmlToMarkdown('<p>Uno</p><p></p><p>Dos</p><p></p>')).toBe('Uno\n\nDos');
+  });
+
+  it('turns <br> into a paragraph break so Markdown keeps it', () => {
+    // A single "\n" would collapse when react-markdown renders the field.
+    expect(htmlToMarkdown('<p>Uno<br>Dos</p>')).toBe('Uno\n\nDos');
+    expect(htmlToMarkdown('<p>Uno<br /><br/>Dos</p>')).toBe('Uno\n\nDos');
+  });
+
+  it('maps inline formatting to Markdown', () => {
+    expect(htmlToMarkdown('<p><strong>Negrita</strong> y <em>cursiva</em></p>')).toBe('**Negrita** y *cursiva*');
+    expect(htmlToMarkdown('<p><b>B</b> y <i>I</i></p>')).toBe('**B** y *I*');
+  });
+
+  it('maps headings to Markdown headings', () => {
+    expect(htmlToMarkdown('<h2>Nuestro proyecto</h2><p>Texto</p>')).toBe('## Nuestro proyecto\n\nTexto');
+  });
+
+  it('maps unordered and ordered lists', () => {
+    expect(htmlToMarkdown('<ul><li>Uno</li><li>Dos</li></ul>')).toBe('- Uno\n- Dos');
+    expect(htmlToMarkdown('<ol><li>Uno</li><li>Dos</li></ol>')).toBe('1. Uno\n2. Dos');
+  });
+
+  it('maps links and images', () => {
+    expect(htmlToMarkdown('<p>Ver <a href="/es/proyectos/">proyectos</a></p>')).toBe('Ver [proyectos](/es/proyectos/)');
+    expect(htmlToMarkdown('<p><img src="/uploads/a.webp" alt="Granja"></p>')).toBe('![Granja](/uploads/a.webp)');
+  });
+
+  it('decodes HTML entities', () => {
+    expect(htmlToMarkdown('<p>Ni&ntilde;os &amp; ni&ntilde;as&nbsp;de Ben&iacute;n</p>')).toBe('Niños & niñas de Benín');
+    expect(htmlToMarkdown('<p>Comillas &quot;asi&quot; y &#191;que tal?</p>')).toBe('Comillas "asi" y ¿que tal?');
+  });
+
+  it('strips unknown tags and never leaks scripts', () => {
+    expect(htmlToMarkdown('<p>Hola <span class="x">mundo</span></p>')).toBe('Hola mundo');
+    expect(htmlToMarkdown('<p>Seguro</p><script>alert(1)</script>')).toBe('Seguro');
+  });
+
+  it('normalises the real "contenedor" project description', () => {
+    const stored = '<p>En estos dos anos hemos enviado un contenedor de ayuda anual.</p><p></p><p>Ahora compramos todo en la zona, generando riqueza local.</p><p></p>';
+    expect(htmlToMarkdown(stored)).toBe(
+      'En estos dos anos hemos enviado un contenedor de ayuda anual.\n\nAhora compramos todo en la zona, generando riqueza local.'
+    );
+  });
+
+  it('is idempotent — running it twice changes nothing', () => {
+    const once = htmlToMarkdown('<h2>Titulo</h2><p><strong>Uno</strong></p><ul><li>A</li></ul>');
+    expect(htmlToMarkdown(once)).toBe(once);
   });
 });
