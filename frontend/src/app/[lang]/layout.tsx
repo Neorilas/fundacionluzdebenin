@@ -15,8 +15,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const isFr = lang === 'fr';
   const siteName = isFr ? 'Fondation Lumière du Bénin' : 'Fundación Luz de Benín';
   const description = isFr
-    ? "ONG espagnole de coopération au développement au Bénin. Nous soutenons des orphelinats, des mères célibataires et l'économie durable en Afrique de l'Ouest."
-    : 'ONG española de cooperación al desarrollo en Benín. Apoyamos orfanatos, madres solteras y economía sostenible en África Occidental.';
+    ? "Fondation espagnole de coopération au développement au Bénin. Nous soutenons des orphelinats, des mères célibataires et l'économie durable en Afrique de l'Ouest."
+    : 'Fundación española de cooperación al desarrollo en Benín. Apoyamos orfanatos, madres solteras y economía sostenible en África Occidental.';
 
   return {
     title: {

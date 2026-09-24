@@ -116,7 +116,7 @@ export default async function CampaignPage({
     price: (campaign.amountCents / 100).toFixed(2),
     priceCurrency: 'EUR',
     recipient: {
-      '@type': 'NGO',
+      '@type': 'Organization',
       name: 'Fundación Luz de Benín',
       alternateName: 'Fondation Lumière du Bénin',
       url: SITE_URL,

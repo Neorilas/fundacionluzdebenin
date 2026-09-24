@@ -17,8 +17,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const isFr = lang === 'fr';
 
   const title = isFr
-    ? 'Fondation Lumière du Bénin – ONG au Bénin, Afrique de l\'Ouest'
-    : 'Fundación Luz de Benín – ONG en Benín, África Occidental';
+    ? 'Fondation Lumière du Bénin – Aide aux orphelinats au Bénin'
+    : 'Fundación Luz de Benín – Ayuda a orfanatos en Benín';
   const description = isFr
     ? "Nous soutenons 4 orphelinats au Bénin grâce à notre ferme avicole de 2 500 poules. Projets d'éducation, d'accompagnement de mères célibataires et de développement économique durable."
     : 'Apoyamos 4 orfanatos en Benín con nuestra granja avícola de 2.500 gallinas. Proyectos de educación, acompañamiento a madres solteras y desarrollo económico sostenible.';
@@ -64,13 +64,13 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
 
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'NGO',
+    '@type': 'Organization',
     name: 'Fundación Luz de Benín',
     alternateName: 'Fondation Lumière du Bénin',
     url: SITE_URL,
     logo: `${SITE_URL}/logo.jpg`,
     image: `${SITE_URL}/logo.jpg`,
-    description: 'ONG española de cooperación al desarrollo en Benín, África Occidental. Apoyamos orfanatos, madres solteras y economía sostenible desde 2012.',
+    description: 'Fundación española de cooperación al desarrollo en Benín, África Occidental. Apoyamos orfanatos, madres solteras y economía sostenible desde 2012.',
     foundingDate: '2012',
     address: {
       '@type': 'PostalAddress',
