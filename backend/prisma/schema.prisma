@@ -20,6 +20,8 @@ model Project {
   images      String   @default("[]") // JSON array of image URLs
   stats       String   @default("{}") // JSON object with stats
   order       Int      @default(0)
+  metaDescEs  String   @default("")
+  metaDescFr  String   @default("")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

@@ -65,7 +65,7 @@ export default async function ContactoPage({ params }: { params: Promise<{ lang:
           {/* Info */}
           <div className="md:col-span-2 space-y-6">
             <div className="bg-primary-50 rounded-2xl p-6 border border-primary-100">
-              <h3 className="font-bold text-primary-800 mb-4">{l === 'es' ? 'Información de contacto' : 'Informations de contact'}</h3>
+              <h2 className="font-bold text-primary-800 mb-4">{l === 'es' ? 'Información de contacto' : 'Informations de contact'}</h2>
               <div className="space-y-3 text-sm text-gray-700">
                 {settings.showEmail !== '0' && (
                   <div className="flex items-start gap-3">

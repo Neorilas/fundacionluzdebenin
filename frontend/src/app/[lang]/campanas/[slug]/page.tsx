@@ -36,7 +36,7 @@ export async function generateMetadata({
 
   const isFr = lang === 'fr';
   const title = isFr ? campaign.metaTitleFr : campaign.metaTitleEs;
-  const description = isFr ? campaign.metaDescFr : campaign.metaDescEs;
+  const description = (isFr ? campaign.seoDescFr : campaign.seoDescEs) || (isFr ? campaign.metaDescFr : campaign.metaDescEs);
 
   return {
     title: { absolute: title },

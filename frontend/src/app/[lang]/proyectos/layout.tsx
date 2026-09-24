@@ -6,8 +6,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const isFr = lang === 'fr';
   const title = isFr ? 'Nos Projets au Bénin' : 'Nuestros Proyectos en Benín';
   const description = isFr
-    ? "Découvrez tous les projets de la Fondation Lumière du Bénin : soutien aux orphelinats, accompagnement des mères célibataires, ferme avicole et projets de développement rural."
-    : 'Conoce todos los proyectos de la Fundación Luz de Benín: apoyo a orfanatos, acompañamiento a madres solteras, granja avícola y proyectos de desarrollo rural.';
+    ? "Tous les projets de la Fondation Lumière du Bénin : soutien aux orphelinats, mères célibataires, ferme avicole et développement rural."
+    : 'Todos los proyectos de la Fundación Luz de Benín: apoyo a orfanatos, acompañamiento a madres solteras, granja avícola y desarrollo rural.';
   return {
     title,
     description,

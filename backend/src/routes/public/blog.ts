@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import prisma from '../../lib/prisma';
+import { blogPostSeo } from '../../lib/seo';
 
 const router = Router();
 
@@ -112,7 +113,7 @@ router.get('/preview/:slug', async (req, res, next) => {
     }
     const post = await prisma.blogPost.findFirst({ where: { slug: req.params.slug } });
     if (!post) { res.status(404).json({ error: 'Post no encontrado' }); return; }
-    res.json(post);
+    res.json({ ...post, ...blogPostSeo(post) });
   } catch (error) { next(error); }
 });
 
@@ -165,7 +166,7 @@ router.get('/:slug', async (req, res, next) => {
       res.status(404).json({ error: 'Post no encontrado' });
       return;
     }
-    res.json(post);
+    res.json({ ...post, ...blogPostSeo(post) });
   } catch (error) {
     next(error);
   }

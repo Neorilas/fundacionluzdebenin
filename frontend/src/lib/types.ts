@@ -11,6 +11,12 @@ export interface Project {
   images: Array<{ url: string; alt: string } | string>;
   stats: Record<string, string | number>;
   order: number;
+  /** Meta description ready for <head> (<=155 chars), computed by the API. */
+  seoDescEs?: string;
+  seoDescFr?: string;
+  /** Final <title> (brand appended only if it fits in 60 chars), computed by the API. */
+  seoTitleEs?: string;
+  seoTitleFr?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -22,6 +28,11 @@ export interface BlogPost {
   titleFr: string;
   metaTitleEs?: string;
   metaTitleFr?: string;
+  /** Computed by the API on the single-post endpoint. */
+  seoTitleEs?: string;
+  seoTitleFr?: string;
+  seoDescEs?: string;
+  seoDescFr?: string;
   excerptEs: string;
   excerptFr: string;
   contentEs?: string;
@@ -124,6 +135,8 @@ export interface Campaign {
   ctaBottomNoteEs: string; ctaBottomNoteFr: string;
   metaTitleEs: string; metaTitleFr: string;
   metaDescEs: string; metaDescFr: string;
+  /** Meta description capped to 155 chars, computed by the API. */
+  seoDescEs?: string; seoDescFr?: string;
   createdAt: string;
   updatedAt: string;
 }

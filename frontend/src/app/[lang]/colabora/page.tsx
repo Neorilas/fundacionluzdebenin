@@ -15,10 +15,10 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const { lang } = await params;
   const isFr = lang === 'fr';
   const title = isFr
-    ? 'Faire un don à la Fondation Lumière du Bénin — Différentes façons d\'aider'
+    ? 'Faire un don à la Fondation Lumière du Bénin'
     : 'Dona a Fundación Luz de Benín — Distintas formas de ayudar';
   const description = isFr
-    ? "Faites un don à la Fondation Lumière du Bénin. Déductible fiscalement à 80 %. Chaque euro compte pour les orphelinats, les mères célibataires et les projets de développement au Bénin."
+    ? "Faites un don à la Fondation Lumière du Bénin, déductible à 80 %. Chaque euro aide les orphelinats, les mères célibataires et nos projets au Bénin."
     : 'Donación puntual o mensual, apadrinamiento de animales o apoyo a proyectos. Deducible al 80% en el IRPF. Sin intermediarios, impacto directo en Benín.';
   return {
     title: { absolute: title },

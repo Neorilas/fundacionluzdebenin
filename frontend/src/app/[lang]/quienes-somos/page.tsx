@@ -13,8 +13,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     ? 'Qui sommes-nous — Fondation Lumière du Bénin'
     : 'Quiénes somos — Fundación Luz de Benín';
   const description = isFr
-    ? "Fondée en 2012 par des coopérants espagnols, la Fondation Lumière du Bénin œuvre pour le développement durable des communautés rurales du Bénin depuis plus de 12 ans."
-    : 'Fundada en 2012 por cooperantes españoles, la Fundación Luz de Benín lleva más de 12 años trabajando por el desarrollo sostenible de las comunidades rurales de Benín.';
+    ? "Fondée en 2012 par des coopérants espagnols, la Fondation Lumière du Bénin œuvre pour le développement durable des communautés rurales du Bénin."
+    : 'Fundada en 2012 por cooperantes españoles, la Fundación Luz de Benín trabaja por el desarrollo sostenible de las comunidades rurales de Benín.';
   return {
     title: { absolute: title },
     description,

@@ -1,10 +1,16 @@
 import { Router } from 'express';
 import prisma from '../../lib/prisma';
+import { campaignSeoDescriptions } from '../../lib/seo';
 
 const router = Router();
 
-const parseCampaign = (c: { coverItems: string; extraItems: string; [key: string]: unknown }) => ({
+const parseCampaign = (c: {
+  coverItems: string; extraItems: string;
+  metaDescEs: string; metaDescFr: string; taglineEs: string; taglineFr: string;
+  [key: string]: unknown;
+}) => ({
   ...c,
+  ...campaignSeoDescriptions(c),
   coverItems: JSON.parse(c.coverItems || '[]'),
   extraItems: JSON.parse(c.extraItems || '[]'),
 });

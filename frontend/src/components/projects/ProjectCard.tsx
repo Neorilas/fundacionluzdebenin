@@ -7,11 +7,14 @@ import Badge from '../ui/Badge';
 interface Props {
   project: Project;
   lang: Lang;
+  /** h2 on listing pages without section headings, h3 inside a titled section (home). */
+  headingLevel?: 'h2' | 'h3';
 }
 
-export default function ProjectCard({ project, lang }: Props) {
-  const title = lang === 'es' ? project.titleEs : project.titleFr;
-  const desc = lang === 'es' ? project.descEs : project.descFr;
+export default function ProjectCard({ project, lang, headingLevel = 'h3' }: Props) {
+  const Heading = headingLevel;
+  const title = (lang === 'fr' && project.titleFr) || project.titleEs;
+  const desc = (lang === 'fr' && project.descFr) || project.descEs;
   const statusLabel = t(lang, `projects.status.${project.status}`);
 
   return (
@@ -45,7 +48,7 @@ export default function ProjectCard({ project, lang }: Props) {
           <div className="mb-2">
             <Badge status={project.status} label={statusLabel} />
           </div>
-          <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">{title}</h3>
+          <Heading className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">{title}</Heading>
           <p className="text-sm text-muted line-clamp-3 mb-4 flex-1">{desc}</p>
 
           <span className="inline-flex items-center gap-1 text-sm font-semibold text-primary-800 group-hover:text-accent transition-colors">

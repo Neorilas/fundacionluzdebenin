@@ -2,7 +2,13 @@ import type { Metadata } from 'next';
 import { Lang, Settings } from '@/lib/types';
 import { api } from '@/lib/api';
 
-export const metadata: Metadata = { robots: 'noindex' };
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params;
+  return {
+    title: lang === 'fr' ? 'Mentions légales' : 'Aviso legal y privacidad',
+    robots: 'noindex',
+  };
+}
 
 export default async function AvisoLegalPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;

@@ -6,9 +6,12 @@ import { t } from '@/lib/i18n';
 interface Props {
   post: BlogPost;
   lang: Lang;
+  /** h2 on listing pages without section headings, h3 inside a titled section (home). */
+  headingLevel?: 'h2' | 'h3';
 }
 
-export default function BlogCard({ post, lang }: Props) {
+export default function BlogCard({ post, lang, headingLevel = 'h3' }: Props) {
+  const Heading = headingLevel;
   const title = lang === 'es' ? post.titleEs : post.titleFr;
   const excerpt = lang === 'es' ? post.excerptEs : post.excerptFr;
   const date = post.publishedAt
@@ -31,7 +34,7 @@ export default function BlogCard({ post, lang }: Props) {
 
         <div className="p-5 flex flex-col flex-1">
           {date && <p className="text-xs text-muted mb-2">{date}</p>}
-          <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">{title}</h3>
+          <Heading className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">{title}</Heading>
           <p className="text-sm text-muted line-clamp-3 mb-4 flex-1">{excerpt}</p>
           <span className="inline-flex items-center gap-1 text-sm font-semibold text-primary-800 group-hover:text-accent transition-colors">
             {t(lang, 'blog.readMore')} →

@@ -448,7 +448,7 @@ Il y a trois ans, nous avons lancé notre programme de santé materno-infantile 
       metaTitleEs: 'Apadrina una gallina en Benín — 5€/mes',
       metaTitleFr: 'Parraine une poule au Bénin — 5€/mois',
       metaDescEs: 'Con 5€ al mes apadrina una gallina en la granja de la Fundación Luz de Benín. Sus huevos alimentan a niños en orfanatos. Sin permanencia. Deducible al 80%.',
-      metaDescFr: 'Avec 5€ par mois, parraine une poule dans la ferme de la Fondation Lumière du Bénin. Ses œufs nourrissent des enfants dans des orphelinats. Sans engagement. Déductible à 80%.',
+      metaDescFr: 'Avec 5€ par mois, parraine une poule de la ferme de la Fondation Lumière du Bénin. Ses œufs nourrissent des orphelins. Sans engagement. Déductible à 80%.',
     },
     {
       slug: 'apadrina-oveja',
@@ -500,8 +500,8 @@ Il y a trois ans, nous avons lancé notre programme de santé materno-infantile 
       ctaBottomNoteFr: 'Vous serez redirigé(e) vers Stripe, plateforme de paiement sécurisé. Sans engagement, annulez quand vous voulez.',
       metaTitleEs: 'Apadrina una oveja en Benín — 10€/mes',
       metaTitleFr: 'Parraine une brebis au Bénin — 10€/mois',
-      metaDescEs: 'Con 10€ al mes apadrina una oveja del nuevo rebaño de la Fundación Luz de Benín. Ayudas a construir el aprisco y dar autonomía económica a una comunidad rural. Sin permanencia. Deducible al 80%.',
-      metaDescFr: 'Avec 10€ par mois, parraine une brebis du nouveau troupeau de la Fondation Lumière du Bénin. Tu aides à construire la bergerie et à donner l\'autonomie économique à une communauté rurale. Sans engagement. Déductible à 80%.',
+      metaDescEs: 'Con 10€ al mes apadrina una oveja del rebaño de la Fundación Luz de Benín y da autonomía económica a una comunidad rural. Sin permanencia. Deducible al 80%.',
+      metaDescFr: 'Avec 10€ par mois, parraine une brebis de la Fondation Lumière du Bénin et offre l\'autonomie à une communauté rurale. Sans engagement. Déductible à 80%.',
     },
   ];
 

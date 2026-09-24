@@ -9,9 +9,9 @@ export const revalidate = 3600;
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
   const isFr = lang === 'fr';
-  const title = isFr ? 'Questions Fréquentes — Fondation Luz de Benín' : 'Preguntas Frecuentes — Fundación Luz de Benín';
+  const title = isFr ? 'Questions fréquentes' : 'Preguntas frecuentes';
   const description = isFr
-    ? 'Tout ce que vous devez savoir sur la Fondation Luz de Benín, nos projets en Bénin et comment vous pouvez collaborer.'
+    ? 'Tout ce que vous devez savoir sur la Fondation Lumière du Bénin, nos projets au Bénin et comment vous pouvez collaborer.'
     : 'Todo lo que necesitas saber sobre la Fundación Luz de Benín, nuestros proyectos en Benín y cómo puedes colaborar.';
   return {
     title,

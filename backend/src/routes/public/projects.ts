@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import prisma from '../../lib/prisma';
 import { buildPublicProjectWhere, isPubliclyVisible } from '../../lib/projectVisibility';
+import { projectSeoDescriptions, projectSeoTitles } from '../../lib/seo';
 
 const router = Router();
 
@@ -18,6 +19,8 @@ router.get('/', async (req, res, next) => {
       ...p,
       images: JSON.parse(p.images || '[]'),
       stats: JSON.parse(p.stats || '{}'),
+      ...projectSeoDescriptions(p),
+      ...projectSeoTitles(p),
     }));
 
     res.json(parsed);
@@ -40,6 +43,8 @@ router.get('/:slug', async (req, res, next) => {
       ...project,
       images: JSON.parse(project.images || '[]'),
       stats: JSON.parse(project.stats || '{}'),
+      ...projectSeoDescriptions(project),
+      ...projectSeoTitles(project),
     });
   } catch (error) {
     next(error);

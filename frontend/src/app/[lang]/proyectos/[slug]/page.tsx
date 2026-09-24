@@ -16,11 +16,12 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const isFr = lang === 'fr';
   try {
     const project = await api.getProject(slug);
-    const title = isFr ? project.titleFr : project.titleEs;
-    const description = isFr ? project.descFr : project.descEs;
+    const title = (isFr && project.titleFr) || project.titleEs;
+    const description = (isFr ? project.seoDescFr : project.seoDescEs) || undefined;
     const image = project.images?.[0] ? parseProjectImage(project.images[0]) : null;
+    const seoTitle = isFr ? project.seoTitleFr : project.seoTitleEs;
     return {
-      title,
+      title: seoTitle ? { absolute: seoTitle } : title,
       description,
       alternates: {
         canonical: `${SITE_URL}/${lang}/proyectos/${slug}/`,
@@ -67,8 +68,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ lang: 
     notFound();
   }
 
-  const title = l === 'es' ? project.titleEs : project.titleFr;
-  const desc = l === 'es' ? project.descEs : project.descFr;
+  const title = (l === 'fr' && project.titleFr) || project.titleEs;
+  const desc = (l === 'fr' && project.descFr) || project.descEs;
   const statusLabel = t(l, `projects.status.${project.status}`);
 
   const breadcrumbLd = {

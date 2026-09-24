@@ -70,9 +70,9 @@ export default async function Footer({ lang }: Props) {
 
           {/* Quick links */}
           <div>
-            <h3 className="font-semibold text-white mb-3">
+            <h2 className="font-semibold text-white mb-3">
               {lang === 'es' ? 'Navegación' : 'Navigation'}
-            </h3>
+            </h2>
             <ul className="space-y-2 text-sm">
               {[
                 { href: `/${lang}/que-hacemos/`, label: t(lang, 'nav.whatWeDo') },
@@ -92,9 +92,9 @@ export default async function Footer({ lang }: Props) {
           {/* Campañas */}
           {campaigns.length > 0 && (
             <div>
-              <h3 className="font-semibold text-white mb-3">
+              <h2 className="font-semibold text-white mb-3">
                 {lang === 'es' ? 'Apadrina' : 'Parraine'}
-              </h3>
+              </h2>
               <ul className="space-y-2 text-sm">
                 {campaigns.filter(c => c.active).map(c => {
                   const title = lang === 'es' ? c.titleEs : c.titleFr;
@@ -113,9 +113,9 @@ export default async function Footer({ lang }: Props) {
 
           {/* Contact */}
           <div>
-            <h3 className="font-semibold text-white mb-3">
+            <h2 className="font-semibold text-white mb-3">
               {lang === 'es' ? 'Contacto' : 'Contact'}
-            </h3>
+            </h2>
             <ul className="space-y-2 text-sm text-primary-300">
               {settings.showEmail !== '0' && (
                 <li>

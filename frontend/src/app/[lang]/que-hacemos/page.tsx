@@ -10,11 +10,11 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const { lang } = await params;
   const isFr = lang === 'fr';
   const title = isFr
-    ? 'Ce que nous faisons — Éducation, animaux et développement durable au Bénin'
-    : 'Qué hacemos — Educación, animales y desarrollo sostenible en Benín';
+    ? 'Nos actions — Éducation et développement durable au Bénin'
+    : 'Qué hacemos — Educación y desarrollo sostenible en Benín';
   const description = isFr
-    ? "Découvrez nos trois axes d'action au Bénin : soutien aux orphelinats, accompagnement des mères célibataires et développement d'une économie durable grâce à notre ferme avicole."
-    : 'Conoce nuestras tres áreas de trabajo en Benín: apoyo a orfanatos, acompañamiento a madres solteras y desarrollo de una economía sostenible con nuestra granja avícola.';
+    ? "Nos trois axes d'action au Bénin : soutien aux orphelinats, accompagnement des mères célibataires et économie durable grâce à notre ferme avicole."
+    : 'Nuestras tres áreas de trabajo en Benín: apoyo a orfanatos, acompañamiento a madres solteras y economía sostenible con nuestra granja avícola.';
   return {
     title: { absolute: title },
     description,

@@ -53,11 +53,14 @@ interface FormData {
   featured: boolean;
   images: ProjectImage[];
   order: number;
+  metaDescEs: string;
+  metaDescFr: string;
 }
 
 const empty: FormData = {
   slug: '', titleEs: '', titleFr: '', descEs: '', descFr: '',
   status: 'active', published: false, featured: false, images: [], order: 0,
+  metaDescEs: '', metaDescFr: '',
 };
 
 function normalizeImages(raw: (string | ProjectImage)[]): ProjectImage[] {
@@ -88,6 +91,7 @@ export default function ProjectsForm() {
           descEs: p.descEs, descFr: p.descFr, status: p.status,
           published: p.published, featured: p.featured,
           images: normalizeImages(p.images), order: p.order,
+          metaDescEs: p.metaDescEs || '', metaDescFr: p.metaDescFr || '',
         });
       }).finally(() => {
         setLoading(false);
@@ -218,6 +222,14 @@ export default function ProjectsForm() {
               );
             })()}
           </div>
+        </div>
+
+        <div>
+          <BilingualField label="Meta descripción (SEO)" nameEs="metaDescEs" nameFr="metaDescFr"
+            valueEs={form.metaDescEs} valueFr={form.metaDescFr} onChange={set} multiline rows={2} />
+          <p className={`text-xs mt-1 ${Math.max(form.metaDescEs.length, form.metaDescFr.length) > 155 ? 'text-red-600' : 'text-gray-400'}`}>
+            ES {form.metaDescEs.length}/155 · FR {form.metaDescFr.length}/155 — Opcional. Si se deja vacía, se genera automáticamente a partir de la descripción.
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">

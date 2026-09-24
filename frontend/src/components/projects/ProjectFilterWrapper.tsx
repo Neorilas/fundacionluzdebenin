@@ -18,7 +18,7 @@ export default function ProjectFilterWrapper({ lang, projects }: Props) {
     <>
       <ProjectFilter lang={lang} active={filter} onChange={setFilter} />
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filtered.map(p => <ProjectCard key={p.id} project={p} lang={lang} />)}
+        {filtered.map(p => <ProjectCard key={p.id} project={p} lang={lang} headingLevel="h2" />)}
         {filtered.length === 0 && (
           <div className="col-span-3 text-center py-20 text-muted">
             {lang === 'es' ? 'No hay proyectos en esta categoría' : 'Aucun projet dans cette catégorie'}

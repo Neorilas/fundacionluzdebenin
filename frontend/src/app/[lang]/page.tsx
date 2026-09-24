@@ -20,8 +20,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     ? 'Fondation Lumière du Bénin – Aide aux orphelinats au Bénin'
     : 'Fundación Luz de Benín – Ayuda a orfanatos en Benín';
   const description = isFr
-    ? "Nous soutenons 4 orphelinats au Bénin grâce à notre ferme avicole de 2 500 poules. Projets d'éducation, d'accompagnement de mères célibataires et de développement économique durable."
-    : 'Apoyamos 4 orfanatos en Benín con nuestra granja avícola de 2.500 gallinas. Proyectos de educación, acompañamiento a madres solteras y desarrollo económico sostenible.';
+    ? "Nous soutenons 4 orphelinats au Bénin grâce à notre ferme avicole de 2 500 poules, la formation de mères célibataires et le développement durable."
+    : 'Apoyamos 4 orfanatos en Benín con nuestra granja avícola de 2.500 gallinas, formación para madres solteras y proyectos de desarrollo sostenible.';
 
   return {
     title: { absolute: title },
@@ -62,9 +62,10 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
   const settings = settingsResult.status === 'fulfilled' ? settingsResult.value : {};
   const logoUrl = (settings as { logoUrl?: string }).logoUrl || '/logo.jpg';
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
+  const organizationId = `${SITE_URL}/#organization`;
+  const organizationLd = {
     '@type': 'Organization',
+    '@id': organizationId,
     name: 'Fundación Luz de Benín',
     alternateName: 'Fondation Lumière du Bénin',
     url: SITE_URL,
@@ -87,6 +88,21 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       'https://www.facebook.com/fundacionluzdebenin',
       'https://www.instagram.com/fundacionluzdebenin',
     ],
+  };
+
+  const websiteLd = {
+    '@type': 'WebSite',
+    '@id': `${SITE_URL}/#website`,
+    url: `${SITE_URL}/`,
+    name: l === 'fr' ? 'Fondation Lumière du Bénin' : 'Fundación Luz de Benín',
+    alternateName: l === 'fr' ? 'Fundación Luz de Benín' : 'Fondation Lumière du Bénin',
+    inLanguage: ['es-ES', 'fr-FR'],
+    publisher: { '@id': organizationId },
+  };
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [organizationLd, websiteLd],
   };
 
   return (

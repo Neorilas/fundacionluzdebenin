@@ -14,10 +14,11 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   try {
     const post = await api.getBlogPost(slug);
     const title = isFr ? post.titleFr : post.titleEs;
-    const description = isFr ? post.excerptFr : post.excerptEs;
+    const description = (isFr ? post.seoDescFr : post.seoDescEs) || (isFr ? post.excerptFr : post.excerptEs);
+    const seoTitle = isFr ? post.seoTitleFr : post.seoTitleEs;
     const metaTitle = isFr ? (post.metaTitleFr || title) : (post.metaTitleEs || title);
     return {
-      title: metaTitle,
+      title: seoTitle ? { absolute: seoTitle } : metaTitle,
       description,
       alternates: {
         canonical: `${SITE_URL}/${lang}/blog/${slug}/`,

@@ -17,12 +17,11 @@ export async function generateMetadata({
     : "Colabora con Fundación Luz de Benín — Empresas y autónomos";
   const description = isFr
     ? "Découvrez les avantages fiscaux de la collaboration avec une fondation à but non lucratif en Espagne. Déduction jusqu'à 50% sur l'impôt sur les sociétés."
-    : "Descubre los beneficios fiscales de colaborar con una fundación sin ánimo de lucro. Deducción de hasta el 50% en el Impuesto sobre Sociedades. Impacto real en Benín.";
+    : "Beneficios fiscales de colaborar con una fundación sin ánimo de lucro: deducción de hasta el 50% en el Impuesto sobre Sociedades. Impacto real en Benín.";
 
   return {
     title: { absolute: title },
     description,
-    robots: { index: false },
     alternates: {
       canonical: `${SITE_URL}/${lang}/colabora-empresas/`,
       languages: {

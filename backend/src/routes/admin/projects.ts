@@ -26,7 +26,7 @@ router.get('/', async (_req, res, next) => {
 // POST /api/admin/projects
 router.post('/', async (req, res, next) => {
   try {
-    const { slug, titleEs, titleFr, descEs, descFr, status, published, featured, images, stats, order } = req.body;
+    const { slug, titleEs, titleFr, descEs, descFr, status, published, featured, images, stats, order, metaDescEs, metaDescFr } = req.body;
     const project = await prisma.project.create({
       data: {
         slug, titleEs, titleFr,
@@ -38,6 +38,8 @@ router.post('/', async (req, res, next) => {
         images: JSON.stringify(images || []),
         stats: JSON.stringify(stats || {}),
         order: order !== undefined ? parseInt(order, 10) : 0,
+        metaDescEs: typeof metaDescEs === 'string' ? metaDescEs.trim() : '',
+        metaDescFr: typeof metaDescFr === 'string' ? metaDescFr.trim() : '',
       },
     });
     revalidate(PATHS.project(slug));
@@ -48,7 +50,7 @@ router.post('/', async (req, res, next) => {
 // PUT /api/admin/projects/:id
 router.put('/:id', async (req, res, next) => {
   try {
-    const { slug, titleEs, titleFr, descEs, descFr, status, published, featured, images, stats, order } = req.body;
+    const { slug, titleEs, titleFr, descEs, descFr, status, published, featured, images, stats, order, metaDescEs, metaDescFr } = req.body;
     const project = await prisma.project.update({
       where: { id: req.params.id },
       data: {
@@ -63,6 +65,8 @@ router.put('/:id', async (req, res, next) => {
         ...(images !== undefined && { images: JSON.stringify(images) }),
         ...(stats !== undefined && { stats: JSON.stringify(stats) }),
         ...(order !== undefined && { order: parseInt(order, 10) }),
+        ...(typeof metaDescEs === 'string' && { metaDescEs: metaDescEs.trim() }),
+        ...(typeof metaDescFr === 'string' && { metaDescFr: metaDescFr.trim() }),
       },
     });
     revalidate(PATHS.project(project.slug));
