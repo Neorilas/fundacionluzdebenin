@@ -11,7 +11,7 @@ cd "$REPO_DIR"
 echo "🔄 Actualizando Fundación Luz de Benín..."
 
 # Rebuild solo los servicios que hayan cambiado
-docker compose build --parallel
+docker compose build --parallel --pull
 
 # Eliminar todos los contenedores del proyecto (evita conflictos de nombres)
 docker ps -aq --filter 'name=fundacion' | xargs -r docker rm -f
