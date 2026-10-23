@@ -172,7 +172,7 @@ HTML/TXT de planes (`plan-seo-editorial.html`, `seo-estrategia.html`, `blog-plan
 - `schema.prisma` debe ser **ASCII puro** (el parser rechaza acentos y emojis, también en comentarios). Comprobar con `grep -Pn '[^\x00-\x7F]' backend/prisma/schema.prisma`.
 - No importar tipos de modelo (`BlogPost`, `Prisma`…) de `@prisma/client` en rutas: derivarlos con `typeof x[0]`.
 - Campo booleano nuevo con filas existentes: darle un `@default` que no oculte datos (ver `Project.published` = `true`).
-- Al crear una ruta admin que cambie contenido público, llamar a `revalidate(PATHS.…)`; si no, la web tarda hasta el `revalidate` de la página. Hoy **FAQ y ajustes no revalidan** al guardar.
+- Al crear una ruta admin que cambie contenido público, llamar a `revalidate(PATHS.…)`; si no, la web tarda hasta el `revalidate` de la página. Hoy solo revalidan `blog`, `campaigns`, `pages` y `projects`; **FAQ y ajustes, que sí se ven en la web, no**. (Las categorías del blog no hace falta: el post guarda su categoría como texto.)
 - Webhook Stripe: solo una donación `pending` pasa a `expired`; nunca se pisa un estado terminal (carrera entre eventos).
 - Ruta pública nueva de proyectos: filtrar con `buildPublicProjectWhere` / `isPubliclyVisible` para no filtrar borradores.
 - `trailingSlash: true` en Next: las URLs internas y los `PATHS` de revalidación terminan en `/`.
