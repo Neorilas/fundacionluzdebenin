@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { isValidLang } from '@/lib/i18n';
 import { Lang, PageSections, SITE_URL } from '@/lib/types';
 import { api } from '@/lib/api';
 import Hero from '@/components/home/Hero';
@@ -45,6 +47,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 
 export default async function HomePage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
+  // El layout ya hace notFound(), pero Next renderiza la página en paralelo:
+  // sin esto, cada /wp-admin/ de un bot revienta los componentes de la home.
+  if (!isValidLang(lang)) notFound();
   const l = lang as Lang;
 
   const [sections, projects, posts, campaignsResult, settingsResult] = await Promise.allSettled([

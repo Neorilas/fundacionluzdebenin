@@ -176,3 +176,4 @@ HTML/TXT de planes (`plan-seo-editorial.html`, `seo-estrategia.html`, `blog-plan
 - Webhook Stripe: solo una donación `pending` pasa a `expired`; nunca se pisa un estado terminal (carrera entre eventos).
 - Ruta pública nueva de proyectos: filtrar con `buildPublicProjectWhere` / `isPubliclyVisible` para no filtrar borradores.
 - `trailingSlash: true` en Next: las URLs internas y los `PATHS` de revalidación terminan en `/`.
+- `notFound()` en `[lang]/layout.tsx` **no basta**: Next 14 renderiza la página en paralelo al layout, así que una página que indexe por `lang` (`defaults[lang][0]`) revienta igualmente con `/wp-admin/` o `/xx/` (404 hacia fuera, `TypeError` en los logs). La home hace su propio `if (!isValidLang(lang)) notFound()`; cualquier página nueva que use `lang` como índice, igual.
